@@ -2,20 +2,7 @@
 
 import { Link } from 'react-router-dom';
 import styles from './DetailsPage.module.css';
-
-type Subject = { name: string };
-type Teacher = { name: string };
-type ClassTeacher = { name: string };
-
-type ClassRoom = {
-  id: number;
-  name: string;
-  capacity: number;
-  schedule: string;
-  subjects?: Subject[];
-  teachers?: Teacher[];
-  classTeacher?: ClassTeacher | null;
-};
+import { ClassRoom } from '../../../types/ClassRoom';
 
 type Props = {
   classRoom: ClassRoom;
@@ -40,8 +27,8 @@ const ClassRoomDetailsPage: React.FC<Props> = ({ classRoom }) => {
         <dd>
           {classRoom.subjects?.length ? (
             <ul>
-              {classRoom.subjects.map((s, i) => (
-                <li key={i}>{s.name}</li>
+              {classRoom.subjects.map((s) => (
+                <li key={s.id}>{s.name}</li>
               ))}
             </ul>
           ) : (
@@ -53,8 +40,8 @@ const ClassRoomDetailsPage: React.FC<Props> = ({ classRoom }) => {
         <dd>
           {classRoom.teachers?.length ? (
             <ul>
-              {classRoom.teachers.map((t, i) => (
-                <li key={i}>{t.name}</li>
+              {classRoom.teachers.map((t) => (
+                <li key={t.id}>{t.name}</li>
               ))}
             </ul>
           ) : (

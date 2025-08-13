@@ -7,12 +7,19 @@ import type { Subject } from '../../../types/Subject';
 
 export default function CreateSubject() {
   const navigate = useNavigate();
-  const [subject, setSubject] = useState<Subject>({ name: '', description: '' });
+  const [subject, setSubject] = useState<Subject>({
+    name: '',
+    description: '',
+    workloadHours: 0, // inicialização da nova propriedade
+  });
   const [errors, setErrors] = useState<{ name?: string }>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setSubject(prev => ({ ...prev, [name]: value }));
+    setSubject(prev => ({
+      ...prev,
+      [name]: name === 'workloadHours' ? Number(value) : value, // converte para number se for workloadHours
+    }));
   };
 
   const validate = () => {
@@ -44,6 +51,17 @@ export default function CreateSubject() {
           <div className={styles.formGroup}>
             <label htmlFor="description">Descrição</label>
             <textarea id="description" name="description" value={subject.description} onChange={handleChange} />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="workloadHours">Carga Horária</label>
+            <input
+              type="number"
+              id="workloadHours"
+              name="workloadHours"
+              value={subject.workloadHours}
+              onChange={handleChange}
+            />
           </div>
 
           <button type="submit">Salvar</button>

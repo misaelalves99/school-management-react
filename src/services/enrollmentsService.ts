@@ -1,6 +1,7 @@
-// src/mocks/enrollmentsService.ts
+// src/services/enrollmentsService.ts
 
-import enrollments, { Enrollment } from './enrollments';
+import enrollments from '../mocks/enrollments';
+import type { Enrollment } from '../types/enrollment'; // Corrigido: importar apenas o tipo
 
 export function getEnrollmentById(id: number): Enrollment | undefined {
   return enrollments.find(e => e.id === id);

@@ -1,6 +1,6 @@
 // src/mocks/enrollments.ts
 
-import { Enrollment } from "../types/Enrollment";
+import { Enrollment } from "../types/enrollment";
 
 const enrollments: Enrollment[] = [
   {

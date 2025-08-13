@@ -4,15 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./CreatePage.module.css";
 import { createTeacher } from "../../../mocks/teachers";
-
-interface TeacherFormData {
-  name: string;
-  email: string;
-  dateOfBirth: string;
-  subject: string;
-  phone: string;
-  address: string;
-}
+import type { TeacherFormData } from "../../../types/TeacherFormData";
 
 export default function TeacherCreate() {
   const navigate = useNavigate();
@@ -49,9 +41,7 @@ export default function TeacherCreate() {
     e.preventDefault();
     if (!validate()) return;
 
-    // Salvar novo professor no mock
     createTeacher(formData);
-
     alert("Professor salvo com sucesso!");
     navigate("/teachers");
   };

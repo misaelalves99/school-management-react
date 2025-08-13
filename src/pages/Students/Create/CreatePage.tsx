@@ -3,15 +3,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CreatePage.module.css';
-
-interface Student {
-  name: string;
-  email: string;
-  dateOfBirth: string;
-  enrollmentNumber: string;
-  phone: string;
-  address: string;
-}
+import { Student } from '../../../types/Student';
 
 export default function CreateStudent() {
   const navigate = useNavigate();

@@ -3,19 +3,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './StudentsPage.module.css';
+import { Student } from '../../types/Student';
 
 // Importa os dados de mock
 import { mockStudents } from '../../mocks/students';
-
-interface Student {
-  id: number;
-  name: string;
-  email?: string; // opcional porque no mock atual não tem
-  dateOfBirth?: string;
-  enrollmentNumber: string;
-  phone?: string;
-  address?: string;
-}
 
 export default function StudentIndex() {
   const [students, setStudents] = useState<Student[]>([]);
