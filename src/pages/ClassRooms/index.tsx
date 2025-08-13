@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './ClassRoomList.module.css';
 import mockClassRooms from '../../mocks/classRooms';
-import type { ClassRoom } from '../../types/Classroom';
+import type { ClassRoom } from '../../types/ClassRoom';
 
 const ClassroomsPage: React.FC = () => {
   const [searchString, setSearchString] = useState('');

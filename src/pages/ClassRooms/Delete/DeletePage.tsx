@@ -2,23 +2,7 @@
 
 import { Link } from 'react-router-dom';
 import styles from './DeletePage.module.css';
-
-type Subject = {
-  name: string;
-};
-
-type Teacher = {
-  name: string;
-};
-
-type ClassRoom = {
-  id: number;
-  name: string;
-  capacity: number;
-  schedule: string;
-  subjects?: Subject[];
-  teachers?: Teacher[];
-};
+import { ClassRoom } from '../../../types/ClassRoom';
 
 type Props = {
   classRoom: ClassRoom;

@@ -1,12 +1,7 @@
 // src/types/Classroom.ts
 
-export interface Subject {
-  name: string;
-}
-
-export interface Teacher {
-  name: string;
-}
+import { Subject } from './Subject';
+import { Teacher } from './Teacher';
 
 export interface ClassRoom {
   id: number;

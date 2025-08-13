@@ -1,26 +1,17 @@
 // src/pages/Enrollments/Edit/EditPage.tsx
 
-// src/pages/Enrollments/Edit/EditPage.tsx
-
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './EditPage.module.css';
-
-interface EnrollmentEdit {
-  id: number;
-  studentId: number;
-  classRoomId: number;
-  enrollmentDate: string; // ISO date string
-  status: string; // Adicionado para corrigir o erro de tipo
-}
+import type { EnrollmentEdit as EnrollmentEditType } from '../../../types/enrollmentEdit';
 
 interface EditProps {
-  enrollment: EnrollmentEdit;
-  onSave: (data: EnrollmentEdit) => Promise<void>;
+  enrollment: EnrollmentEditType;
+  onSave: (data: EnrollmentEditType) => Promise<void>;
 }
 
 export default function EditEnrollment({ enrollment, onSave }: EditProps) {
-  const [formData, setFormData] = useState<EnrollmentEdit>({ ...enrollment });
+  const [formData, setFormData] = useState<EnrollmentEditType>({ ...enrollment });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
 
@@ -36,7 +27,6 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
     e.preventDefault();
     setErrors({});
 
-    // Simple validation
     const newErrors: Record<string, string> = {};
     if (!formData.studentId) newErrors.studentId = 'Aluno é obrigatório.';
     if (!formData.classRoomId) newErrors.classRoomId = 'Turma é obrigatória.';
@@ -52,7 +42,6 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
       navigate('/enrollments');
     } catch (error) {
       console.error('Erro ao salvar matrícula:', error);
-      // Pode exibir erro global aqui
     }
   }
 

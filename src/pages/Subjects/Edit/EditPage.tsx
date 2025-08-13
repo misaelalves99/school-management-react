@@ -3,18 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styles from './EditPage.module.css';
-
-interface Subject {
-  id: number;
-  name: string;
-  description: string;
-}
-
-const mockSubject: Subject = {
-  id: 1,
-  name: 'Matemática',
-  description: 'Disciplina de matemática básica',
-};
+import type { Subject } from '../../../types/Subject';
+import { mockSubjects } from '../../../mocks/subjects';
 
 export default function EditSubject() {
   const navigate = useNavigate();
@@ -24,17 +14,31 @@ export default function EditSubject() {
     id: 0,
     name: '',
     description: '',
+    workloadHours: 0,
   });
   const [errors, setErrors] = useState<{ name?: string }>({});
 
   useEffect(() => {
-    // Simula fetch do dado pelo id
-    setSubject(mockSubject);
-  }, [id]);
+    if (!id) {
+      alert('ID da disciplina não fornecido.');
+      navigate('/subjects');
+      return;
+    }
+
+    const subjectId = Number(id);
+    const found = mockSubjects.find(s => s.id === subjectId);
+    if (!found) {
+      alert('Disciplina não encontrada.');
+      navigate('/subjects');
+      return;
+    }
+
+    setSubject(found);
+  }, [id, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setSubject(prev => ({ ...prev, [name]: value }));
+    setSubject(prev => ({ ...prev, [name]: name === 'workloadHours' ? Number(value) : value }));
   };
 
   const validate = () => {
@@ -76,6 +80,17 @@ export default function EditSubject() {
             id="description"
             name="description"
             value={subject.description}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="workloadHours">Carga Horária</label>
+          <input
+            type="number"
+            id="workloadHours"
+            name="workloadHours"
+            value={subject.workloadHours}
             onChange={handleChange}
           />
         </div>

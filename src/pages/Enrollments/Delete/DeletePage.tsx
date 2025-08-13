@@ -1,17 +1,8 @@
 // src/pages/Enrollments/Delete/DeletePage.tsx
 
-// src/pages/Enrollments/Delete/DeletePage.tsx
-
 import { useNavigate } from 'react-router-dom';
 import styles from './DeletePage.module.css';
-
-interface EnrollmentDetails {
-  id: number;
-  studentName: string | null;
-  classRoomName: string | null;
-  enrollmentDate: string; // ISO string (yyyy-mm-dd)
-  status: string; // Adicionado para corrigir o erro de tipo
-}
+import { EnrollmentDetails } from '../../../types/enrollmentDetails';
 
 interface DeleteEnrollmentProps {
   enrollment: EnrollmentDetails;
@@ -28,7 +19,6 @@ export default function DeleteEnrollment({ enrollment, onDelete }: DeleteEnrollm
       navigate('/enrollments');
     } catch (error) {
       console.error('Erro ao excluir matrícula:', error);
-      // Pode exibir mensagem de erro ao usuário aqui
     }
   }
 
@@ -45,7 +35,6 @@ export default function DeleteEnrollment({ enrollment, onDelete }: DeleteEnrollm
       </div>
 
       <form onSubmit={handleDelete} className={styles.form}>
-        {/* Hidden input not required in React, id is in state */}
         <button type="submit" className={styles.btnDanger}>Excluir</button>
         <button
           type="button"

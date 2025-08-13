@@ -5,19 +5,19 @@ import { Link, useSearchParams } from 'react-router-dom';
 import styles from './EnrollmentsPage.module.css';
 
 import { mockStudents } from '../../mocks/students';
-import classRooms from '../../mocks/classRooms';
-import enrollments, { Enrollment } from '../../mocks/enrollments';
+import mockClassRooms from '../../mocks/classRooms';
+import enrollmentsMock from '../../mocks/enrollments';
+import type { EnrollmentPageData, EnrollmentWithNames } from '../../types/enrollmentPageData';
 
 const PAGE_SIZE = 2;
 
 export default function EnrollmentIndexPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchString, setSearchString] = useState(searchParams.get('searchString') || '');
-
   const currentPage = Number(searchParams.get('page') || '1');
 
-  const [data, setData] = useState({
-    items: [] as Enrollment[],
+  const [data, setData] = useState<EnrollmentPageData>({
+    items: [],
     currentPage,
     totalItems: 0,
     pageSize: PAGE_SIZE,
@@ -25,20 +25,22 @@ export default function EnrollmentIndexPage() {
   });
 
   useEffect(() => {
-    let filtered = enrollments;
-
-    if (searchString) {
-      const lowerSearch = searchString.toLowerCase();
-      filtered = filtered.filter((e) =>
-        e.status.toLowerCase().includes(lowerSearch)
-      );
-    }
+    // Filtra pelo status
+    const filtered = enrollmentsMock.filter(e =>
+      searchString ? e.status.toLowerCase().includes(searchString.toLowerCase()) : true
+    );
 
     const start = (currentPage - 1) * PAGE_SIZE;
-    const paginatedItems = filtered.slice(start, start + PAGE_SIZE);
+    const paginated = filtered.slice(start, start + PAGE_SIZE);
+
+    const itemsWithNames: EnrollmentWithNames[] = paginated.map(e => ({
+      ...e,
+      studentName: mockStudents.find(s => s.id === e.studentId)?.name ?? 'Aluno não informado',
+      classRoomName: mockClassRooms.find(c => c.id === e.classRoomId)?.name ?? 'Turma não informada',
+    }));
 
     setData({
-      items: paginatedItems,
+      items: itemsWithNames,
       currentPage,
       totalItems: filtered.length,
       pageSize: PAGE_SIZE,
@@ -46,16 +48,10 @@ export default function EnrollmentIndexPage() {
     });
   }, [searchString, currentPage]);
 
-  const totalPages = useMemo(
-    () => Math.ceil(data.totalItems / data.pageSize),
-    [data.totalItems, data.pageSize]
-  );
-
-  const getStudentName = (id: number) =>
-    mockStudents.find((s) => s.id === id)?.name ?? 'Aluno não informado';
-
-  const getClassRoomName = (id: number) =>
-    classRooms.find((c) => c.id === id)?.name ?? 'Turma não informada';
+  const totalPages = useMemo(() => Math.ceil(data.totalItems / data.pageSize), [
+    data.totalItems,
+    data.pageSize,
+  ]);
 
   return (
     <div className={styles.pageContainer}>
@@ -63,7 +59,7 @@ export default function EnrollmentIndexPage() {
         <h2 className={styles.title}>Buscar Matrículas</h2>
         <form
           className={styles.searchForm}
-          onSubmit={(e) => {
+          onSubmit={e => {
             e.preventDefault();
             setSearchParams({ searchString, page: '1' });
           }}
@@ -72,7 +68,7 @@ export default function EnrollmentIndexPage() {
             type="text"
             value={searchString}
             placeholder="Buscar Matrícula ou Status..."
-            onChange={(e) => setSearchString(e.target.value)}
+            onChange={e => setSearchString(e.target.value)}
           />
           <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
             Buscar
@@ -97,29 +93,20 @@ export default function EnrollmentIndexPage() {
             </tr>
           </thead>
           <tbody>
-            {data.items.map((enrollment) => (
-              <tr key={enrollment.id}>
-                <td>{getStudentName(enrollment.studentId)}</td>
-                <td>{getClassRoomName(enrollment.classRoomId)}</td>
-                <td>{enrollment.status}</td>
-                <td>{new Date(enrollment.enrollmentDate).toLocaleDateString()}</td>
+            {data.items.map(e => (
+              <tr key={e.id}>
+                <td>{e.studentName}</td>
+                <td>{e.classRoomName}</td>
+                <td>{e.status}</td>
+                <td>{new Date(e.enrollmentDate).toLocaleDateString()}</td>
                 <td>
-                  <Link
-                    to={`/enrollments/details/${enrollment.id}`}
-                    className={`${styles.btn} ${styles.btnInfo}`}
-                  >
+                  <Link to={`/enrollments/details/${e.id}`} className={`${styles.btn} ${styles.btnInfo}`}>
                     Detalhes
                   </Link>{' '}
-                  <Link
-                    to={`/enrollments/edit/${enrollment.id}`}
-                    className={`${styles.btn} ${styles.btnWarning}`}
-                  >
+                  <Link to={`/enrollments/edit/${e.id}`} className={`${styles.btn} ${styles.btnWarning}`}>
                     Editar
                   </Link>{' '}
-                  <Link
-                    to={`/enrollments/delete/${enrollment.id}`}
-                    className={`${styles.btn} ${styles.btnDanger}`}
-                  >
+                  <Link to={`/enrollments/delete/${e.id}`} className={`${styles.btn} ${styles.btnDanger}`}>
                     Excluir
                   </Link>
                 </td>
@@ -137,11 +124,9 @@ export default function EnrollmentIndexPage() {
               Anterior
             </Link>
           )}
-
           <span className={styles.pageInfo}>
             Página {data.currentPage} de {totalPages}
           </span>
-
           {data.currentPage < totalPages && (
             <Link
               to={`?page=${data.currentPage + 1}&searchString=${searchString}`}

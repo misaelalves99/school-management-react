@@ -1,15 +1,6 @@
 // src/mocks/teachers.ts
 
-export interface Teacher {
-  id: number;
-  name: string;
-  email: string;
-  dateOfBirth: string; // ISO string
-  subject: string;
-  phone: string;
-  address: string;
-  photoUrl?: string;
-}
+import type { Teacher } from "../types/Teacher";
 
 // Inicial mock teachers
 let teachersData: Teacher[] = [

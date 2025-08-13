@@ -3,29 +3,10 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CreatePage.module.css';
-
-interface Student {
-  id: number;
-  name: string;
-}
-
-interface ClassRoom {
-  id: number;
-  name: string;
-}
-
-// Export the type so it can be used in App.tsx
-export interface EnrollmentForm {
-  studentId: number | '';
-  classRoomId: number | '';
-  enrollmentDate: string;
-}
-
-interface ValidationErrors {
-  studentId?: string;
-  classRoomId?: string;
-  enrollmentDate?: string;
-}
+import { Student } from '../../../types/Student';
+import { ClassRoom } from '../../../types/ClassRoom';
+import { EnrollmentForm } from '../../../types/enrollmentForm';
+import { ValidationErrors } from '../../../types/validationErrors';
 
 interface CreateEnrollmentProps {
   students: Student[];
@@ -34,11 +15,10 @@ interface CreateEnrollmentProps {
 }
 
 export default function CreateEnrollment({ students, classRooms, onCreate }: CreateEnrollmentProps) {
-  // ... (rest of the component remains the same)
   const [form, setForm] = useState<EnrollmentForm>({
     studentId: '',
     classRoomId: '',
-    enrollmentDate: new Date().toISOString().slice(0, 10), // yyyy-mm-dd
+    enrollmentDate: new Date().toISOString().slice(0, 10),
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({});
@@ -63,7 +43,6 @@ export default function CreateEnrollment({ students, classRooms, onCreate }: Cre
       await onCreate(form);
       navigate('/enrollments');
     } catch (error) {
-      // Tratar erro de criação (ex: mostrar mensagem)
       console.error(error);
     }
   }

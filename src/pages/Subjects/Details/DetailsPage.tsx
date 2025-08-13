@@ -2,19 +2,7 @@
 
 import { useNavigate, useParams } from 'react-router-dom';
 import styles from './DetailsPage.module.css';
-
-interface Subject {
-  id: number;
-  name: string;
-  workloadHours: number;
-}
-
-// Mock de várias disciplinas
-const mockSubjects: Subject[] = [
-  { id: 1, name: 'Matemática', workloadHours: 60 },
-  { id: 2, name: 'Física', workloadHours: 60 },
-  { id: 3, name: 'Química', workloadHours: 60 },
-];
+import { mockSubjects } from '../../../mocks/subjects';
 
 export default function SubjectDetails() {
   const navigate = useNavigate();
@@ -28,7 +16,10 @@ export default function SubjectDetails() {
     return (
       <div className={styles.container}>
         <h2>Disciplina não encontrada.</h2>
-        <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => navigate('/subjects')}>
+        <button
+          className={`${styles.btn} ${styles.btnSecondary}`}
+          onClick={() => navigate('/subjects')}
+        >
           Voltar
         </button>
       </div>
@@ -43,6 +34,9 @@ export default function SubjectDetails() {
         <dl className={styles.row}>
           <dt>Nome</dt>
           <dd>{subject.name}</dd>
+
+          <dt>Descrição</dt>
+          <dd>{subject.description}</dd>
 
           <dt>Carga Horária</dt>
           <dd>{subject.workloadHours} horas</dd>

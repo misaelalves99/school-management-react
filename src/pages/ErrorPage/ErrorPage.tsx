@@ -1,16 +1,12 @@
 // src/pages/ErrorPage/ErrorPage.tsx
 
-import { useLocation } from 'react-router-dom'
-import styles from './ErrorPage.module.css'
-
-interface ErrorData {
-  message: string
-  stack?: string
-}
+import { useLocation } from 'react-router-dom';
+import styles from './ErrorPage.module.css';
+import type { ErrorData } from '../../types/errorData';
 
 export default function ErrorPage() {
-  const location = useLocation()
-  const state = location.state as { error?: ErrorData } | undefined
+  const location = useLocation();
+  const state = location.state as { error?: ErrorData } | undefined;
 
   return (
     <div className={styles.errorContainer}>
@@ -32,5 +28,5 @@ export default function ErrorPage() {
 
       <a href="/" className={styles.btnReturn}>⬅ Voltar para o Início</a>
     </div>
-  )
+  );
 }

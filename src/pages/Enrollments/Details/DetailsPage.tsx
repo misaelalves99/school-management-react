@@ -1,22 +1,15 @@
 // src/pages/Enrollments/Details/DetailsPage.tsx
 
-import { useNavigate } from 'react-router-dom'
-import styles from './DetailsPage.module.css'
-
-interface EnrollmentDetails {
-  id: number
-  studentName: string | null
-  classRoomName: string | null
-  status: string | null
-  enrollmentDate: string // ISO string
-}
+import { useNavigate } from 'react-router-dom';
+import styles from './DetailsPage.module.css';
+import type { EnrollmentDetails as EnrollmentDetailsType } from '../../../types/enrollmentDetails';
 
 interface DetailsProps {
-  enrollment: EnrollmentDetails
+  enrollment: EnrollmentDetailsType;
 }
 
 export default function EnrollmentDetails({ enrollment }: DetailsProps) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <>
@@ -34,7 +27,7 @@ export default function EnrollmentDetails({ enrollment }: DetailsProps) {
           <dd className={styles.dd}>{enrollment.status ?? '-'}</dd>
 
           <dt className={styles.dt}>Data da Matrícula</dt>
-          <dd className={styles.dd}>{new Date(enrollment.enrollmentDate).toLocaleDateString()}</dd>
+          <dd>{new Date(enrollment.enrollmentDate).toLocaleDateString()}</dd>
         </dl>
       </div>
 
@@ -53,5 +46,5 @@ export default function EnrollmentDetails({ enrollment }: DetailsProps) {
         </button>
       </div>
     </>
-  )
+  );
 }

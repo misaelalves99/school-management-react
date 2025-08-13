@@ -3,11 +3,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CreatePage.module.css';
-
-interface Subject {
-  name: string;
-  description: string;
-}
+import type { Subject } from '../../../types/Subject';
 
 export default function CreateSubject() {
   const navigate = useNavigate();

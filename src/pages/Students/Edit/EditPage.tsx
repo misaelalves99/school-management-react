@@ -3,34 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './EditPage.module.css';
-
-// Mock simples de dados para exemplo:
-const mockStudents = [
-  {
-    id: '1',
-    name: 'João Silva',
-    email: 'joao@example.com',
-    dateOfBirth: '2000-01-01',
-    enrollmentNumber: '20230001',
-    phone: '123456789',
-    address: 'Rua A',
-  },
-  {
-    id: '2',
-    name: 'Maria Oliveira',
-    email: 'maria@example.com',
-    dateOfBirth: '1999-05-15',
-    enrollmentNumber: '20230002',
-    phone: '987654321',
-    address: 'Rua B',
-  },
-];
+import { mockStudents } from '../../../mocks/students';
+import type { Student } from '../../../types/Student';
 
 export default function EditStudent() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Omit<Student, 'id'>>({
     name: '',
     email: '',
     dateOfBirth: '',
@@ -39,7 +19,6 @@ export default function EditStudent() {
     address: '',
   });
 
-  // Carrega dados do aluno pelo id assim que o componente monta
   useEffect(() => {
     if (!id) {
       alert('ID do aluno não fornecido.');
@@ -47,21 +26,16 @@ export default function EditStudent() {
       return;
     }
 
-    const student = mockStudents.find((s) => s.id === id);
+    const student = mockStudents.find((s) => s.id === Number(id));
     if (!student) {
       alert('Aluno não encontrado.');
       navigate('/students');
       return;
     }
 
-    setFormData({
-      name: student.name,
-      email: student.email,
-      dateOfBirth: student.dateOfBirth,
-      enrollmentNumber: student.enrollmentNumber,
-      phone: student.phone,
-      address: student.address,
-    });
+    // Extrai 'restFormData' sem atribuir 'id' a uma variável
+    const { ...restFormData } = student;
+    setFormData(restFormData);
   }, [id, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,8 +45,13 @@ export default function EditStudent() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: salvar aluno editado via API ou state global
-    alert('Aluno atualizado!');
+    if (!id) return;
+
+    const index = mockStudents.findIndex((s) => s.id === Number(id));
+    if (index !== -1) {
+      mockStudents[index] = { id: Number(id), ...formData };
+      alert('Aluno atualizado!');
+    }
     navigate('/students');
   };
 

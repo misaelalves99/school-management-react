@@ -2,20 +2,26 @@
 
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from './DetailsPage.module.css';
+import { mockStudents } from '../../../mocks/students';
+import type { Student } from '../../../types/Student';
 
 export default function StudentDetails() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // TODO: fetch student by ID
-  const student = {
-    name: 'João da Silva',
-    email: 'joao@email.com',
-    dateOfBirth: '2001-09-15',
-    enrollmentNumber: '2025001',
-    phone: '(11) 99999-9999',
-    address: 'Rua Exemplo, 123'
-  };
+  // Buscar aluno pelo id do mock
+  const student: Student | undefined = mockStudents.find(s => s.id === Number(id));
+
+  if (!student) {
+    return (
+      <div className={styles.container}>
+        <h1 className={styles.title}>Aluno não encontrado</h1>
+        <button className={styles.btnSecondary} onClick={() => navigate('/students')}>
+          Voltar à Lista
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -26,9 +32,14 @@ export default function StudentDetails() {
       <div><strong>Número de Matrícula:</strong> {student.enrollmentNumber}</div>
       <div><strong>Telefone:</strong> {student.phone}</div>
       <div><strong>Endereço:</strong> {student.address}</div>
+
       <div className={styles.actions}>
-        <button className={styles.btnWarning} onClick={() => navigate(`/students/edit/${id}`)}>Editar</button>
-        <button className={styles.btnSecondary} onClick={() => navigate('/students')}>Voltar à Lista</button>
+        <button className={styles.btnWarning} onClick={() => navigate(`/students/edit/${student.id}`)}>
+          Editar
+        </button>
+        <button className={styles.btnSecondary} onClick={() => navigate('/students')}>
+          Voltar à Lista
+        </button>
       </div>
     </div>
   );

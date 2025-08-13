@@ -1,12 +1,6 @@
 // src/mocks/enrollments.ts
 
-export type Enrollment = {
-  id: number;
-  studentId: number;
-  classRoomId: number;
-  enrollmentDate: string;
-  status: string;
-};
+import { Enrollment } from "../types/Enrollment";
 
 const enrollments: Enrollment[] = [
   {

@@ -3,7 +3,8 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./TeachersPage.module.css";
-import { getTeachers, Teacher } from "../../mocks/teachers";
+import type { Teacher } from "../../types/Teacher";
+import { getTeachers } from "../../mocks/teachers";
 
 const PAGE_SIZE = 2;
 

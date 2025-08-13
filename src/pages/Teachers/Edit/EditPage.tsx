@@ -4,15 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./EditPage.module.css";
 import { getTeacherById, updateTeacher } from "../../../mocks/teachers";
-
-interface TeacherFormData {
-  name: string;
-  email: string;
-  dateOfBirth: string;
-  subject: string;
-  phone: string;
-  address: string;
-}
+import type { TeacherFormData } from "../../../types/TeacherFormData";
 
 export default function TeacherEdit() {
   const { id } = useParams<{ id: string }>();
