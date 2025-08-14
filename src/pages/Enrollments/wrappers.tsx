@@ -12,12 +12,13 @@ import type { Enrollment } from '../../types/enrollment';
 import type { EnrollmentWithNames } from '../../types/enrollmentWithNames';
 
 import { mockStudents } from '../../mocks/students';
-import mockClassRooms from '../../mocks/classRooms';
+import { mockClassRooms } from '../../mocks/classRooms'; // corrigido: import nomeado
+import type { ClassRoom } from '../../types/ClassRoom';
 
 // Transforma o Enrollment em EnrollmentWithNames
 function getEnrollmentDetails(enrollment: Enrollment): EnrollmentWithNames {
   const student = mockStudents.find(s => s.id === enrollment.studentId);
-  const classRoom = mockClassRooms.find(c => c.id === enrollment.classRoomId);
+  const classRoom: ClassRoom | undefined = mockClassRooms.find(c => c.id === enrollment.classRoomId);
 
   return {
     ...enrollment,
@@ -28,7 +29,7 @@ function getEnrollmentDetails(enrollment: Enrollment): EnrollmentWithNames {
 
 // Wrapper de detalhes
 export function EnrollmentDetailsWrapper() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [enrollment, setEnrollment] = useState<EnrollmentWithNames | null>(null);
 
@@ -54,7 +55,7 @@ export function EnrollmentDetailsWrapper() {
 
 // Wrapper de edição
 export function EnrollmentEditWrapper() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
 
@@ -87,7 +88,7 @@ export function EnrollmentEditWrapper() {
 
 // Wrapper de exclusão
 export function EnrollmentDeleteWrapper() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [enrollment, setEnrollment] = useState<EnrollmentWithNames | null>(null);
 

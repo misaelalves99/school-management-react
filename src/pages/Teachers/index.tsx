@@ -6,7 +6,7 @@ import styles from "./TeachersPage.module.css";
 import type { Teacher } from "../../types/Teacher";
 import { getTeachers } from "../../mocks/teachers";
 
-const PAGE_SIZE = 2;
+const PAGE_SIZE = 10; // <-- limite máximo por página
 
 export default function TeachersPage() {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function TeachersPage() {
   }, [searchTerm, allTeachers]);
 
   const totalItems = filteredTeachers.length;
-  const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
 
   const currentItems = filteredTeachers.slice(
     (currentPage - 1) * PAGE_SIZE,
@@ -129,29 +129,32 @@ export default function TeachersPage() {
           </tbody>
         </table>
 
-        <div className={styles.pagination}>
-          <button
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={styles.pageLink}
-            aria-label="Página anterior"
-          >
-            Anterior
-          </button>
+        {/* Paginação */}
+        {totalPages > 1 && (
+          <div className={styles.pagination}>
+            <button
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={styles.pageLink}
+              aria-label="Página anterior"
+            >
+              Anterior
+            </button>
 
-          <span className={styles.pageInfo}>
-            Página {currentPage} de {totalPages}
-          </span>
+            <span className={styles.pageInfo}>
+              Página {currentPage} de {totalPages}
+            </span>
 
-          <button
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className={styles.pageLink}
-            aria-label="Próxima página"
-          >
-            Próxima
-          </button>
-        </div>
+            <button
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={styles.pageLink}
+              aria-label="Próxima página"
+            >
+              Próxima
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

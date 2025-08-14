@@ -1,50 +1,64 @@
 // src/pages/Students/index.tsx
 
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import styles from './StudentsPage.module.css';
-import { Student } from '../../types/Student';
-
-// Importa os dados de mock
-import { mockStudents } from '../../mocks/students';
+import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
+import styles from "./StudentsPage.module.css";
+import type { Student } from "../../types/Student";
+import { getStudents, deleteStudent } from "../../mocks/students";
 
 export default function StudentIndex() {
   const [students, setStudents] = useState<Student[]>([]);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    const fetchStudents = () => {
-      const filtered = mockStudents.filter(s =>
+  const pageSize = 10;
+
+  const fetchStudents = useCallback(() => {
+    let allStudents: Student[] = getStudents();
+
+    if (search.trim()) {
+      allStudents = allStudents.filter((s: Student) =>
         s.name.toLowerCase().includes(search.toLowerCase())
       );
-      const pageSize = 10;
-      const start = (page - 1) * pageSize;
-      const paginated = filtered.slice(start, start + pageSize);
-      setStudents(paginated);
-      setTotalPages(Math.ceil(filtered.length / pageSize));
-    };
+    }
 
-    fetchStudents();
+    const total = Math.max(1, Math.ceil(allStudents.length / pageSize));
+    setTotalPages(total);
+
+    const currentPage = page > total ? 1 : page;
+    setPage(currentPage);
+
+    const start = (currentPage - 1) * pageSize;
+    const paginated = allStudents.slice(start, start + pageSize);
+    setStudents(paginated);
   }, [search, page]);
+
+  useEffect(() => {
+    fetchStudents();
+  }, [fetchStudents]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPage(1);
+  };
+
+  const handleDelete = (id: number) => {
+    if (!window.confirm("Deseja realmente excluir este aluno?")) return;
+    deleteStudent(id);
+    fetchStudents();
+  };
 
   return (
     <div className={styles.pageContainer}>
       <div className={styles.leftPanel}>
         <h2 className={styles.title}>Buscar Alunos</h2>
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            setPage(1);
-          }}
-          className={styles.searchForm}
-        >
+        <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
           <input
             type="text"
             placeholder="Digite o nome..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
           />
           <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
             Buscar
@@ -57,42 +71,75 @@ export default function StudentIndex() {
 
       <div className={styles.rightPanel}>
         <h2 className={styles.title}>Lista de Alunos</h2>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Matrícula</th>
-              <th>Telefone</th>
-              <th>Endereço</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map(student => (
-              <tr key={student.id}>
-                <td>{student.name}</td>
-                <td>{student.enrollmentNumber}</td>
-                <td>{student.phone || '-'}</td>
-                <td>{student.address || '-'}</td>
-                <td>
-                  <Link to={`/students/details/${student.id}`} className={`${styles.btn} ${styles.btnInfo}`}>Detalhes</Link>
-                  <Link to={`/students/edit/${student.id}`} className={`${styles.btn} ${styles.btnWarning}`}>Editar</Link>
-                  <Link to={`/students/delete/${student.id}`} className={`${styles.btn} ${styles.btnDanger}`}>Excluir</Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {students.length > 0 ? (
+          <>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Matrícula</th>
+                  <th>Telefone</th>
+                  <th>Endereço</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {students.map((student: Student) => (
+                  <tr key={student.id}>
+                    <td>{student.name}</td>
+                    <td>{student.enrollmentNumber}</td>
+                    <td>{student.phone || "-"}</td>
+                    <td>{student.address || "-"}</td>
+                    <td>
+                      <Link
+                        to={`/students/details/${student.id}`}
+                        className={`${styles.btn} ${styles.btnInfo}`}
+                      >
+                        Detalhes
+                      </Link>
+                      <Link
+                        to={`/students/edit/${student.id}`}
+                        className={`${styles.btn} ${styles.btnWarning}`}
+                      >
+                        Editar
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(student.id)}
+                        className={`${styles.btn} ${styles.btnDanger}`}
+                      >
+                        Excluir
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-        <div className={styles.pagination}>
-          {page > 1 && (
-            <button className={styles.pageLink} onClick={() => setPage(p => p - 1)}>Anterior</button>
-          )}
-          <span className={styles.pageInfo}>Página {page} de {totalPages}</span>
-          {page < totalPages && (
-            <button className={styles.pageLink} onClick={() => setPage(p => p + 1)}>Próxima</button>
-          )}
-        </div>
+            {totalPages > 1 && (
+              <div className={styles.pagination}>
+                <button
+                  className={styles.pageLink}
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                >
+                  Anterior
+                </button>
+                <span className={styles.pageInfo}>
+                  Página {page} de {totalPages}
+                </span>
+                <button
+                  className={styles.pageLink}
+                  disabled={page === totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                >
+                  Próxima
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
+          <p className={styles.noResults}>Nenhum aluno encontrado.</p>
+        )}
       </div>
     </div>
   );

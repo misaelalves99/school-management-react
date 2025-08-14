@@ -1,7 +1,7 @@
 // src/types/Student.ts
 
 export type Student = {
-  id?: number; // opcional para criação
+  id: number;
   name: string;
   email: string;
   dateOfBirth: string;

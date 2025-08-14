@@ -1,4 +1,5 @@
 // src/types/TeacherFormData.ts
+
 export interface TeacherFormData {
   name: string;
   email: string;

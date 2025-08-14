@@ -3,29 +3,38 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CreatePage.module.css';
+import { mockClassRooms } from '../../../mocks/classRooms';
 
 const ClassRoomCreate: React.FC = () => {
   const [name, setName] = useState('');
   const [capacity, setCapacity] = useState(1);
-  const [errors, setErrors] = useState<{ name?: string; capacity?: string }>({});
+  const [schedule, setSchedule] = useState('');
+  const [errors, setErrors] = useState<{ name?: string; capacity?: string; schedule?: string }>({});
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const newErrors: typeof errors = {};
-    if (!name) newErrors.name = 'Nome é obrigatório.';
-    if (!capacity || capacity < 1 || capacity > 100)
-      newErrors.capacity = 'Capacidade deve ser entre 1 e 100.';
+    if (!name.trim()) newErrors.name = 'Nome é obrigatório.';
+    if (!capacity || capacity < 1 || capacity > 100) newErrors.capacity = 'Capacidade deve ser entre 1 e 100.';
+    if (!schedule.trim()) newErrors.schedule = 'Horário é obrigatório.';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    console.log('Form submitted', { name, capacity });
+    // criar sala no mock
+    mockClassRooms.create({
+      name,
+      capacity,
+      schedule,
+      subjects: [],
+      teachers: [],
+      classTeacher: null,
+    });
 
-    // Aqui você faria uma requisição para salvar a sala
     navigate('/classrooms');
   };
 
@@ -35,26 +44,20 @@ const ClassRoomCreate: React.FC = () => {
       <form onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
           <label htmlFor="name">Nome</label>
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} />
           {errors.name && <span className={styles.textDanger}>{errors.name}</span>}
         </div>
 
         <div className={styles.formGroup}>
           <label htmlFor="capacity">Capacidade</label>
-          <input
-            id="capacity"
-            type="number"
-            min="1"
-            max="100"
-            value={capacity}
-            onChange={(e) => setCapacity(Number(e.target.value))}
-          />
+          <input id="capacity" type="number" min="1" max="100" value={capacity} onChange={(e) => setCapacity(Number(e.target.value))} />
           {errors.capacity && <span className={styles.textDanger}>{errors.capacity}</span>}
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="schedule">Horário</label>
+          <input id="schedule" type="text" value={schedule} onChange={(e) => setSchedule(e.target.value)} placeholder="Ex: Seg - 08:00 às 10:00" />
+          {errors.schedule && <span className={styles.textDanger}>{errors.schedule}</span>}
         </div>
 
         <button type="submit">Salvar</button>

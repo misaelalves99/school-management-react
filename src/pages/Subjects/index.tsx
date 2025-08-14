@@ -1,24 +1,43 @@
 // src/pages/Subjects/index.tsx
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';  // Import Link para navegação
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import styles from './SubjectsPage.module.css';
 import { mockSubjects } from '../../mocks/subjects';
-import { Subject } from '../../types/Subject';
+import type { Subject } from '../../types/Subject';
 
-const pageSize = 2;
+const PAGE_SIZE = 10;
 
 export default function SubjectsIndexPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
 
-  const filtered: Subject[] = mockSubjects.filter((s) =>
+  // carregar do mock quando o componente monta
+  useEffect(() => {
+    setSubjects(mockSubjects.list()); // <-- usa o método list()
+  }, []);
+
+  // filtrar os dados com base no search
+  const filtered: Subject[] = subjects.filter((s) =>
     s.name.toLowerCase().includes(search.toLowerCase()) ||
     s.description.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filtered.length / pageSize);
-  const paginated: Subject[] = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+
+  // paginar
+  const paginated: Subject[] = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setPage(1);
+  };
+
+  const goToPage = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages) return;
+    setPage(newPage);
+  };
 
   return (
     <div className={styles.pageContainer}>
@@ -29,10 +48,7 @@ export default function SubjectsIndexPage() {
             type="text"
             value={search}
             placeholder="Digite o nome ou descrição..."
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
+            onChange={handleSearchChange}
           />
           <button className={`${styles.btn} ${styles.btnPrimary}`}>Buscar</button>
         </form>
@@ -54,49 +70,36 @@ export default function SubjectsIndexPage() {
             </tr>
           </thead>
           <tbody>
-            {paginated.map((subject) => (
-              <tr key={subject.id}>
-                <td>{subject.name}</td>
-                <td>{subject.description}</td>
-                <td>{subject.workloadHours}</td>
-                <td>
-                  <Link
-                    to={`/subjects/details/${subject.id}`}
-                    className={`${styles.btn} ${styles.btnInfo}`}
-                  >
-                    Detalhes
-                  </Link>{' '}
-                  <Link
-                    to={`/subjects/edit/${subject.id}`}
-                    className={`${styles.btn} ${styles.btnWarning}`}
-                  >
-                    Editar
-                  </Link>{' '}
-                  <Link
-                    to={`/subjects/delete/${subject.id}`}
-                    className={`${styles.btn} ${styles.btnDanger}`}
-                  >
-                    Excluir
-                  </Link>
+            {paginated.length === 0 ? (
+              <tr>
+                <td colSpan={4} style={{ textAlign: 'center', padding: '20px' }}>
+                  Nenhuma disciplina encontrada.
                 </td>
               </tr>
-            ))}
+            ) : (
+              paginated.map((subject) => (
+                <tr key={subject.id}>
+                  <td>{subject.name}</td>
+                  <td>{subject.description}</td>
+                  <td>{subject.workloadHours}</td>
+                  <td>
+                    <Link to={`/subjects/details/${subject.id}`} className={`${styles.btn} ${styles.btnInfo}`}>Detalhes</Link>{' '}
+                    <Link to={`/subjects/edit/${subject.id}`} className={`${styles.btn} ${styles.btnWarning}`}>Editar</Link>{' '}
+                    <Link to={`/subjects/delete/${subject.id}`} className={`${styles.btn} ${styles.btnDanger}`}>Excluir</Link>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
 
-        <div className={styles.pagination}>
-          {page > 1 && (
-            <button onClick={() => setPage(page - 1)} className={styles.pageLink}>
-              Anterior
-            </button>
-          )}
-          <span className={styles.pageInfo}>Página {page} de {totalPages}</span>
-          {page < totalPages && (
-            <button onClick={() => setPage(page + 1)} className={styles.pageLink}>
-              Próxima
-            </button>
-          )}
-        </div>
+        {totalPages > 1 && (
+          <div className={styles.pagination}>
+            <button onClick={() => goToPage(page - 1)} disabled={page === 1} className={styles.pageLink}>Anterior</button>
+            <span className={styles.pageInfo}>Página {page} de {totalPages}</span>
+            <button onClick={() => goToPage(page + 1)} disabled={page === totalPages} className={styles.pageLink}>Próxima</button>
+          </div>
+        )}
       </div>
     </div>
   );

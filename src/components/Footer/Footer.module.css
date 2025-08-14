@@ -1,0 +1,13 @@
+/* src/components/Footer/Footer.module.css */
+
+.footer {
+  width: 100%;
+  padding: 1rem 0;
+  background-color: #f8f9fa; /* fundo claro */
+  color: #495057; /* texto cinza escuro */
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-top: 1px solid #dee2e6; /* separador sutil */
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
+}

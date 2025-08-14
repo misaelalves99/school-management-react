@@ -1,15 +1,18 @@
 // src/pages/Enrollments/index.tsx
 
+// src/pages/Enrollments/index.tsx
+
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import styles from './EnrollmentsPage.module.css';
 
 import { mockStudents } from '../../mocks/students';
-import mockClassRooms from '../../mocks/classRooms';
+// CORREÇÃO: Altere a importação para usar exportação nomeada
+import { mockClassRooms } from '../../mocks/classRooms';
 import enrollmentsMock from '../../mocks/enrollments';
 import type { EnrollmentPageData, EnrollmentWithNames } from '../../types/enrollmentPageData';
 
-const PAGE_SIZE = 2;
+const PAGE_SIZE = 10;
 
 export default function EnrollmentIndexPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,9 +28,10 @@ export default function EnrollmentIndexPage() {
   });
 
   useEffect(() => {
-    // Filtra pelo status
     const filtered = enrollmentsMock.filter(e =>
-      searchString ? e.status.toLowerCase().includes(searchString.toLowerCase()) : true
+      searchString
+        ? e.status.toLowerCase().includes(searchString.toLowerCase())
+        : true
     );
 
     const start = (currentPage - 1) * PAGE_SIZE;
@@ -48,10 +52,15 @@ export default function EnrollmentIndexPage() {
     });
   }, [searchString, currentPage]);
 
-  const totalPages = useMemo(() => Math.ceil(data.totalItems / data.pageSize), [
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(data.totalItems / data.pageSize)), [
     data.totalItems,
     data.pageSize,
   ]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchString(e.target.value);
+    setSearchParams({ searchString: e.target.value, page: '1' });
+  };
 
   return (
     <div className={styles.pageContainer}>
@@ -59,16 +68,13 @@ export default function EnrollmentIndexPage() {
         <h2 className={styles.title}>Buscar Matrículas</h2>
         <form
           className={styles.searchForm}
-          onSubmit={e => {
-            e.preventDefault();
-            setSearchParams({ searchString, page: '1' });
-          }}
+          onSubmit={e => e.preventDefault()}
         >
           <input
             type="text"
             value={searchString}
             placeholder="Buscar Matrícula ou Status..."
-            onChange={e => setSearchString(e.target.value)}
+            onChange={handleSearchChange}
           />
           <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
             Buscar
@@ -93,49 +99,59 @@ export default function EnrollmentIndexPage() {
             </tr>
           </thead>
           <tbody>
-            {data.items.map(e => (
-              <tr key={e.id}>
-                <td>{e.studentName}</td>
-                <td>{e.classRoomName}</td>
-                <td>{e.status}</td>
-                <td>{new Date(e.enrollmentDate).toLocaleDateString()}</td>
-                <td>
-                  <Link to={`/enrollments/details/${e.id}`} className={`${styles.btn} ${styles.btnInfo}`}>
-                    Detalhes
-                  </Link>{' '}
-                  <Link to={`/enrollments/edit/${e.id}`} className={`${styles.btn} ${styles.btnWarning}`}>
-                    Editar
-                  </Link>{' '}
-                  <Link to={`/enrollments/delete/${e.id}`} className={`${styles.btn} ${styles.btnDanger}`}>
-                    Excluir
-                  </Link>
+            {data.items.length === 0 ? (
+              <tr>
+                <td colSpan={5} style={{ textAlign: 'center', padding: '20px' }}>
+                  Nenhuma matrícula encontrada.
                 </td>
               </tr>
-            ))}
+            ) : (
+              data.items.map(e => (
+                <tr key={e.id}>
+                  <td>{e.studentName}</td>
+                  <td>{e.classRoomName}</td>
+                  <td>{e.status}</td>
+                  <td>{new Date(e.enrollmentDate).toLocaleDateString()}</td>
+                  <td>
+                    <Link to={`/enrollments/details/${e.id}`} className={`${styles.btn} ${styles.btnInfo}`}>
+                      Detalhes
+                    </Link>{' '}
+                    <Link to={`/enrollments/edit/${e.id}`} className={`${styles.btn} ${styles.btnWarning}`}>
+                      Editar
+                    </Link>{' '}
+                    <Link to={`/enrollments/delete/${e.id}`} className={`${styles.btn} ${styles.btnDanger}`}>
+                      Excluir
+                    </Link>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
 
-        <div className={styles.pagination}>
-          {data.currentPage > 1 && (
+        {totalPages > 1 && (
+          <div className={styles.pagination}>
             <Link
-              to={`?page=${data.currentPage - 1}&searchString=${searchString}`}
+              to={`?page=${Math.max(1, data.currentPage - 1)}&searchString=${searchString}`}
               className={styles.pageLink}
+              aria-disabled={data.currentPage === 1}
             >
               Anterior
             </Link>
-          )}
-          <span className={styles.pageInfo}>
-            Página {data.currentPage} de {totalPages}
-          </span>
-          {data.currentPage < totalPages && (
+
+            <span className={styles.pageInfo}>
+              Página {data.currentPage} de {totalPages}
+            </span>
+
             <Link
-              to={`?page=${data.currentPage + 1}&searchString=${searchString}`}
+              to={`?page=${Math.min(totalPages, data.currentPage + 1)}&searchString=${searchString}`}
               className={styles.pageLink}
+              aria-disabled={data.currentPage === totalPages}
             >
               Próxima
             </Link>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

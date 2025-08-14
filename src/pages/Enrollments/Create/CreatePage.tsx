@@ -3,18 +3,23 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CreatePage.module.css';
-import { Student } from '../../../types/Student';
-import { ClassRoom } from '../../../types/ClassRoom';
-import { EnrollmentForm } from '../../../types/enrollmentForm';
-import { ValidationErrors } from '../../../types/validationErrors';
 
-interface CreateEnrollmentProps {
+import type { Student } from '../../../types/Student';
+import type { ClassRoom } from '../../../types/ClassRoom';
+import type { EnrollmentForm } from '../../../types/enrollmentForm';
+import type { ValidationErrors } from '../../../types/validationErrors';
+
+interface CreateEnrollmentPageProps {
   students: Student[];
   classRooms: ClassRoom[];
-  onCreate: (data: EnrollmentForm) => Promise<void>;
+  onCreate: (newEnrollment: EnrollmentForm) => Promise<void>;
 }
 
-export default function CreateEnrollment({ students, classRooms, onCreate }: CreateEnrollmentProps) {
+export default function CreateEnrollmentPage({
+  students,
+  classRooms,
+  onCreate,
+}: CreateEnrollmentPageProps) {
   const [form, setForm] = useState<EnrollmentForm>({
     studentId: '',
     classRoomId: '',
@@ -26,30 +31,32 @@ export default function CreateEnrollment({ students, classRooms, onCreate }: Cre
 
   function validate(): boolean {
     const newErrors: ValidationErrors = {};
-
     if (!form.studentId) newErrors.studentId = 'Aluno é obrigatório.';
     if (!form.classRoomId) newErrors.classRoomId = 'Turma é obrigatória.';
     if (!form.enrollmentDate) newErrors.enrollmentDate = 'Data da matrícula é obrigatória.';
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!validate()) return;
 
     try {
-      await onCreate(form);
+      await onCreate({
+        studentId: Number(form.studentId),
+        classRoomId: Number(form.classRoomId),
+        enrollmentDate: form.enrollmentDate,
+      });
       navigate('/enrollments');
     } catch (error) {
-      console.error(error);
+      console.error('Erro ao criar matrícula:', error);
     }
   }
 
-  function handleChange(e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value } = e.target;
-    setForm((prev) => ({
+    setForm(prev => ({
       ...prev,
       [name]: name === 'studentId' || name === 'classRoomId' ? (value ? Number(value) : '') : value,
     }));
@@ -70,7 +77,7 @@ export default function CreateEnrollment({ students, classRooms, onCreate }: Cre
             className={styles['form-control']}
           >
             <option value="">Selecione o Aluno</option>
-            {students.map((s) => (
+            {students.map(s => (
               <option key={s.id} value={s.id}>
                 {s.name}
               </option>
@@ -89,7 +96,7 @@ export default function CreateEnrollment({ students, classRooms, onCreate }: Cre
             className={styles['form-control']}
           >
             <option value="">Selecione a Turma</option>
-            {classRooms.map((c) => (
+            {classRooms.map(c => (
               <option key={c.id} value={c.id}>
                 {c.name}
               </option>

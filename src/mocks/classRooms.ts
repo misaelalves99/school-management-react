@@ -4,7 +4,8 @@ import type { ClassRoom } from '../types/ClassRoom';
 import type { Subject } from '../types/Subject';
 import type { Teacher } from '../types/Teacher';
 
-const mockClassRooms: ClassRoom[] = [
+// Mock inicial de salas de aula
+export let classRoomsData: ClassRoom[] = [
   {
     id: 1,
     name: 'Sala A',
@@ -44,4 +45,33 @@ const mockClassRooms: ClassRoom[] = [
   },
 ];
 
-export default mockClassRooms;
+// Funções para manipular salas de aula (simula API)
+export function getClassRooms(): ClassRoom[] {
+  return [...classRoomsData];
+}
+
+export function getClassRoomById(id: number): ClassRoom | undefined {
+  return classRoomsData.find(cr => cr.id === id);
+}
+
+export function createClassRoom(classRoom: Omit<ClassRoom, "id">): ClassRoom {
+  const newClassRoom = {
+    ...classRoom,
+    id: Math.max(0, ...classRoomsData.map(cr => cr.id)) + 1
+  };
+  classRoomsData.push(newClassRoom);
+  return newClassRoom;
+}
+
+export function updateClassRoom(id: number, updated: Partial<ClassRoom>): ClassRoom | null {
+  const index = classRoomsData.findIndex(cr => cr.id === id);
+  if (index === -1) return null;
+  classRoomsData[index] = { ...classRoomsData[index], ...updated };
+  return classRoomsData[index];
+}
+
+export function deleteClassRoom(id: number): void {
+  classRoomsData = classRoomsData.filter(cr => cr.id !== id);
+}
+
+export { classRoomsData as mockClassRooms };

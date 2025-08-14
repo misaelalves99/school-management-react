@@ -1,7 +1,7 @@
 // src/types/Subject.ts
 
 export interface Subject {
-  id?: number;
+  id: number;
   name: string;
   description: string;
   workloadHours: number;

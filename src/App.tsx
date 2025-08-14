@@ -1,81 +1,99 @@
 // src/App.tsx
 
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useState, useCallback } from 'react';
+// src/App.tsx
 
-import Navbar from './components/Navbar/Navbar';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useState, useCallback } from "react";
 
-import HomePage from './pages/Home/HomePage';
+import Navbar from "./components/Navbar/Navbar";
+import HomePage from "./pages/Home/HomePage";
 
 // Alunos
-import StudentsPage from './pages/Students/index';
-import StudentCreatePage from './pages/Students/Create/CreatePage';
-import StudentEditPage from './pages/Students/Edit/EditPage';
-import StudentDetailsPage from './pages/Students/Details/DetailsPage';
-import StudentDeletePage from './pages/Students/Delete/DeletePage';
+import StudentsPage from "./pages/Students";
+import StudentCreatePage from "./pages/Students/Create/CreatePage";
+import StudentEditPage from "./pages/Students/Edit/EditPage";
+import StudentDetailsPage from "./pages/Students/Details/DetailsPage";
+import StudentDeletePage from "./pages/Students/Delete/DeletePage";
 
 // Professores
-import TeachersPage from './pages/Teachers/index';
-import TeacherDetailsPage from './pages/Teachers/Details/DetailsPage';
-import TeacherCreatePage from './pages/Teachers/Create/CreatePage';
-import TeacherEditPage from './pages/Teachers/Edit/EditPage';
-import TeacherDeletePage from './pages/Teachers/Delete/DeletePage';
+import TeachersPage from "./pages/Teachers";
+import TeacherCreatePage from "./pages/Teachers/Create/CreatePage";
+import TeacherDetailsPage from "./pages/Teachers/Details/DetailsPage";
+import TeacherEditPage from "./pages/Teachers/Edit/EditPage";
+import TeacherDeletePage from "./pages/Teachers/Delete/DeletePage";
 
 // Disciplinas
-import SubjectsPage from './pages/Subjects/index';
-import SubjectDetailsPage from './pages/Subjects/Details/DetailsPage';
-import SubjectEditPage from './pages/Subjects/Edit/EditPage';
-import SubjectDeletePage from './pages/Subjects/Delete/DeletePage';
+import SubjectsPage from "./pages/Subjects";
+import CreateSubject from "./pages/Subjects/Create/CreatePage";
+import SubjectDetailsPage from "./pages/Subjects/Details/DetailsPage";
+import SubjectEditPage from "./pages/Subjects/Edit/EditPage";
+import SubjectDeletePage from "./pages/Subjects/Delete/DeletePage";
 
 // Salas
-import ClassroomsPage from './pages/ClassRooms/index';
-import ClassroomCreatePage from './pages/ClassRooms/Create/CreatePage';
+import ClassroomsPage from "./pages/ClassRooms";
+import ClassroomCreatePage from "./pages/ClassRooms/Create/CreatePage";
 import {
   ClassRoomDeletePageWrapper,
   ClassRoomDetailsPageWrapper,
   ClassRoomEditPageWrapper,
-} from './pages/ClassRooms/wrappers';
+} from "./pages/ClassRooms/wrappers";
 
 // Matrículas
-import EnrollmentIndexPage from './pages/Enrollments/Index';
-import CreateEnrollment from './pages/Enrollments/Create/CreatePage';
+import EnrollmentIndexPage from "./pages/Enrollments/Index";
+import CreateEnrollment from "./pages/Enrollments/Create/CreatePage";
 import {
   EnrollmentDetailsWrapper,
   EnrollmentEditWrapper,
   EnrollmentDeleteWrapper,
-} from './pages/Enrollments/wrappers';
+} from "./pages/Enrollments/wrappers";
 
-// Importando tipos separados
-import type { Enrollment } from './types/enrollment';
-import type { EnrollmentForm } from './types/enrollmentForm';
+// Tipos
+import type { Enrollment } from "./types/enrollment";
+import type { EnrollmentForm } from "./types/enrollmentForm";
+import type { Student } from "./types/Student";
 
-// Importando mocks
-import { mockStudents } from './mocks/students';
-import mockClassRooms from './mocks/classRooms';
-import mockEnrollments from './mocks/enrollments';
+// Mocks
+import { mockStudents } from "./mocks/students";
+import { mockClassRooms } from "./mocks/classRooms"; // CORRECTED: Changed to named import
+import mockEnrollments from "./mocks/enrollments";
+import Footer from "components/Footer/Footer";
+import './index.css';
 
 export default function App() {
+  // Estado de alunos
+  const [students, setStudents] = useState<Student[]>(mockStudents);
+
+  const handleAddStudent = useCallback((newStudent: Omit<Student, "id">) => {
+    const studentToAdd: Student = {
+      ...newStudent,
+      id: students.length + 1, // ID incremental simples
+    };
+    setStudents((prev) => [...prev, studentToAdd]);
+  }, [students]);
+
+  // Estado de matrículas
   const [enrollments, setEnrollments] = useState<Enrollment[]>(mockEnrollments);
 
-  const handleCreate = useCallback(
+  const handleCreateEnrollment = useCallback(
     (newEnrollment: EnrollmentForm) => {
-      // Garantir que IDs são números
       if (
-        typeof newEnrollment.studentId !== 'number' ||
-        typeof newEnrollment.classRoomId !== 'number'
+        typeof newEnrollment.studentId !== "number" ||
+        typeof newEnrollment.classRoomId !== "number"
       ) {
-        return Promise.reject(new Error('Student ID and Classroom ID must be numbers.'));
+        return Promise.reject(
+          new Error("Student ID e Classroom ID precisam ser números.")
+        );
       }
 
       const enrollmentToAdd: Enrollment = {
-        id: enrollments.length + 1, // ID simples
+        id: enrollments.length + 1,
         studentId: newEnrollment.studentId,
         classRoomId: newEnrollment.classRoomId,
         enrollmentDate: newEnrollment.enrollmentDate,
-        status: 'Ativo', // status padrão
+        status: "Ativo",
       };
 
-      setEnrollments(prev => [...prev, enrollmentToAdd]);
+      setEnrollments((prev) => [...prev, enrollmentToAdd]);
       return Promise.resolve();
     },
     [enrollments]
@@ -84,13 +102,16 @@ export default function App() {
   return (
     <BrowserRouter>
       <Navbar />
-      <main style={{ padding: '1rem' }}>
+      <main className="container">
         <Routes>
           <Route path="/" element={<HomePage />} />
 
           {/* Alunos */}
           <Route path="/students" element={<StudentsPage />} />
-          <Route path="/students/create" element={<StudentCreatePage />} />
+          <Route
+            path="/students/create"
+            element={<StudentCreatePage onAddStudent={handleAddStudent} />}
+          />
           <Route path="/students/details/:id" element={<StudentDetailsPage />} />
           <Route path="/students/edit/:id" element={<StudentEditPage />} />
           <Route path="/students/delete/:id" element={<StudentDeletePage />} />
@@ -104,6 +125,7 @@ export default function App() {
 
           {/* Disciplinas */}
           <Route path="/subjects" element={<SubjectsPage />} />
+          <Route path="/subjects/create" element={<CreateSubject />} />
           <Route path="/subjects/details/:id" element={<SubjectDetailsPage />} />
           <Route path="/subjects/edit/:id" element={<SubjectEditPage />} />
           <Route path="/subjects/delete/:id" element={<SubjectDeletePage />} />
@@ -111,9 +133,18 @@ export default function App() {
           {/* Salas */}
           <Route path="/classrooms" element={<ClassroomsPage />} />
           <Route path="/classrooms/create" element={<ClassroomCreatePage />} />
-          <Route path="/classrooms/details/:id" element={<ClassRoomDetailsPageWrapper />} />
-          <Route path="/classrooms/edit/:id" element={<ClassRoomEditPageWrapper />} />
-          <Route path="/classrooms/delete/:id" element={<ClassRoomDeletePageWrapper />} />
+          <Route
+            path="/classrooms/details/:id"
+            element={<ClassRoomDetailsPageWrapper />}
+          />
+          <Route
+            path="/classrooms/edit/:id"
+            element={<ClassRoomEditPageWrapper />}
+          />
+          <Route
+            path="/classrooms/delete/:id"
+            element={<ClassRoomDeletePageWrapper />}
+          />
 
           {/* Matrículas */}
           <Route path="/enrollments" element={<EnrollmentIndexPage />} />
@@ -121,20 +152,30 @@ export default function App() {
             path="/enrollments/create"
             element={
               <CreateEnrollment
-                students={mockStudents}
+                students={students}
                 classRooms={mockClassRooms}
-                onCreate={handleCreate}
+                onCreate={handleCreateEnrollment}
               />
             }
           />
-          <Route path="/enrollments/details/:id" element={<EnrollmentDetailsWrapper />} />
-          <Route path="/enrollments/edit/:id" element={<EnrollmentEditWrapper />} />
-          <Route path="/enrollments/delete/:id" element={<EnrollmentDeleteWrapper />} />
+          <Route
+            path="/enrollments/details/:id"
+            element={<EnrollmentDetailsWrapper />}
+          />
+          <Route
+            path="/enrollments/edit/:id"
+            element={<EnrollmentEditWrapper />}
+          />
+          <Route
+            path="/enrollments/delete/:id"
+            element={<EnrollmentDeleteWrapper />}
+          />
 
-          {/* Redirecionamento */}
+          {/* Redirecionamento para Home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
+      <Footer/>
     </BrowserRouter>
   );
 }

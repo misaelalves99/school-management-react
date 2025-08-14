@@ -1,94 +1,83 @@
 // src/pages/Students/Create/CreatePage.tsx
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styles from './CreatePage.module.css';
-import { Student } from '../../../types/Student';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import styles from "./CreatePage.module.css";
+import type { Student } from "../../../types/Student";
 
-export default function CreateStudent() {
+interface Props {
+  onAddStudent: (newStudent: Omit<Student, "id">) => void;
+}
+
+export default function StudentCreatePage({ onAddStudent }: Props) {
   const navigate = useNavigate();
-  const [student, setStudent] = useState<Student>({
-    name: '',
-    email: '',
-    dateOfBirth: '',
-    enrollmentNumber: '',
-    phone: '',
-    address: '',
+
+  const [formData, setFormData] = useState<Omit<Student, "id">>({
+    name: "",
+    email: "",
+    dateOfBirth: "",
+    enrollmentNumber: "",
+    phone: "",
+    address: "",
   });
 
-  const [errors, setErrors] = useState<Partial<Record<keyof Student, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof Omit<Student, "id">, string>>>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setStudent(prev => ({ ...prev, [name]: value }));
+  const validate = (): boolean => {
+    const newErrors: typeof errors = {};
+    if (!formData.name.trim()) newErrors.name = "Nome é obrigatório.";
+    if (!formData.email.trim()) newErrors.email = "Email é obrigatório.";
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email inválido.";
+    if (!formData.dateOfBirth) newErrors.dateOfBirth = "Data de nascimento é obrigatória.";
+    if (!formData.enrollmentNumber.trim()) newErrors.enrollmentNumber = "Matrícula é obrigatória.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const validate = () => {
-    const newErrors: typeof errors = {};
-    if (!student.name) newErrors.name = 'Nome é obrigatório.';
-    if (!student.email) newErrors.email = 'Email é obrigatório.';
-    if (!student.dateOfBirth) newErrors.dateOfBirth = 'Data de nascimento é obrigatória.';
-    if (!student.enrollmentNumber) newErrors.enrollmentNumber = 'Matrícula é obrigatória.';
-    return newErrors;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+    if (!validate()) return;
 
-    // Enviar para API ou simular
-    console.log('Aluno cadastrado:', student);
-    navigate('/students');
+    // Usando o callback do App.tsx
+    onAddStudent(formData);
+
+    alert("Aluno cadastrado com sucesso!");
+    navigate("/students");
   };
 
   return (
-    <div className={styles.createContainer}>
-      <h1 className={styles.title}>Cadastrar Novo Aluno</h1>
-      <form onSubmit={handleSubmit}>
-        <div className={styles.formGroup}>
-          <label htmlFor="name">Nome</label>
-          <input type="text" name="name" value={student.name} onChange={handleChange} />
-          {errors.name && <span className={styles.textDanger}>{errors.name}</span>}
+    <div className={styles.container}>
+      <h1>Cadastrar Novo Aluno</h1>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        {Object.entries(formData).map(([key, value]) => (
+          <div key={key} className={styles.formGroup}>
+            <label htmlFor={key}>
+              {key.charAt(0).toUpperCase() + key.slice(1)}:
+            </label>
+            <input
+              id={key}
+              name={key}
+              type={key === "dateOfBirth" ? "date" : "text"}
+              value={value}
+              onChange={handleChange}
+            />
+            {errors[key as keyof typeof formData] && (
+              <span className={styles.error}>{errors[key as keyof typeof formData]}</span>
+            )}
+          </div>
+        ))}
+        <div className={styles.actions}>
+          <button type="submit" className={styles.btnPrimary}>Salvar</button>
+          <button type="button" className={styles.btnSecondary} onClick={() => navigate("/students")}>
+            Cancelar
+          </button>
         </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="email">Email</label>
-          <input type="email" name="email" value={student.email} onChange={handleChange} />
-          {errors.email && <span className={styles.textDanger}>{errors.email}</span>}
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="dateOfBirth">Data de Nascimento</label>
-          <input type="date" name="dateOfBirth" value={student.dateOfBirth} onChange={handleChange} />
-          {errors.dateOfBirth && <span className={styles.textDanger}>{errors.dateOfBirth}</span>}
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="enrollmentNumber">Matrícula</label>
-          <input type="text" name="enrollmentNumber" value={student.enrollmentNumber} onChange={handleChange} />
-          {errors.enrollmentNumber && <span className={styles.textDanger}>{errors.enrollmentNumber}</span>}
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="phone">Telefone</label>
-          <input type="tel" name="phone" value={student.phone} onChange={handleChange} />
-        </div>
-
-        <div className={styles.formGroup}>
-          <label htmlFor="address">Endereço</label>
-          <input type="text" name="address" value={student.address} onChange={handleChange} />
-        </div>
-
-        <button type="submit">Salvar</button>
       </form>
-
-      <button className={styles.btnSecondary} onClick={() => navigate('/students')}>
-        Voltar à Lista
-      </button>
     </div>
   );
 }
