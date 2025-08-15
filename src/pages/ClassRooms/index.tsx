@@ -1,25 +1,26 @@
-// /src/pages/ClassRooms/index.tsx
+// src/pages/ClassRooms/index.tsx
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './ClassRoomList.module.css';
-import { getClassRooms } from '../../mocks/classRooms';
+import { useClassRooms } from '../../hooks/useClassRooms';
 import type { ClassRoom } from '../../types/ClassRoom';
 
 const PAGE_SIZE = 10;
 
 const ClassroomsPage: React.FC = () => {
+  const { classRooms } = useClassRooms();
   const [searchString, setSearchString] = useState('');
   const [page, setPage] = useState(1);
-  const [classRooms, setClassRooms] = useState<ClassRoom[]>([]);
 
-  useEffect(() => {
-    setClassRooms(getClassRooms());
-  }, []);
-
-  const filteredData: ClassRoom[] = classRooms.filter(c =>
-    c.name.toLowerCase().includes(searchString.toLowerCase())
-  );
+  const filteredData: ClassRoom[] = useMemo(() => {
+    const term = searchString.toLowerCase();
+    return classRooms.filter(c =>
+      c.name.toLowerCase().includes(term) ||
+      c.schedule.toLowerCase().includes(term) ||
+      c.capacity.toString().includes(term)
+    );
+  }, [searchString, classRooms]);
 
   const totalPages = Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE));
   const pagedData: ClassRoom[] = filteredData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -43,11 +44,14 @@ const ClassroomsPage: React.FC = () => {
             type="text"
             value={searchString}
             onChange={handleSearchChange}
-            placeholder="Digite o nome ou capacidade..."
+            placeholder="Digite o nome, horário ou capacidade..."
           />
           <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>Buscar</button>
         </form>
-        <Link to="/classrooms/create" className={`${styles.btn} ${styles.btnSuccess}`}>Cadastrar Nova Sala</Link>
+
+        <Link to="/classrooms/create" className={`${styles.btn} ${styles.btnSuccess}`}>
+          Cadastrar Nova Sala
+        </Link>
       </div>
 
       <div className={styles.rightPanel}>
@@ -64,7 +68,9 @@ const ClassroomsPage: React.FC = () => {
           <tbody>
             {pagedData.length === 0 ? (
               <tr>
-                <td colSpan={4} style={{ textAlign: 'center', padding: '20px' }}>Nenhuma sala encontrada.</td>
+                <td colSpan={4} style={{ textAlign: 'center', padding: '20px' }}>
+                  Nenhuma sala encontrada.
+                </td>
               </tr>
             ) : (
               pagedData.map((room) => (
@@ -85,9 +91,13 @@ const ClassroomsPage: React.FC = () => {
 
         {totalPages > 1 && (
           <div className={styles.pagination}>
-            <button onClick={() => goToPage(page - 1)} disabled={page === 1} className={styles.pageLink}>Anterior</button>
+            <button onClick={() => goToPage(page - 1)} disabled={page === 1} className={styles.pageLink}>
+              Anterior
+            </button>
             <span className={styles.pageInfo}>Página {page} de {totalPages}</span>
-            <button onClick={() => goToPage(page + 1)} disabled={page === totalPages} className={styles.pageLink}>Próxima</button>
+            <button onClick={() => goToPage(page + 1)} disabled={page === totalPages} className={styles.pageLink}>
+              Próxima
+            </button>
           </div>
         )}
       </div>

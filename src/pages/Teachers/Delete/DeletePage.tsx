@@ -2,22 +2,23 @@
 
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./DeletePage.module.css";
-import { getTeacherById, deleteTeacher } from "../../../mocks/teachers";
+import { useTeachers } from "../../../hooks/useTeachers";
 
 export default function TeacherDelete() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { getTeacher, removeTeacher } = useTeachers();
 
   if (!id) return <div>Id inválido</div>;
 
-  const teacher = getTeacherById(Number(id));
+  const teacher = getTeacher(Number(id));
 
   if (!teacher) {
     return <div>Professor não encontrado.</div>;
   }
 
   const handleDelete = () => {
-    deleteTeacher(teacher.id);
+    removeTeacher(teacher.id);
     alert("Professor excluído com sucesso.");
     navigate("/teachers");
   };

@@ -1,33 +1,28 @@
 // src/pages/Subjects/index.tsx
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './SubjectsPage.module.css';
-import { mockSubjects } from '../../mocks/subjects';
-import type { Subject } from '../../types/Subject';
+import { useSubjects } from '../../hooks/useSubjects';
 
 const PAGE_SIZE = 10;
 
 export default function SubjectsIndexPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
 
-  // carregar do mock quando o componente monta
-  useEffect(() => {
-    setSubjects(mockSubjects.list()); // <-- usa o método list()
-  }, []);
+  const { subjects } = useSubjects();
 
-  // filtrar os dados com base no search
-  const filtered: Subject[] = subjects.filter((s) =>
-    s.name.toLowerCase().includes(search.toLowerCase()) ||
-    s.description.toLowerCase().includes(search.toLowerCase())
-  );
+  // filtra usando memo para otimização
+  const filtered = useMemo(() => {
+    const term = search.toLowerCase();
+    return subjects.filter(
+      s => s.name.toLowerCase().includes(term) || s.description.toLowerCase().includes(term)
+    );
+  }, [subjects, search]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-
-  // paginar
-  const paginated: Subject[] = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -77,15 +72,21 @@ export default function SubjectsIndexPage() {
                 </td>
               </tr>
             ) : (
-              paginated.map((subject) => (
+              paginated.map(subject => (
                 <tr key={subject.id}>
                   <td>{subject.name}</td>
                   <td>{subject.description}</td>
                   <td>{subject.workloadHours}</td>
                   <td>
-                    <Link to={`/subjects/details/${subject.id}`} className={`${styles.btn} ${styles.btnInfo}`}>Detalhes</Link>{' '}
-                    <Link to={`/subjects/edit/${subject.id}`} className={`${styles.btn} ${styles.btnWarning}`}>Editar</Link>{' '}
-                    <Link to={`/subjects/delete/${subject.id}`} className={`${styles.btn} ${styles.btnDanger}`}>Excluir</Link>
+                    <Link to={`/subjects/details/${subject.id}`} className={`${styles.btn} ${styles.btnInfo}`}>
+                      Detalhes
+                    </Link>{' '}
+                    <Link to={`/subjects/edit/${subject.id}`} className={`${styles.btn} ${styles.btnWarning}`}>
+                      Editar
+                    </Link>{' '}
+                    <Link to={`/subjects/delete/${subject.id}`} className={`${styles.btn} ${styles.btnDanger}`}>
+                      Excluir
+                    </Link>
                   </td>
                 </tr>
               ))
@@ -95,9 +96,13 @@ export default function SubjectsIndexPage() {
 
         {totalPages > 1 && (
           <div className={styles.pagination}>
-            <button onClick={() => goToPage(page - 1)} disabled={page === 1} className={styles.pageLink}>Anterior</button>
+            <button onClick={() => goToPage(page - 1)} disabled={page === 1} className={styles.pageLink}>
+              Anterior
+            </button>
             <span className={styles.pageInfo}>Página {page} de {totalPages}</span>
-            <button onClick={() => goToPage(page + 1)} disabled={page === totalPages} className={styles.pageLink}>Próxima</button>
+            <button onClick={() => goToPage(page + 1)} disabled={page === totalPages} className={styles.pageLink}>
+              Próxima
+            </button>
           </div>
         )}
       </div>

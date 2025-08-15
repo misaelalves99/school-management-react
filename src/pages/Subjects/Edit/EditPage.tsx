@@ -1,49 +1,64 @@
 // src/pages/Subjects/Edit/EditPage.tsx
 
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import styles from './EditPage.module.css';
-import type { Subject } from '../../../types/Subject';
-import { mockSubjects } from '../../../mocks/subjects';
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import styles from "./EditPage.module.css";
+import type { Subject } from "../../../types/Subject";
+import { useSubjects } from "../../../hooks/useSubjects";
 
-export default function EditSubject() {
+export default function SubjectEditPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { getSubjectById, updateSubject } = useSubjects();
 
-  const [subject, setSubject] = useState<Subject>({
-    id: 0,
-    name: '',
-    description: '',
+  const [subject, setSubject] = useState<Omit<Subject, "id">>({
+    name: "",
+    description: "",
     workloadHours: 0,
   });
+
   const [errors, setErrors] = useState<{ name?: string }>({});
 
   useEffect(() => {
     if (!id) {
-      alert('ID da disciplina não fornecido.');
-      navigate('/subjects');
+      alert("ID da disciplina não fornecido.");
+      navigate("/subjects");
       return;
     }
 
     const subjectId = Number(id);
-    const found = mockSubjects.find(s => s.id === subjectId);
+
+    // USAR O HOOK CORRETAMENTE
+    const found = getSubjectById(subjectId);
+
     if (!found) {
-      alert('Disciplina não encontrada.');
-      navigate('/subjects');
+      alert("Disciplina não encontrada.");
+      navigate("/subjects");
       return;
     }
 
-    setSubject(found);
-  }, [id, navigate]);
+    setSubject({
+      name: found.name,
+      description: found.description,
+      workloadHours: found.workloadHours,
+    });
+  }, [id, navigate, getSubjectById]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setSubject(prev => ({ ...prev, [name]: name === 'workloadHours' ? Number(value) : value }));
+    setSubject(prev => ({
+      ...prev,
+      [name]: name === "workloadHours" ? Number(value) : value,
+    }));
   };
 
   const validate = () => {
     const newErrors: typeof errors = {};
-    if (!subject.name.trim()) newErrors.name = 'O nome da disciplina é obrigatório.';
+    if (!subject.name.trim()) {
+      newErrors.name = "O nome da disciplina é obrigatório.";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -52,16 +67,20 @@ export default function EditSubject() {
     e.preventDefault();
     if (!validate()) return;
 
-    console.log('Salvar alterações:', subject); // Substituir pela chamada real API
-    navigate('/subjects');
+    const updated = updateSubject(Number(id), subject);
+    if (!updated) {
+      alert("Erro ao atualizar a disciplina.");
+      return;
+    }
+
+    alert("Disciplina atualizada com sucesso!");
+    navigate("/subjects");
   };
 
   return (
-    <>
+    <div className={styles.container}>
       <h1 className={styles.title}>Editar Disciplina</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
-        <input type="hidden" name="id" value={subject.id} />
-
         <div className={styles.formGroup}>
           <label htmlFor="name">Nome da Disciplina</label>
           <input
@@ -71,7 +90,9 @@ export default function EditSubject() {
             value={subject.name}
             onChange={handleChange}
           />
-          {errors.name && <span className={styles.textDanger}>{errors.name}</span>}
+          {errors.name && (
+            <span className={styles.textDanger}>{errors.name}</span>
+          )}
         </div>
 
         <div className={styles.formGroup}>
@@ -95,15 +116,22 @@ export default function EditSubject() {
           />
         </div>
 
-        <button type="submit">Salvar Alterações</button>
+        <div className={styles.actions}>
+          <button
+            type="submit"
+            className={`${styles.btn} ${styles.btnPrimary}`}
+          >
+            Salvar Alterações
+          </button>
+          <button
+            type="button"
+            className={`${styles.btn} ${styles.btnSecondary}`}
+            onClick={() => navigate("/subjects")}
+          >
+            Voltar à Lista
+          </button>
+        </div>
       </form>
-
-      <button
-        className={styles.btnSecondary}
-        onClick={() => navigate('/subjects')}
-      >
-        Voltar à Lista
-      </button>
-    </>
+    </div>
   );
 }

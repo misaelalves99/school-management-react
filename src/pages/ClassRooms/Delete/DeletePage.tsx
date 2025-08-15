@@ -1,24 +1,36 @@
-// src/pages/ClassRoom/Delete/DeletePage.tsx
+// src/pages/ClassRooms/Delete/DeletePage.tsx
 
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styles from './DeletePage.module.css';
-import { ClassRoom } from '../../../types/ClassRoom';
+import { useClassRooms } from '../../../hooks/useClassRooms';
 
-type Props = {
-  classRoom: ClassRoom;
-  onDelete: (id: number) => void;
-};
+interface Props {
+  id: number;
+}
 
-const DeleteClassRoom: React.FC<Props> = ({ classRoom, onDelete }) => {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onDelete(classRoom.id);
+const DeleteClassRoom: React.FC<Props> = ({ id }) => {
+  const navigate = useNavigate();
+  const { getById, remove } = useClassRooms();
+  const classRoom = getById(id);
+
+  if (!classRoom) return <p>Turma não encontrada.</p>;
+
+  const handleDelete = () => {
+    const confirmed = window.confirm(`Deseja realmente excluir a turma "${classRoom.name}"?`);
+    if (!confirmed) return;
+
+    try {
+      remove(classRoom.id);
+      alert('Turma excluída com sucesso!');
+      navigate('/classrooms');
+    } catch {
+      alert('Erro ao excluir a turma.');
+    }
   };
 
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Excluir Turma</h1>
-
       <p className={styles.warning}>Tem certeza que deseja excluir esta turma?</p>
 
       <dl className={styles.details}>
@@ -33,10 +45,10 @@ const DeleteClassRoom: React.FC<Props> = ({ classRoom, onDelete }) => {
 
         <dt>Disciplinas</dt>
         <dd>
-          {classRoom.subjects && classRoom.subjects.length > 0 ? (
+          {classRoom.subjects?.length ? (
             <ul>
-              {classRoom.subjects.map((subj, idx) => (
-                <li key={idx}>{subj.name}</li>
+              {classRoom.subjects.map(subj => (
+                <li key={subj.id}>{subj.name}</li>
               ))}
             </ul>
           ) : (
@@ -46,10 +58,10 @@ const DeleteClassRoom: React.FC<Props> = ({ classRoom, onDelete }) => {
 
         <dt>Professores</dt>
         <dd>
-          {classRoom.teachers && classRoom.teachers.length > 0 ? (
+          {classRoom.teachers?.length ? (
             <ul>
-              {classRoom.teachers.map((t, idx) => (
-                <li key={idx}>{t.name}</li>
+              {classRoom.teachers.map(t => (
+                <li key={t.id}>{t.name}</li>
               ))}
             </ul>
           ) : (
@@ -58,15 +70,14 @@ const DeleteClassRoom: React.FC<Props> = ({ classRoom, onDelete }) => {
         </dd>
       </dl>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <input type="hidden" value={classRoom.id} />
-        <button type="submit" className={styles.btnDanger}>
+      <div className={styles.actions}>
+        <button type="button" className={styles.btnDanger} onClick={handleDelete}>
           Confirmar Exclusão
         </button>
-        <Link to="/classrooms" className={styles.btnSecondary}>
+        <button type="button" className={styles.btnSecondary} onClick={() => navigate('/classrooms')}>
           Cancelar
-        </Link>
-      </form>
+        </button>
+      </div>
     </div>
   );
 };

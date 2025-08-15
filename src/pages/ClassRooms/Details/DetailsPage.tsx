@@ -1,14 +1,19 @@
-// src/pages/ClassRoom/Details/DetailsPage.tsx
+// src/pages/ClassRooms/Details/DetailsPage.tsx
 
 import { Link } from 'react-router-dom';
 import styles from './DetailsPage.module.css';
-import { ClassRoom } from '../../../types/ClassRoom';
+import { useClassRooms } from '../../../hooks/useClassRooms';
 
-type Props = {
-  classRoom: ClassRoom;
-};
+interface Props {
+  id: number;
+}
 
-const ClassRoomDetailsPage: React.FC<Props> = ({ classRoom }) => {
+const ClassRoomDetailsPage: React.FC<Props> = ({ id }) => {
+  const { getById } = useClassRooms();
+  const classRoom = getById(id);
+
+  if (!classRoom) return <p>Turma não encontrada.</p>;
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Detalhes da Turma</h1>
@@ -27,9 +32,7 @@ const ClassRoomDetailsPage: React.FC<Props> = ({ classRoom }) => {
         <dd>
           {classRoom.subjects?.length ? (
             <ul>
-              {classRoom.subjects.map((s) => (
-                <li key={s.id}>{s.name}</li>
-              ))}
+              {classRoom.subjects.map(s => <li key={s.id}>{s.name}</li>)}
             </ul>
           ) : (
             <span className={styles.muted}>Sem disciplinas vinculadas.</span>
@@ -40,9 +43,7 @@ const ClassRoomDetailsPage: React.FC<Props> = ({ classRoom }) => {
         <dd>
           {classRoom.teachers?.length ? (
             <ul>
-              {classRoom.teachers.map((t) => (
-                <li key={t.id}>{t.name}</li>
-              ))}
+              {classRoom.teachers.map(t => <li key={t.id}>{t.name}</li>)}
             </ul>
           ) : (
             <span className={styles.muted}>Sem professores vinculados.</span>
@@ -54,10 +55,7 @@ const ClassRoomDetailsPage: React.FC<Props> = ({ classRoom }) => {
       </dl>
 
       <div className={styles.actions}>
-        <Link
-          to={`/classrooms/edit/${classRoom.id}`}
-          className={`${styles.btn} ${styles.btnWarning}`}
-        >
+        <Link to={`/classrooms/edit/${classRoom.id}`} className={`${styles.btn} ${styles.btnWarning}`}>
           Editar
         </Link>
         <Link to="/classrooms" className={`${styles.btn} ${styles.btnSecondary}`}>

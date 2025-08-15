@@ -3,14 +3,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CreatePage.module.css';
-import { mockClassRooms } from '../../../mocks/classRooms';
+import { useClassRooms } from '../../../hooks/useClassRooms';
 
-const ClassRoomCreate: React.FC = () => {
+export default function CreateClassRoom() {
+  const navigate = useNavigate();
+  const { create } = useClassRooms();
+
   const [name, setName] = useState('');
   const [capacity, setCapacity] = useState(1);
   const [schedule, setSchedule] = useState('');
   const [errors, setErrors] = useState<{ name?: string; capacity?: string; schedule?: string }>({});
-  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,8 +27,8 @@ const ClassRoomCreate: React.FC = () => {
       return;
     }
 
-    // criar sala no mock
-    mockClassRooms.create({
+    // Cria a sala usando o contexto
+    create({
       name,
       capacity,
       schedule,
@@ -35,6 +37,7 @@ const ClassRoomCreate: React.FC = () => {
       classTeacher: null,
     });
 
+    alert('Sala cadastrada com sucesso!');
     navigate('/classrooms');
   };
 
@@ -50,17 +53,30 @@ const ClassRoomCreate: React.FC = () => {
 
         <div className={styles.formGroup}>
           <label htmlFor="capacity">Capacidade</label>
-          <input id="capacity" type="number" min="1" max="100" value={capacity} onChange={(e) => setCapacity(Number(e.target.value))} />
+          <input
+            id="capacity"
+            type="number"
+            min="1"
+            max="100"
+            value={capacity}
+            onChange={(e) => setCapacity(Number(e.target.value))}
+          />
           {errors.capacity && <span className={styles.textDanger}>{errors.capacity}</span>}
         </div>
 
         <div className={styles.formGroup}>
           <label htmlFor="schedule">Horário</label>
-          <input id="schedule" type="text" value={schedule} onChange={(e) => setSchedule(e.target.value)} placeholder="Ex: Seg - 08:00 às 10:00" />
+          <input
+            id="schedule"
+            type="text"
+            value={schedule}
+            onChange={(e) => setSchedule(e.target.value)}
+            placeholder="Ex: Seg - 08:00 às 10:00"
+          />
           {errors.schedule && <span className={styles.textDanger}>{errors.schedule}</span>}
         </div>
 
-        <button type="submit">Salvar</button>
+        <button type="submit" className={styles.btnPrimary}>Salvar</button>
       </form>
 
       <button className={styles.btnSecondary} onClick={() => navigate('/classrooms')}>
@@ -68,6 +84,4 @@ const ClassRoomCreate: React.FC = () => {
       </button>
     </div>
   );
-};
-
-export default ClassRoomCreate;
+}

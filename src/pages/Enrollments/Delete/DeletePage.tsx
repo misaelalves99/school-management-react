@@ -2,11 +2,11 @@
 
 import { useNavigate } from 'react-router-dom';
 import styles from './DeletePage.module.css';
-import { EnrollmentDetails } from '../../../types/enrollmentDetails';
+import type { EnrollmentDetails } from '../../../types/enrollmentDetails';
 
 interface DeleteEnrollmentProps {
   enrollment: EnrollmentDetails;
-  onDelete: (id: number) => Promise<void>;
+  onDelete: (id: number) => Promise<void>; // ✅ adicionado
 }
 
 export default function DeleteEnrollment({ enrollment, onDelete }: DeleteEnrollmentProps) {
@@ -15,7 +15,7 @@ export default function DeleteEnrollment({ enrollment, onDelete }: DeleteEnrollm
   async function handleDelete(e: React.FormEvent) {
     e.preventDefault();
     try {
-      await onDelete(enrollment.id);
+      await onDelete(enrollment.id); // ✅ usar a função passada via props
       navigate('/enrollments');
     } catch (error) {
       console.error('Erro ao excluir matrícula:', error);
@@ -25,9 +25,7 @@ export default function DeleteEnrollment({ enrollment, onDelete }: DeleteEnrollm
   return (
     <>
       <h1 className={styles.title}>Excluir Matrícula</h1>
-
       <h3 className={styles.warning}>Tem certeza que deseja excluir esta matrícula?</h3>
-
       <div className={styles.detailsContainer}>
         <h4>Aluno: {enrollment.studentName ?? 'Aluno não informado'}</h4>
         <p>Turma: {enrollment.classRoomName ?? 'Turma não informada'}</p>
@@ -36,13 +34,7 @@ export default function DeleteEnrollment({ enrollment, onDelete }: DeleteEnrollm
 
       <form onSubmit={handleDelete} className={styles.form}>
         <button type="submit" className={styles.btnDanger}>Excluir</button>
-        <button
-          type="button"
-          className={styles.btnSecondary}
-          onClick={() => navigate('/enrollments')}
-        >
-          Cancelar
-        </button>
+        <button type="button" className={styles.btnSecondary} onClick={() => navigate('/enrollments')}>Cancelar</button>
       </form>
     </>
   );

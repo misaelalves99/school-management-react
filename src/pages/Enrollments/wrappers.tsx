@@ -7,19 +7,20 @@ import EnrollmentDetails from './Details/DetailsPage';
 import EditEnrollment from './Edit/EditPage';
 import DeleteEnrollment from './Delete/DeletePage';
 
-import enrollmentsMock from '../../mocks/enrollments'; // default import
+import { useEnrollments } from '../../hooks/useEnrollments';
+import { useStudents } from '../../hooks/useStudents';
+import { useClassRooms } from '../../hooks/useClassRooms';
 import type { Enrollment } from '../../types/enrollment';
 import type { EnrollmentWithNames } from '../../types/enrollmentWithNames';
 
-import { mockStudents } from '../../mocks/students';
-import { mockClassRooms } from '../../mocks/classRooms'; // corrigido: import nomeado
-import type { ClassRoom } from '../../types/ClassRoom';
-
-// Transforma o Enrollment em EnrollmentWithNames
-function getEnrollmentDetails(enrollment: Enrollment): EnrollmentWithNames {
-  const student = mockStudents.find(s => s.id === enrollment.studentId);
-  const classRoom: ClassRoom | undefined = mockClassRooms.find(c => c.id === enrollment.classRoomId);
-
+// Converte Enrollment em EnrollmentWithNames
+function getEnrollmentDetails(
+  enrollment: Enrollment,
+  students: ReturnType<typeof useStudents>['students'],
+  classRooms: ReturnType<typeof useClassRooms>['classRooms']
+): EnrollmentWithNames {
+  const student = students.find(s => s.id === enrollment.studentId);
+  const classRoom = classRooms.find(c => c.id === enrollment.classRoomId);
   return {
     ...enrollment,
     studentName: student?.name ?? 'Aluno não informado',
@@ -27,94 +28,74 @@ function getEnrollmentDetails(enrollment: Enrollment): EnrollmentWithNames {
   };
 }
 
-// Wrapper de detalhes
+// Wrapper Detalhes
 export function EnrollmentDetailsWrapper() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { enrollments } = useEnrollments();
+  const { students } = useStudents();
+  const { classRooms } = useClassRooms();
+
   const [enrollment, setEnrollment] = useState<EnrollmentWithNames | null>(null);
 
   useEffect(() => {
-    if (!id) {
-      navigate('/enrollments');
-      return;
-    }
-
-    const found = enrollmentsMock.find(e => e.id === Number(id));
-    if (!found) {
-      alert('Matrícula não encontrada');
-      navigate('/enrollments');
-      return;
-    }
-    setEnrollment(getEnrollmentDetails(found));
-  }, [id, navigate]);
+    if (!id) { navigate('/enrollments'); return; }
+    const found = enrollments.find(e => e.id === Number(id));
+    if (!found) { alert('Matrícula não encontrada'); navigate('/enrollments'); return; }
+    setEnrollment(getEnrollmentDetails(found, students, classRooms));
+  }, [id, enrollments, navigate, students, classRooms]);
 
   if (!enrollment) return <div>Carregando matrícula...</div>;
-
   return <EnrollmentDetails enrollment={enrollment} />;
 }
 
-// Wrapper de edição
+// Wrapper Edição
 export function EnrollmentEditWrapper() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { enrollments, updateEnrollment } = useEnrollments();
+
   const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
 
   useEffect(() => {
-    if (!id) {
-      navigate('/enrollments');
-      return;
-    }
-
-    const found = enrollmentsMock.find(e => e.id === Number(id));
-    if (!found) {
-      alert('Matrícula não encontrada');
-      navigate('/enrollments');
-      return;
-    }
+    if (!id) { navigate('/enrollments'); return; }
+    const found = enrollments.find(e => e.id === Number(id));
+    if (!found) { alert('Matrícula não encontrada'); navigate('/enrollments'); return; }
     setEnrollment(found);
-  }, [id, navigate]);
+  }, [id, enrollments, navigate]);
 
-  async function onSave(updatedEnrollment: Enrollment) {
-    const index = enrollmentsMock.findIndex(e => e.id === updatedEnrollment.id);
-    if (index === -1) throw new Error('Matrícula não encontrada');
-    enrollmentsMock[index] = updatedEnrollment;
+  async function onSave(updatedEnrollment: Enrollment): Promise<void> {
+    const updated = await updateEnrollment(updatedEnrollment);
+    if (!updated) { alert('Erro ao atualizar matrícula'); return; }
     navigate('/enrollments');
   }
 
   if (!enrollment) return <div>Carregando matrícula...</div>;
-
   return <EditEnrollment enrollment={enrollment} onSave={onSave} />;
 }
 
-// Wrapper de exclusão
+// Wrapper Exclusão
 export function EnrollmentDeleteWrapper() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { enrollments, removeEnrollment } = useEnrollments();
+  const { students } = useStudents();
+  const { classRooms } = useClassRooms();
+
   const [enrollment, setEnrollment] = useState<EnrollmentWithNames | null>(null);
 
   useEffect(() => {
-    if (!id) {
-      navigate('/enrollments');
-      return;
-    }
-
-    const found = enrollmentsMock.find(e => e.id === Number(id));
-    if (!found) {
-      alert('Matrícula não encontrada');
-      navigate('/enrollments');
-      return;
-    }
-    setEnrollment(getEnrollmentDetails(found));
-  }, [id, navigate]);
+    if (!id) { navigate('/enrollments'); return; }
+    const found = enrollments.find(e => e.id === Number(id));
+    if (!found) { alert('Matrícula não encontrada'); navigate('/enrollments'); return; }
+    setEnrollment(getEnrollmentDetails(found, students, classRooms));
+  }, [id, enrollments, navigate, students, classRooms]);
 
   async function onDelete(idToDelete: number) {
-    const index = enrollmentsMock.findIndex(e => e.id === idToDelete);
-    if (index === -1) throw new Error('Matrícula não encontrada');
-    enrollmentsMock.splice(index, 1);
+    removeEnrollment(idToDelete);
     navigate('/enrollments');
   }
 
   if (!enrollment) return <div>Carregando matrícula...</div>;
-
   return <DeleteEnrollment enrollment={enrollment} onDelete={onDelete} />;
 }

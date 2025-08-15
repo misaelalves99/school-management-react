@@ -4,13 +4,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./CreatePage.module.css";
 import type { Student } from "../../../types/Student";
+import { useStudents } from "../../../hooks/useStudents";
 
-interface Props {
-  onAddStudent: (newStudent: Omit<Student, "id">) => void;
-}
-
-export default function StudentCreatePage({ onAddStudent }: Props) {
+export default function StudentCreatePage() {
   const navigate = useNavigate();
+  const { addStudent } = useStudents();
 
   const [formData, setFormData] = useState<Omit<Student, "id">>({
     name: "",
@@ -23,14 +21,13 @@ export default function StudentCreatePage({ onAddStudent }: Props) {
 
   const [errors, setErrors] = useState<Partial<Record<keyof Omit<Student, "id">, string>>>({});
 
-  const validate = (): boolean => {
+  const validate = () => {
     const newErrors: typeof errors = {};
     if (!formData.name.trim()) newErrors.name = "Nome é obrigatório.";
     if (!formData.email.trim()) newErrors.email = "Email é obrigatório.";
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email inválido.";
     if (!formData.dateOfBirth) newErrors.dateOfBirth = "Data de nascimento é obrigatória.";
     if (!formData.enrollmentNumber.trim()) newErrors.enrollmentNumber = "Matrícula é obrigatória.";
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -42,10 +39,7 @@ export default function StudentCreatePage({ onAddStudent }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-
-    // Usando o callback do App.tsx
-    onAddStudent(formData);
-
+    addStudent(formData);
     alert("Aluno cadastrado com sucesso!");
     navigate("/students");
   };
@@ -56,9 +50,7 @@ export default function StudentCreatePage({ onAddStudent }: Props) {
       <form onSubmit={handleSubmit} className={styles.form}>
         {Object.entries(formData).map(([key, value]) => (
           <div key={key} className={styles.formGroup}>
-            <label htmlFor={key}>
-              {key.charAt(0).toUpperCase() + key.slice(1)}:
-            </label>
+            <label htmlFor={key}>{key.charAt(0).toUpperCase() + key.slice(1)}:</label>
             <input
               id={key}
               name={key}

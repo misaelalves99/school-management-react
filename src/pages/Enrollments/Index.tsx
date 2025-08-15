@@ -1,16 +1,13 @@
 // src/pages/Enrollments/index.tsx
 
-// src/pages/Enrollments/index.tsx
-
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import styles from './EnrollmentsPage.module.css';
 
-import { mockStudents } from '../../mocks/students';
-// CORREÇÃO: Altere a importação para usar exportação nomeada
-import { mockClassRooms } from '../../mocks/classRooms';
-import enrollmentsMock from '../../mocks/enrollments';
-import type { EnrollmentPageData, EnrollmentWithNames } from '../../types/enrollmentPageData';
+import { useEnrollments } from '../../hooks/useEnrollments';
+import { useStudents } from '../../hooks/useStudents';
+import { useClassRooms } from '../../hooks/useClassRooms';
+import type { EnrollmentWithNames } from '../../types/enrollmentWithNames';
 
 const PAGE_SIZE = 10;
 
@@ -19,57 +16,76 @@ export default function EnrollmentIndexPage() {
   const [searchString, setSearchString] = useState(searchParams.get('searchString') || '');
   const currentPage = Number(searchParams.get('page') || '1');
 
-  const [data, setData] = useState<EnrollmentPageData>({
+  const { enrollments, removeEnrollment } = useEnrollments();
+  const { students } = useStudents();
+  const { classRooms } = useClassRooms();
+
+  const [data, setData] = useState<{
+    items: EnrollmentWithNames[];
+    currentPage: number;
+    totalItems: number;
+  }>({
     items: [],
     currentPage,
     totalItems: 0,
-    pageSize: PAGE_SIZE,
-    searchTerm: '',
   });
 
-  useEffect(() => {
-    const filtered = enrollmentsMock.filter(e =>
-      searchString
-        ? e.status.toLowerCase().includes(searchString.toLowerCase())
-        : true
+  // Converte Enrollment em EnrollmentWithNames
+  const mapToWithNames = useCallback(
+    (enrollment: typeof enrollments[number]): EnrollmentWithNames => {
+      const student = students.find(s => s.id === enrollment.studentId);
+      const classRoom = classRooms.find(c => c.id === enrollment.classRoomId);
+      return {
+        ...enrollment,
+        studentName: student?.name ?? 'Aluno não informado',
+        classRoomName: classRoom?.name ?? 'Turma não informada',
+      };
+    },
+    [students, classRooms]
+  );
+
+  const loadData = useCallback(() => {
+    const filtered = enrollments.filter(e =>
+      searchString ? e.status.toLowerCase().includes(searchString.toLowerCase()) : true
     );
 
     const start = (currentPage - 1) * PAGE_SIZE;
     const paginated = filtered.slice(start, start + PAGE_SIZE);
-
-    const itemsWithNames: EnrollmentWithNames[] = paginated.map(e => ({
-      ...e,
-      studentName: mockStudents.find(s => s.id === e.studentId)?.name ?? 'Aluno não informado',
-      classRoomName: mockClassRooms.find(c => c.id === e.classRoomId)?.name ?? 'Turma não informada',
-    }));
+    const itemsWithNames = paginated.map(mapToWithNames);
 
     setData({
       items: itemsWithNames,
       currentPage,
       totalItems: filtered.length,
-      pageSize: PAGE_SIZE,
-      searchTerm: searchString,
     });
-  }, [searchString, currentPage]);
+  }, [enrollments, searchString, currentPage, mapToWithNames]);
 
-  const totalPages = useMemo(() => Math.max(1, Math.ceil(data.totalItems / data.pageSize)), [
-    data.totalItems,
-    data.pageSize,
-  ]);
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(data.totalItems / PAGE_SIZE)),
+    [data.totalItems]
+  );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchString(e.target.value);
     setSearchParams({ searchString: e.target.value, page: '1' });
   };
 
+  const handleDelete = (id: number) => {
+    if (confirm('Deseja realmente excluir esta matrícula?')) {
+      removeEnrollment(id);
+      loadData();
+    }
+  };
+
   return (
     <div className={styles.pageContainer}>
       <div className={styles.leftPanel}>
         <h2 className={styles.title}>Buscar Matrículas</h2>
-        <form
-          className={styles.searchForm}
-          onSubmit={e => e.preventDefault()}
-        >
+        <form className={styles.searchForm} onSubmit={(e) => e.preventDefault()}>
           <input
             type="text"
             value={searchString}
@@ -119,9 +135,12 @@ export default function EnrollmentIndexPage() {
                     <Link to={`/enrollments/edit/${e.id}`} className={`${styles.btn} ${styles.btnWarning}`}>
                       Editar
                     </Link>{' '}
-                    <Link to={`/enrollments/delete/${e.id}`} className={`${styles.btn} ${styles.btnDanger}`}>
+                    <button
+                      className={`${styles.btn} ${styles.btnDanger}`}
+                      onClick={() => handleDelete(e.id)}
+                    >
                       Excluir
-                    </Link>
+                    </button>
                   </td>
                 </tr>
               ))

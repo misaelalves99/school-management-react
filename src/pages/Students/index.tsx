@@ -1,42 +1,34 @@
 // src/pages/Students/index.tsx
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import styles from "./StudentsPage.module.css";
-import type { Student } from "../../types/Student";
-import { getStudents, deleteStudent } from "../../mocks/students";
+import { useStudents } from "../../hooks/useStudents";
 
 export default function StudentIndex() {
-  const [students, setStudents] = useState<Student[]>([]);
+  const { students, removeStudent, refreshStudents } = useStudents();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-
   const pageSize = 10;
 
-  const fetchStudents = useCallback(() => {
-    let allStudents: Student[] = getStudents();
+  // Filtra os alunos pelo nome
+  const filteredStudents = useMemo(() => {
+    const term = search.toLowerCase();
+    return students.filter(s => s.name.toLowerCase().includes(term));
+  }, [students, search]);
 
-    if (search.trim()) {
-      allStudents = allStudents.filter((s: Student) =>
-        s.name.toLowerCase().includes(search.toLowerCase())
-      );
-    }
+  const totalPages = Math.max(1, Math.ceil(filteredStudents.length / pageSize));
+  const pagedStudents = filteredStudents.slice((page - 1) * pageSize, page * pageSize);
 
-    const total = Math.max(1, Math.ceil(allStudents.length / pageSize));
-    setTotalPages(total);
-
-    const currentPage = page > total ? 1 : page;
-    setPage(currentPage);
-
-    const start = (currentPage - 1) * pageSize;
-    const paginated = allStudents.slice(start, start + pageSize);
-    setStudents(paginated);
-  }, [search, page]);
-
+  // Atualiza a página se necessário ao mudar o filtro
   useEffect(() => {
-    fetchStudents();
-  }, [fetchStudents]);
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
+
+  // Chama refreshStudents na montagem inicial
+  useEffect(() => {
+    refreshStudents();
+  }, [refreshStudents]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,9 +36,9 @@ export default function StudentIndex() {
   };
 
   const handleDelete = (id: number) => {
-    if (!window.confirm("Deseja realmente excluir este aluno?")) return;
-    deleteStudent(id);
-    fetchStudents();
+    if (window.confirm("Deseja realmente excluir este aluno?")) {
+      removeStudent(id);
+    }
   };
 
   return (
@@ -58,7 +50,7 @@ export default function StudentIndex() {
             type="text"
             placeholder="Digite o nome..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={e => setSearch(e.target.value)}
           />
           <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
             Buscar
@@ -71,7 +63,8 @@ export default function StudentIndex() {
 
       <div className={styles.rightPanel}>
         <h2 className={styles.title}>Lista de Alunos</h2>
-        {students.length > 0 ? (
+
+        {pagedStudents.length > 0 ? (
           <>
             <table className={styles.table}>
               <thead>
@@ -84,7 +77,7 @@ export default function StudentIndex() {
                 </tr>
               </thead>
               <tbody>
-                {students.map((student: Student) => (
+                {pagedStudents.map(student => (
                   <tr key={student.id}>
                     <td>{student.name}</td>
                     <td>{student.enrollmentNumber}</td>
@@ -96,13 +89,13 @@ export default function StudentIndex() {
                         className={`${styles.btn} ${styles.btnInfo}`}
                       >
                         Detalhes
-                      </Link>
+                      </Link>{" "}
                       <Link
                         to={`/students/edit/${student.id}`}
                         className={`${styles.btn} ${styles.btnWarning}`}
                       >
                         Editar
-                      </Link>
+                      </Link>{" "}
                       <button
                         onClick={() => handleDelete(student.id)}
                         className={`${styles.btn} ${styles.btnDanger}`}
@@ -120,7 +113,7 @@ export default function StudentIndex() {
                 <button
                   className={styles.pageLink}
                   disabled={page === 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
                 >
                   Anterior
                 </button>
@@ -130,7 +123,7 @@ export default function StudentIndex() {
                 <button
                   className={styles.pageLink}
                   disabled={page === totalPages}
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 >
                   Próxima
                 </button>

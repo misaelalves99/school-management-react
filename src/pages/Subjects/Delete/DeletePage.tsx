@@ -1,31 +1,94 @@
 // src/pages/Subjects/Delete/DeletePage.tsx
 
-import { useNavigate, useParams } from 'react-router-dom';
-import styles from './DeletePage.module.css';
+import { useNavigate, useParams } from "react-router-dom";
+import styles from "./DeletePage.module.css";
+import { useSubjects } from "../../../hooks/useSubjects";
 
-export default function DeleteSubject() {
+export default function SubjectDeletePage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { getSubjectById, deleteSubject, reloadSubjects } = useSubjects();
+
+  if (!id) {
+    return (
+      <div className={styles.container}>
+        <h2>ID inválido.</h2>
+        <button
+          className={`${styles.btn} ${styles.btnSecondary}`}
+          onClick={() => navigate("/subjects")}
+        >
+          Voltar
+        </button>
+      </div>
+    );
+  }
+
+  const subjectId = Number(id);
+  const subject = getSubjectById(subjectId);
+
+  if (!subject) {
+    return (
+      <div className={styles.container}>
+        <h2>Disciplina não encontrada.</h2>
+        <button
+          className={`${styles.btn} ${styles.btnSecondary}`}
+          onClick={() => navigate("/subjects")}
+        >
+          Voltar
+        </button>
+      </div>
+    );
+  }
 
   const handleDelete = () => {
-    console.log('Excluir disciplina com ID:', id); // Aqui faria a chamada à API
-    navigate('/subjects');
+    const confirmed = window.confirm(
+      `Deseja realmente excluir a disciplina "${subject.name}"?`
+    );
+    if (!confirmed) return;
+
+    const deleted = deleteSubject(subject.id);
+
+    if (!deleted) {
+      alert("Erro ao excluir a disciplina.");
+      return;
+    }
+
+    // Atualiza a lista do contexto
+    reloadSubjects();
+
+    alert("Disciplina excluída com sucesso!");
+    navigate("/subjects");
   };
 
   return (
-    <>
+    <div className={styles.container}>
       <h1 className={styles.title}>Excluir Disciplina</h1>
-      <h3 className={styles.warning}>Tem certeza que deseja excluir esta disciplina?</h3>
+      <h3 className={styles.warning}>
+        Tem certeza que deseja excluir esta disciplina?
+      </h3>
 
       <div className={styles.subjectBox}>
-        <h4>Nome da Disciplina (simulado)</h4>
-        <p>Carga Horária: 60 horas</p>
+        <h4>{subject.name}</h4>
+        <p>Carga Horária: {subject.workloadHours} horas</p>
+        {subject.description && <p>{subject.description}</p>}
       </div>
 
-      <form className={styles.form}>
-        <button type="button" className={styles.btnDanger} onClick={handleDelete}>Excluir</button>
-        <button type="button" className={styles.btnSecondary} onClick={() => navigate('/subjects')}>Cancelar</button>
-      </form>
-    </>
+      <div className={styles.actions}>
+        <button
+          type="button"
+          className={`${styles.btn} ${styles.btnDanger}`}
+          onClick={handleDelete}
+        >
+          Excluir
+        </button>
+        <button
+          type="button"
+          className={`${styles.btn} ${styles.btnSecondary}`}
+          onClick={() => navigate("/subjects")}
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
   );
 }

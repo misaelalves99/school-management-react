@@ -1,48 +1,30 @@
 // src/pages/ClassRooms/wrappers.tsx
 
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import DeleteClassRoom from './Delete/DeletePage';
 import ClassRoomDetailsPage from './Details/DetailsPage';
 import EditClassRoom from './Edit/EditPage';
-import { deleteClassRoom, getClassRoomById, updateClassRoom } from '../../mocks/classRooms';
 
 export const ClassRoomDeletePageWrapper: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  if (!id) return <p>Turma não encontrada.</p>;
   const classRoomId = Number(id);
-  const classRoom = getClassRoomById(classRoomId);
-  if (!classRoom) return <p>Turma não encontrada.</p>;
-  const handleDelete = () => {
-    deleteClassRoom(classRoom.id);
-    navigate('/classrooms');
-  };
-  return <DeleteClassRoom classRoom={classRoom} onDelete={handleDelete} />;
+
+  return <DeleteClassRoom id={classRoomId} />;
 };
 
 export const ClassRoomDetailsPageWrapper: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  if (!id) return <p>Turma não encontrada.</p>;
   const classRoomId = Number(id);
-  const classRoom = getClassRoomById(classRoomId);
-  if (!classRoom) return <p>Turma não encontrada.</p>;
-  return <ClassRoomDetailsPage classRoom={classRoom} />;
+
+  return <ClassRoomDetailsPage id={classRoomId} />;
 };
 
 export const ClassRoomEditPageWrapper: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  if (!id) return <p>Turma não encontrada.</p>;
   const classRoomId = Number(id);
-  const classRoom = getClassRoomById(classRoomId);
-  if (!classRoom) return <p>Turma não encontrada.</p>;
-  const handleSubmit = (data: { id: number; name: string; capacity: number }) => {
-    updateClassRoom(data.id, { name: data.name, capacity: data.capacity });
-    navigate('/classrooms');
-  };
-  return (
-    <EditClassRoom
-      id={classRoom.id}
-      name={classRoom.name}
-      capacity={classRoom.capacity}
-      onSubmit={handleSubmit}
-    />
-  );
+
+  return <EditClassRoom id={classRoomId} />;
 };

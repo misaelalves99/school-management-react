@@ -4,22 +4,18 @@ import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CreatePage.module.css';
 
-import type { Student } from '../../../types/Student';
-import type { ClassRoom } from '../../../types/ClassRoom';
+import { useStudents } from '../../../hooks/useStudents';
+import { useClassRooms } from '../../../hooks/useClassRooms';
 import type { EnrollmentForm } from '../../../types/enrollmentForm';
 import type { ValidationErrors } from '../../../types/validationErrors';
+import { useEnrollments } from '../../../hooks/useEnrollments';
 
-interface CreateEnrollmentPageProps {
-  students: Student[];
-  classRooms: ClassRoom[];
-  onCreate: (newEnrollment: EnrollmentForm) => Promise<void>;
-}
+export default function CreateEnrollmentPage() {
+  const navigate = useNavigate();
+  const { students = [] } = useStudents();
+  const { classRooms = [] } = useClassRooms();
+  const { createEnrollment } = useEnrollments();
 
-export default function CreateEnrollmentPage({
-  students,
-  classRooms,
-  onCreate,
-}: CreateEnrollmentPageProps) {
   const [form, setForm] = useState<EnrollmentForm>({
     studentId: '',
     classRoomId: '',
@@ -27,7 +23,6 @@ export default function CreateEnrollmentPage({
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const navigate = useNavigate();
 
   function validate(): boolean {
     const newErrors: ValidationErrors = {};
@@ -43,7 +38,7 @@ export default function CreateEnrollmentPage({
     if (!validate()) return;
 
     try {
-      await onCreate({
+      await createEnrollment({
         studentId: Number(form.studentId),
         classRoomId: Number(form.classRoomId),
         enrollmentDate: form.enrollmentDate,
@@ -62,25 +57,21 @@ export default function CreateEnrollmentPage({
     }));
   }
 
+  // Renderiza só quando students e classRooms estiverem carregados
+  if (!students || !classRooms) {
+    return <p>Carregando...</p>;
+  }
+
   return (
     <>
       <h1 className={styles.title}>Nova Matrícula</h1>
-
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles['form-group']}>
           <label htmlFor="studentId">Aluno</label>
-          <select
-            id="studentId"
-            name="studentId"
-            value={form.studentId}
-            onChange={handleChange}
-            className={styles['form-control']}
-          >
+          <select id="studentId" name="studentId" value={form.studentId} onChange={handleChange}>
             <option value="">Selecione o Aluno</option>
             {students.map(s => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
+              <option key={s.id} value={s.id}>{s.name}</option>
             ))}
           </select>
           {errors.studentId && <span className={styles['text-danger']}>{errors.studentId}</span>}
@@ -88,18 +79,10 @@ export default function CreateEnrollmentPage({
 
         <div className={styles['form-group']}>
           <label htmlFor="classRoomId">Turma</label>
-          <select
-            id="classRoomId"
-            name="classRoomId"
-            value={form.classRoomId}
-            onChange={handleChange}
-            className={styles['form-control']}
-          >
+          <select id="classRoomId" name="classRoomId" value={form.classRoomId} onChange={handleChange}>
             <option value="">Selecione a Turma</option>
             {classRooms.map(c => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
+              <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
           {errors.classRoomId && <span className={styles['text-danger']}>{errors.classRoomId}</span>}
@@ -107,29 +90,16 @@ export default function CreateEnrollmentPage({
 
         <div className={styles['form-group']}>
           <label htmlFor="enrollmentDate">Data da Matrícula</label>
-          <input
-            id="enrollmentDate"
-            name="enrollmentDate"
-            type="date"
-            value={form.enrollmentDate}
-            onChange={handleChange}
-            className={styles['form-control']}
-          />
+          <input id="enrollmentDate" name="enrollmentDate" type="date" value={form.enrollmentDate} onChange={handleChange} />
           {errors.enrollmentDate && <span className={styles['text-danger']}>{errors.enrollmentDate}</span>}
         </div>
 
         <div className={styles['form-group']}>
-          <button type="submit" className={styles['btn-submit']}>
-            Salvar
-          </button>
+          <button type="submit" className={styles['btn-submit']}>Salvar</button>
         </div>
       </form>
 
-      <button
-        className={styles['btn-secondary']}
-        onClick={() => navigate('/enrollments')}
-        type="button"
-      >
+      <button className={styles['btn-secondary']} onClick={() => navigate('/enrollments')} type="button">
         Voltar à Lista
       </button>
     </>
