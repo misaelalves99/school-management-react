@@ -1,4 +1,4 @@
-// src/contexts/StudentsContext.ts
+// src/contexts/Students/StudentsContext.ts
 
 import { createContext } from "react";
 import type { Student } from "../../types/Student";

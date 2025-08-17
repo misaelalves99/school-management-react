@@ -2,20 +2,18 @@
 
 import { useNavigate, useParams } from 'react-router-dom';
 import styles from './DetailsPage.module.css';
-import { mockSubjects } from '../../../mocks/subjects';
-import type { Subject } from '../../../types/Subject';
+import { useSubjects } from '../../../hooks/useSubjects';
 
 export default function SubjectDetails() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { getSubjectById } = useSubjects();
 
   // Converter o ID de string para número
   const subjectId = Number(id);
 
-  // Buscar o subject usando o método list()
-  const subject: Subject | undefined = mockSubjects.list().find(
-    (s: Subject) => s.id === subjectId
-  );
+  // Buscar o subject pelo contexto
+  const subject = getSubjectById(subjectId);
 
   if (!subject) {
     return (

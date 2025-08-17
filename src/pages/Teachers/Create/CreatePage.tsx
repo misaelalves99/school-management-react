@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./CreatePage.module.css";
-import { createTeacher } from "../../../mocks/teachers";
 import type { TeacherFormData } from "../../../types/TeacherFormData";
+import { useTeachers } from "../../../hooks/useTeachers";
 
 export default function TeacherCreate() {
   const navigate = useNavigate();
+  const { addTeacher } = useTeachers();
 
   const [formData, setFormData] = useState<TeacherFormData>({
     name: "",
@@ -41,7 +42,7 @@ export default function TeacherCreate() {
     e.preventDefault();
     if (!validate()) return;
 
-    createTeacher(formData);
+    addTeacher(formData);
     alert("Professor salvo com sucesso!");
     navigate("/teachers");
   };

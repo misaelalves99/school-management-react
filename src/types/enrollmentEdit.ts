@@ -4,6 +4,6 @@ export interface EnrollmentEdit {
   id: number;
   studentId: number;
   classRoomId: number;
-  enrollmentDate: string; // ISO date string
+  enrollmentDate: string;
   status: string;
 }

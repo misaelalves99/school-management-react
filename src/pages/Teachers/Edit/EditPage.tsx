@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./EditPage.module.css";
-import { getTeacherById, updateTeacher } from "../../../mocks/teachers";
+import { useTeachers } from "../../../hooks/useTeachers";
 import type { TeacherFormData } from "../../../types/TeacherFormData";
 
 export default function TeacherEdit() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { getTeacher, editTeacher } = useTeachers();
 
   const [formData, setFormData] = useState<TeacherFormData>({
     name: "",
@@ -24,7 +25,7 @@ export default function TeacherEdit() {
 
   useEffect(() => {
     if (!id) return;
-    const teacher = getTeacherById(Number(id));
+    const teacher = getTeacher(Number(id));
     if (!teacher) {
       alert("Professor não encontrado");
       navigate("/teachers");
@@ -39,11 +40,10 @@ export default function TeacherEdit() {
       address: teacher.address,
     });
     setLoading(false);
-  }, [id, navigate]);
+  }, [id, navigate, getTeacher]);
 
   const validate = (): boolean => {
     const newErrors: Partial<Record<keyof TeacherFormData, string>> = {};
-
     if (!formData.name.trim()) newErrors.name = "Nome é obrigatório.";
     if (!formData.email.trim()) newErrors.email = "Email é obrigatório.";
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email inválido.";
@@ -61,10 +61,9 @@ export default function TeacherEdit() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-
     if (!id) return;
 
-    const updated = updateTeacher(Number(id), formData);
+    const updated = editTeacher(Number(id), formData);
     if (!updated) {
       alert("Erro ao atualizar professor");
       return;

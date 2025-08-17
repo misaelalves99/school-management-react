@@ -2,15 +2,16 @@
 
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./DetailsPage.module.css";
-import { getTeacherById } from "../../../mocks/teachers";
+import { useTeachers } from "../../../hooks/useTeachers";
 
 export default function TeacherDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { getTeacher } = useTeachers();
 
   if (!id) return <div>Id inválido</div>;
 
-  const teacher = getTeacherById(Number(id));
+  const teacher = getTeacher(Number(id));
 
   if (!teacher) {
     return <div>Professor não encontrado.</div>;

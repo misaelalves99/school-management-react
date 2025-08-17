@@ -1,29 +1,33 @@
 // src/pages/Students/Delete/DeletePage.tsx
 
-import { useParams, useNavigate } from 'react-router-dom';
-import styles from './DeletePage.module.css';
+import { useParams, useNavigate } from "react-router-dom";
+import styles from "./DeletePage.module.css";
+import { useStudents } from "../../../hooks/useStudents";
 
-export default function DeleteStudent() {
+export default function StudentDelete() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { students, removeStudent } = useStudents(); // ⚡ usando contexto
 
-  const handleDelete = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: API call to delete student
-    alert(`Aluno ${id} excluído!`);
-    navigate('/students');
+  if (!id) return <div>ID inválido</div>;
+
+  const student = students.find(s => s.id === Number(id));
+  if (!student) return <div>Aluno não encontrado</div>;
+
+  const handleDelete = () => {
+    removeStudent(student.id); // ⚡ usando contexto
+    alert("Aluno excluído com sucesso!");
+    navigate("/students");
   };
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Excluir Aluno</h1>
+      <h1>Excluir Aluno</h1>
       <p className={styles.warning}>
-        Tem certeza que deseja excluir o aluno <strong>ID: {id}</strong>?
+        Tem certeza que deseja excluir <strong>{student.name}</strong>?
       </p>
-      <form onSubmit={handleDelete} className={styles.form}>
-        <button type="submit" className={styles.btnDelete}>Confirmar Exclusão</button>
-        <button type="button" className={styles.btnCancel} onClick={() => navigate('/students')}>Cancelar</button>
-      </form>
+      <button onClick={handleDelete} className={styles.btnDelete}>Confirmar Exclusão</button>
+      <button onClick={() => navigate("/students")} className={styles.btnCancel}>Cancelar</button>
     </div>
   );
 }

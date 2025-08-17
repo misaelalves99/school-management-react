@@ -3,31 +3,27 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./TeachersPage.module.css";
-import type { Teacher } from "../../types/Teacher";
-import { getTeachers } from "../../mocks/teachers";
+import { useTeachers } from "../../hooks/useTeachers";
 
-const PAGE_SIZE = 10; // <-- limite máximo por página
+const PAGE_SIZE = 10;
 
 export default function TeachersPage() {
   const navigate = useNavigate();
+  const { teachers } = useTeachers();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const allTeachers = getTeachers();
-
   const filteredTeachers = useMemo(() => {
-    if (!searchTerm.trim()) return allTeachers;
+    if (!searchTerm.trim()) return teachers;
     const term = searchTerm.toLowerCase();
-    return allTeachers.filter(
-      t =>
-        t.name.toLowerCase().includes(term) ||
-        t.subject.toLowerCase().includes(term)
+    return teachers.filter(
+      t => t.name.toLowerCase().includes(term) || t.subject.toLowerCase().includes(term)
     );
-  }, [searchTerm, allTeachers]);
+  }, [searchTerm, teachers]);
 
   const totalItems = filteredTeachers.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
-
   const currentItems = filteredTeachers.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
@@ -53,17 +49,12 @@ export default function TeachersPage() {
             goToPage(1);
           }}
           className={styles.searchForm}
-          role="search"
-          aria-label="Buscar professores"
         >
           <input
             type="text"
-            name="searchString"
             placeholder="Digite o nome ou disciplina..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className={styles.searchInput}
-            aria-label="Campo de busca de professores"
           />
           <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
             Buscar
@@ -81,7 +72,7 @@ export default function TeachersPage() {
       <div className={styles.rightPanel}>
         <h2 className={styles.title}>Lista de Professores</h2>
 
-        <table className={styles.table} aria-label="Lista de professores">
+        <table className={styles.table}>
           <thead>
             <tr>
               <th>Nome</th>
@@ -98,27 +89,27 @@ export default function TeachersPage() {
                 </td>
               </tr>
             ) : (
-              currentItems.map((teacher: Teacher) => (
-                <tr key={teacher.id}>
-                  <td>{teacher.name}</td>
-                  <td>{teacher.email}</td>
-                  <td>{teacher.subject}</td>
+              currentItems.map(t => (
+                <tr key={t.id}>
+                  <td>{t.name}</td>
+                  <td>{t.email}</td>
+                  <td>{t.subject}</td>
                   <td>
                     <button
                       className={`${styles.btn} ${styles.btnInfo}`}
-                      onClick={() => navigate(`/teachers/details/${teacher.id}`)}
+                      onClick={() => navigate(`/teachers/details/${t.id}`)}
                     >
                       Detalhes
                     </button>
                     <button
                       className={`${styles.btn} ${styles.btnWarning}`}
-                      onClick={() => navigate(`/teachers/edit/${teacher.id}`)}
+                      onClick={() => navigate(`/teachers/edit/${t.id}`)}
                     >
                       Editar
                     </button>
                     <button
                       className={`${styles.btn} ${styles.btnDanger}`}
-                      onClick={() => navigate(`/teachers/delete/${teacher.id}`)}
+                      onClick={() => navigate(`/teachers/delete/${t.id}`)}
                     >
                       Excluir
                     </button>
@@ -129,28 +120,13 @@ export default function TeachersPage() {
           </tbody>
         </table>
 
-        {/* Paginação */}
         {totalPages > 1 && (
           <div className={styles.pagination}>
-            <button
-              onClick={() => goToPage(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={styles.pageLink}
-              aria-label="Página anterior"
-            >
+            <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
               Anterior
             </button>
-
-            <span className={styles.pageInfo}>
-              Página {currentPage} de {totalPages}
-            </span>
-
-            <button
-              onClick={() => goToPage(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={styles.pageLink}
-              aria-label="Próxima página"
-            >
+            <span>Página {currentPage} de {totalPages}</span>
+            <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
               Próxima
             </button>
           </div>

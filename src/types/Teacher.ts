@@ -4,7 +4,7 @@ export interface Teacher {
   id: number;
   name: string;
   email: string;
-  dateOfBirth: string; // ISO string
+  dateOfBirth: string;
   subject: string;
   phone: string;
   address: string;

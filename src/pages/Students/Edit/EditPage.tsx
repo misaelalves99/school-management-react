@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./EditPage.module.css";
-import { getStudentById, updateStudent } from "../../../mocks/students";
 import type { Student } from "../../../types/Student";
+import { useStudents } from "../../../hooks/useStudents";
 
 export default function StudentEdit() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { students, editStudent } = useStudents(); // ⚡ usando contexto
 
   const [formData, setFormData] = useState<Omit<Student, "id">>({
     name: "",
@@ -23,23 +24,21 @@ export default function StudentEdit() {
 
   useEffect(() => {
     if (!id) return;
-    const student = getStudentById(Number(id));
+    const student = students.find(s => s.id === Number(id));
     if (!student) {
       alert("Aluno não encontrado");
       navigate("/students");
       return;
     }
-    // Copia todos os campos exceto o id
-    const rest: Omit<Student, "id"> = {
+    setFormData({
       name: student.name,
       email: student.email,
       dateOfBirth: student.dateOfBirth,
       enrollmentNumber: student.enrollmentNumber,
       phone: student.phone,
       address: student.address,
-    };
-    setFormData(rest);
-  }, [id, navigate]);
+    });
+  }, [id, students, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -64,7 +63,7 @@ export default function StudentEdit() {
     }
 
     if (!id) return;
-    const updated = updateStudent(Number(id), formData);
+    const updated = editStudent(Number(id), formData);
     if (!updated) {
       alert("Erro ao atualizar aluno");
       return;

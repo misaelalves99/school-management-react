@@ -1,4 +1,4 @@
-// src/context/ClassRoomContext.tsx
+// src/context/ClassRooms/ClassRoomContext.tsx
 
 import { createContext } from "react";
 import type { ClassRoom } from "../../types/ClassRoom";

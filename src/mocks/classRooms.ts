@@ -4,7 +4,7 @@ import type { ClassRoom } from '../types/ClassRoom';
 import type { Subject } from '../types/Subject';
 import type { Teacher } from '../types/Teacher';
 
-// Mock inicial de salas de aula
+// Mock inicial de salas
 export let classRoomsData: ClassRoom[] = [
   {
     id: 1,
@@ -45,7 +45,7 @@ export let classRoomsData: ClassRoom[] = [
   },
 ];
 
-// Funções para manipular salas de aula (simula API)
+// Funções CRUD
 export function getClassRooms(): ClassRoom[] {
   return [...classRoomsData];
 }
@@ -54,10 +54,10 @@ export function getClassRoomById(id: number): ClassRoom | undefined {
   return classRoomsData.find(cr => cr.id === id);
 }
 
-export function createClassRoom(classRoom: Omit<ClassRoom, "id">): ClassRoom {
-  const newClassRoom = {
+export function createClassRoom(classRoom: Omit<ClassRoom, 'id'>): ClassRoom {
+  const newClassRoom: ClassRoom = {
     ...classRoom,
-    id: Math.max(0, ...classRoomsData.map(cr => cr.id)) + 1
+    id: Math.max(0, ...classRoomsData.map(cr => cr.id)) + 1,
   };
   classRoomsData.push(newClassRoom);
   return newClassRoom;
@@ -74,4 +74,5 @@ export function deleteClassRoom(id: number): void {
   classRoomsData = classRoomsData.filter(cr => cr.id !== id);
 }
 
+// Named export do mock
 export { classRoomsData as mockClassRooms };
