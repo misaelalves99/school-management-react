@@ -3,7 +3,7 @@
 import { ReactNode, useCallback, useState } from "react";
 import { EnrollmentsContext } from "./EnrollmentsContext";
 import type { Enrollment } from "../../types/Enrollment";
-import type { EnrollmentForm } from "../../types/EnrollmentForm";
+import type { EnrollmentFormData } from "../../types/EnrollmentForm";
 import type { EnrollmentEdit } from "../../types/EnrollmentEdit";
 import {
   getEnrollments as getMockEnrollments,
@@ -23,12 +23,12 @@ export const EnrollmentsProvider: React.FC<Props> = ({ children }) => {
     setEnrollments(getMockEnrollments());
   }, []);
 
-  const createEnrollment = useCallback(async (data: EnrollmentForm) => {
+  const createEnrollment = useCallback(async (data: EnrollmentFormData) => {
     const newEnrollment = createMockEnrollment({
       studentId: Number(data.studentId),
       classRoomId: Number(data.classRoomId),
       enrollmentDate: data.enrollmentDate,
-      status: "Ativo",
+      status: data.status || "Ativo",
     });
     refresh();
     return newEnrollment;

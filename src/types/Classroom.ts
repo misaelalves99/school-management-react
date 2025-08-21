@@ -10,4 +10,5 @@ export interface ClassRoom {
   schedule: string;
   subjects: Subject[];
   teachers: Teacher[];
+  classTeacher?: Teacher; // ✅ adicionado opcionalmente
 }

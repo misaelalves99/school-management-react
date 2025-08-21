@@ -2,13 +2,13 @@
 
 import { createContext } from "react";
 import type { Enrollment } from "../../types/Enrollment";
-import type { EnrollmentForm } from "../../types/EnrollmentForm";
+import type { EnrollmentFormData } from "../../types/EnrollmentForm";
 import type { EnrollmentEdit } from "../../types/EnrollmentEdit";
 
 export interface EnrollmentsContextType {
   enrollments: Enrollment[];
   refresh: () => void;
-  createEnrollment: (data: EnrollmentForm) => Promise<Enrollment>;
+  createEnrollment: (data: EnrollmentFormData) => Promise<Enrollment>;
   updateEnrollment: (data: EnrollmentEdit) => Promise<Enrollment | null>;
   removeEnrollment: (id: number) => void;
 }
