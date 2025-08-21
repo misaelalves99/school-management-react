@@ -3,6 +3,8 @@
 import { Link } from 'react-router-dom';
 import styles from './DetailsPage.module.css';
 import { useClassRooms } from '../../../hooks/useClassRooms';
+import type { Subject } from '../../../types/Subject';
+import type { Teacher } from '../../../types/Teacher';
 
 interface Props {
   id: number;
@@ -32,7 +34,9 @@ const ClassRoomDetailsPage: React.FC<Props> = ({ id }) => {
         <dd>
           {classRoom.subjects?.length ? (
             <ul>
-              {classRoom.subjects.map(s => <li key={s.id}>{s.name}</li>)}
+              {classRoom.subjects.map((s: Subject) => (   // ✅ tipado
+                <li key={s.id}>{s.name}</li>
+              ))}
             </ul>
           ) : (
             <span className={styles.muted}>Sem disciplinas vinculadas.</span>
@@ -43,7 +47,9 @@ const ClassRoomDetailsPage: React.FC<Props> = ({ id }) => {
         <dd>
           {classRoom.teachers?.length ? (
             <ul>
-              {classRoom.teachers.map(t => <li key={t.id}>{t.name}</li>)}
+              {classRoom.teachers.map((t: Teacher) => (   // ✅ tipado
+                <li key={t.id}>{t.name}</li>
+              ))}
             </ul>
           ) : (
             <span className={styles.muted}>Sem professores vinculados.</span>

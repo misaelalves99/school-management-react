@@ -2,7 +2,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import styles from './DeletePage.module.css';
-import type { EnrollmentDetails } from '../../../types/enrollmentDetails';
+import type { EnrollmentDetails } from '../../../types/EnrollmentDetails';
 
 interface DeleteEnrollmentProps {
   enrollment: EnrollmentDetails;

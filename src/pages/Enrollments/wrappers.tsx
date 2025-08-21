@@ -10,8 +10,8 @@ import DeleteEnrollment from './Delete/DeletePage';
 import { useEnrollments } from '../../hooks/useEnrollments';
 import { useStudents } from '../../hooks/useStudents';
 import { useClassRooms } from '../../hooks/useClassRooms';
-import type { Enrollment } from '../../types/enrollment';
-import type { EnrollmentWithNames } from '../../types/enrollmentWithNames';
+import type { Enrollment } from '../../types/Enrollment';
+import type { EnrollmentWithNames } from '../../types/EnrollmentWithNames';
 
 // Converte Enrollment em EnrollmentWithNames
 function getEnrollmentDetails(

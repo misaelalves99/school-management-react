@@ -2,15 +2,15 @@
 
 import { ReactNode, useCallback, useState } from "react";
 import { EnrollmentsContext } from "./EnrollmentsContext";
-import type { Enrollment } from "../../types/enrollment";
-import type { EnrollmentForm } from "../../types/enrollmentForm";
-import type { EnrollmentEdit } from "../../types/enrollmentEdit";
+import type { Enrollment } from "../../types/Enrollment";
+import type { EnrollmentForm } from "../../types/EnrollmentForm";
+import type { EnrollmentEdit } from "../../types/EnrollmentEdit";
 import {
   getEnrollments as getMockEnrollments,
   createEnrollment as createMockEnrollment,
   updateEnrollment as updateMockEnrollment,
   deleteEnrollment as deleteMockEnrollment,
-} from "../../mocks/enrollments";
+} from "../../mocks/Enrollments";
 
 interface Props {
   children: ReactNode;

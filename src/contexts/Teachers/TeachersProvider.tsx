@@ -4,7 +4,7 @@ import { useState, useEffect, ReactNode } from "react";
 import { TeachersContext } from "./TeachersContext";
 import type { Teacher } from "../../types/Teacher";
 import type { TeacherFormData } from "../../types/TeacherFormData";
-import { getTeachers, getTeacherById, createTeacher, updateTeacher, deleteTeacher } from "../../mocks/teachers";
+import { getTeachers, getTeacherById, createTeacher, updateTeacher, deleteTeacher } from "../../mocks/Teachers";
 
 interface Props { children: ReactNode }
 

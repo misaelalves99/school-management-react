@@ -6,8 +6,8 @@ import styles from './CreatePage.module.css';
 
 import { useStudents } from '../../../hooks/useStudents';
 import { useClassRooms } from '../../../hooks/useClassRooms';
-import type { EnrollmentForm } from '../../../types/enrollmentForm';
-import type { ValidationErrors } from '../../../types/validationErrors';
+import type { EnrollmentForm } from '../../../types/EnrollmentForm';
+import type { ValidationErrors } from '../../../types/ValidationErrors';
 import { useEnrollments } from '../../../hooks/useEnrollments';
 
 export default function CreateEnrollmentPage() {

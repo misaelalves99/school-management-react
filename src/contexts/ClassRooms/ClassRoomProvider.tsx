@@ -9,7 +9,7 @@ import {
   createClassRoom,
   updateClassRoom,
   deleteClassRoom,
-} from "../../mocks/classRooms";
+} from "../../mocks/ClassRooms";
 
 interface Props {
   children: ReactNode;

@@ -2,7 +2,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import styles from './DetailsPage.module.css';
-import type { EnrollmentDetails as EnrollmentDetailsType } from '../../../types/enrollmentDetails';
+import type { EnrollmentDetails as EnrollmentDetailsType } from '../../../types/EnrollmentDetails';
 
 interface DetailsProps {
   enrollment: EnrollmentDetailsType;

@@ -1,14 +1,13 @@
-// src/types/Classroom.ts
+// src/types/ClassRoom.ts
 
-import { Subject } from './Subject';
-import { Teacher } from './Teacher';
+import type { Subject } from "./Subject";
+import type { Teacher } from "./Teacher";
 
 export interface ClassRoom {
   id: number;
   name: string;
   capacity: number;
   schedule: string;
-  subjects?: Subject[];
-  teachers?: Teacher[];
-  classTeacher?: Teacher | null;
+  subjects: Subject[];
+  teachers: Teacher[];
 }

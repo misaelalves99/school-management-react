@@ -3,7 +3,7 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './EditPage.module.css';
-import type { EnrollmentEdit as EnrollmentEditType } from '../../../types/enrollmentEdit';
+import type { EnrollmentEdit as EnrollmentEditType } from '../../../types/EnrollmentEdit';
 
 interface EditProps {
   enrollment: EnrollmentEditType;

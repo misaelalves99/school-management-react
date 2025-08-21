@@ -3,7 +3,7 @@
 import { useState, useCallback, ReactNode } from "react";
 import { SubjectsContext } from "./SubjectsContext";
 import type { Subject } from "../../types/Subject";
-import { mockSubjects } from "../../mocks/subjects";
+import { mockSubjects } from "../../mocks/Subjects";
 
 interface SubjectsProviderProps {
   children: ReactNode;

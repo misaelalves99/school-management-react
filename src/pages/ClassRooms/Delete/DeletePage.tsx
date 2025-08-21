@@ -3,6 +3,8 @@
 import { useNavigate } from 'react-router-dom';
 import styles from './DeletePage.module.css';
 import { useClassRooms } from '../../../hooks/useClassRooms';
+import type { Subject } from '../../../types/Subject';
+import type { Teacher } from '../../../types/Teacher';
 
 interface Props {
   id: number;
@@ -47,7 +49,7 @@ const DeleteClassRoom: React.FC<Props> = ({ id }) => {
         <dd>
           {classRoom.subjects?.length ? (
             <ul>
-              {classRoom.subjects.map(subj => (
+              {classRoom.subjects.map((subj: Subject) => (
                 <li key={subj.id}>{subj.name}</li>
               ))}
             </ul>
@@ -60,7 +62,7 @@ const DeleteClassRoom: React.FC<Props> = ({ id }) => {
         <dd>
           {classRoom.teachers?.length ? (
             <ul>
-              {classRoom.teachers.map(t => (
+              {classRoom.teachers.map((t: Teacher) => (
                 <li key={t.id}>{t.name}</li>
               ))}
             </ul>
