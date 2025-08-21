@@ -1,10 +1,6 @@
 // src/types/enrollmentPageData.ts
-import type { Enrollment } from './Enrollment';
 
-export interface EnrollmentWithNames extends Enrollment {
-  studentName: string;
-  classRoomName: string;
-}
+import type { EnrollmentWithNames } from './EnrollmentWithNames';
 
 export interface EnrollmentPageData {
   items: EnrollmentWithNames[];

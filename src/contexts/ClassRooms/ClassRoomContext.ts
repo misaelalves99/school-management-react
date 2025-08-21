@@ -1,15 +1,15 @@
-// src/context/ClassRooms/ClassRoomContext.tsx
+// src/contexts/ClassRooms/ClassRoomContext.ts
 
 import { createContext } from "react";
 import type { ClassRoom } from "../../types/ClassRoom";
 
-export interface ClassRoomsContextType {
+export interface ClassRoomContextType {
   classRooms: ClassRoom[];
-  getById: (id: number) => ClassRoom | undefined;
-  create: (classRoom: Omit<ClassRoom, "id">) => ClassRoom;
-  update: (id: number, updated: Partial<ClassRoom>) => ClassRoom | null;
-  remove: (id: number) => void;
   refresh: () => void;
+  create: (data: Omit<ClassRoom, 'id'>) => ClassRoom;
+  update: (id: number, data: Partial<ClassRoom>) => ClassRoom | null;
+  remove: (id: number) => void;
+  getById: (id: number) => ClassRoom | undefined;
 }
 
-export const ClassRoomsContext = createContext<ClassRoomsContextType | undefined>(undefined);
+export const ClassRoomContext = createContext<ClassRoomContextType | undefined>(undefined);

@@ -1,15 +1,15 @@
 // src/pages/Enrollments/Create/CreatePage.tsx
 
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CreatePage.module.css';
 
 import { useStudents } from '../../../hooks/useStudents';
 import { useClassRooms } from '../../../hooks/useClassRooms';
-import { useEnrollments } from '../../../hooks/useEnrollments';
-
 import type { EnrollmentFormData } from '../../../types/EnrollmentForm';
 import type { ValidationErrors } from '../../../types/ValidationErrors';
+import { useEnrollments } from '../../../hooks/useEnrollments';
+import type { ClassRoom } from '../../../types/ClassRoom';
 
 export default function CreateEnrollmentPage() {
   const navigate = useNavigate();
@@ -48,10 +48,10 @@ export default function CreateEnrollmentPage() {
     }
   }
 
-  function handleChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value } = e.target;
-    setForm(prevForm => ({
-      ...prevForm,
+    setForm((prev: EnrollmentFormData) => ({
+      ...prev,
       [name]: name === 'studentId' || name === 'classRoomId' ? Number(value) : value,
     }));
   }
@@ -64,14 +64,9 @@ export default function CreateEnrollmentPage() {
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles['form-group']}>
           <label htmlFor="studentId">Aluno</label>
-          <select
-            id="studentId"
-            name="studentId"
-            value={form.studentId || ''}
-            onChange={handleChange}
-          >
+          <select id="studentId" name="studentId" value={form.studentId || ''} onChange={handleChange}>
             <option value="">Selecione o Aluno</option>
-            {students.map(s => (
+            {students.map((s) => (
               <option key={s.id} value={s.id}>{s.name}</option>
             ))}
           </select>
@@ -87,7 +82,7 @@ export default function CreateEnrollmentPage() {
             onChange={handleChange}
           >
             <option value="">Selecione a Turma</option>
-            {classRooms.map(c => (
+            {classRooms.map((c: ClassRoom) => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>

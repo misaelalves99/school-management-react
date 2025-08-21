@@ -1,4 +1,4 @@
-// src/types/enrollmentDetails.ts
+// src/types/EnrollmentDetails.ts
 
 import type { Enrollment } from './Enrollment';
 

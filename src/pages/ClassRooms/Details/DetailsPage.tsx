@@ -5,7 +5,6 @@ import styles from './DetailsPage.module.css';
 import { useClassRooms } from '../../../hooks/useClassRooms';
 import type { Subject } from '../../../types/Subject';
 import type { Teacher } from '../../../types/Teacher';
-import type { ClassRoom } from '../../../types/ClassRoom';
 
 interface Props {
   id: number;
@@ -13,7 +12,7 @@ interface Props {
 
 const ClassRoomDetailsPage: React.FC<Props> = ({ id }) => {
   const { getById } = useClassRooms();
-  const classRoom: ClassRoom | undefined = getById(id);
+  const classRoom = getById(id);
 
   if (!classRoom) return <p>Turma não encontrada.</p>;
 

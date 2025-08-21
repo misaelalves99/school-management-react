@@ -38,7 +38,7 @@ import {
 } from "./pages/ClassRooms/wrappers";
 
 // Matrículas
-import EnrollmentIndexPage from "./pages/Enrollments/Index";
+import EnrollmentIndexPage from "./pages/Enrollments/index";
 import CreateEnrollment from "./pages/Enrollments/Create/CreatePage";
 import {
   EnrollmentDetailsWrapper,
@@ -50,7 +50,7 @@ import {
 import { StudentsProvider } from "./contexts/Students/StudentsProvider";
 import { TeachersProvider } from "./contexts/Teachers/TeachersProvider";
 import { SubjectsProvider } from "./contexts/Subjects/SubjectsProvider";
-import { ClassRoomsProvider } from "./contexts/ClassRooms/ClassRoomProvider";
+import { ClassRoomProvider } from "./contexts/ClassRooms/ClassRoomProvider";
 import { EnrollmentsProvider } from "./contexts/Enrollments/EnrollmentsProvider";
 
 // CSS global
@@ -61,7 +61,7 @@ export default function App() {
     <TeachersProvider>
       <StudentsProvider>
         <SubjectsProvider>
-          <ClassRoomsProvider>
+          <ClassRoomProvider>
             <EnrollmentsProvider>
               <BrowserRouter>
                 <Navbar />
@@ -111,7 +111,7 @@ export default function App() {
                 <Footer />
               </BrowserRouter>
             </EnrollmentsProvider>
-          </ClassRoomsProvider>
+          </ClassRoomProvider>
         </SubjectsProvider>
       </StudentsProvider>
     </TeachersProvider>

@@ -41,7 +41,7 @@ export let classRoomsData: ClassRoom[] = [
     schedule: 'Qua - 13:00 às 15:00',
     subjects: [] as Subject[],
     teachers: [] as Teacher[],
-    classTeacher: null,
+    classTeacher: undefined,
   },
 ];
 
@@ -74,5 +74,4 @@ export function deleteClassRoom(id: number): void {
   classRoomsData = classRoomsData.filter(cr => cr.id !== id);
 }
 
-// Named export do mock
 export { classRoomsData as mockClassRooms };

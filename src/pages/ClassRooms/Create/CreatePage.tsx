@@ -1,9 +1,10 @@
-// /src/pages/ClassRooms/Create/CreatePage.tsx
+// src/pages/ClassRooms/Create/CreatePage.tsx
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CreatePage.module.css';
 import { useClassRooms } from '../../../hooks/useClassRooms';
+import type { ClassRoom } from '../../../types/ClassRoom';
 
 export default function CreateClassRoom() {
   const navigate = useNavigate();
@@ -27,16 +28,16 @@ export default function CreateClassRoom() {
       return;
     }
 
-    // Cria a sala usando o contexto
-    create({
+    const newClassRoom: Omit<ClassRoom, "id"> = {
       name,
       capacity,
       schedule,
       subjects: [],
       teachers: [],
       classTeacher: undefined,
-    });
+    };
 
+    create(newClassRoom);
     alert('Sala cadastrada com sucesso!');
     navigate('/classrooms');
   };

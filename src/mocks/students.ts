@@ -1,4 +1,5 @@
 // src/mocks/students.ts
+
 import type { Student } from "../types/Student";
 
 let studentsData: Student[] = [

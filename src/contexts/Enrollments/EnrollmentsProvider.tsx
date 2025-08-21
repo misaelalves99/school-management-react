@@ -28,7 +28,7 @@ export const EnrollmentsProvider: React.FC<Props> = ({ children }) => {
       studentId: Number(data.studentId),
       classRoomId: Number(data.classRoomId),
       enrollmentDate: data.enrollmentDate,
-      status: data.status || "Ativo",
+      status: data.status,
     });
     refresh();
     return newEnrollment;

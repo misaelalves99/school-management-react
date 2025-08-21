@@ -23,7 +23,7 @@ export function getEnrollmentById(id: number): Enrollment | undefined {
 export function createEnrollment(data: Omit<Enrollment, 'id'>): Enrollment {
   const newEnrollment: Enrollment = {
     ...data,
-    id: Math.max(0, ...enrollmentsData.map(e => e.id)) + 1, // ID incremental
+    id: Math.max(0, ...enrollmentsData.map(e => e.id)) + 1,
   };
   enrollmentsData.push(newEnrollment);
   return newEnrollment;

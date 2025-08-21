@@ -15,7 +15,7 @@ const ClassroomsPage: React.FC = () => {
 
   const filteredData: ClassRoom[] = useMemo(() => {
     const term = searchString.toLowerCase();
-    return classRooms.filter(c =>
+    return classRooms.filter((c: ClassRoom) =>
       c.name.toLowerCase().includes(term) ||
       c.schedule.toLowerCase().includes(term) ||
       c.capacity.toString().includes(term)
@@ -73,7 +73,7 @@ const ClassroomsPage: React.FC = () => {
                 </td>
               </tr>
             ) : (
-              pagedData.map((room) => (
+              pagedData.map((room: ClassRoom) => (
                 <tr key={room.id}>
                   <td>{room.name}</td>
                   <td>{room.capacity}</td>

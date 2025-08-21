@@ -51,3 +51,5 @@ export function updateTeacher(id: number, updated: Partial<Teacher>): Teacher | 
 export function deleteTeacher(id: number) {
   teachersData = teachersData.filter(t => t.id !== id);
 }
+
+export { teachersData as mockTeachers };
