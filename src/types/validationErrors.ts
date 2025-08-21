@@ -1,7 +1,3 @@
 // src/types/validationErrors.ts
 
-export interface ValidationErrors {
-  studentId?: string;
-  classRoomId?: string;
-  enrollmentDate?: string;
-}
+export type ValidationErrors<T> = Partial<Record<keyof T, string>>;

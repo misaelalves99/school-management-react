@@ -4,6 +4,7 @@ import { useState, ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './EditPage.module.css';
 import type { EnrollmentEdit as EnrollmentEditType } from '../../../types/EnrollmentEdit';
+import type { ValidationErrors } from '../../../types/ValidationErrors';
 
 interface EditProps {
   enrollment: EnrollmentEditType;
@@ -11,9 +12,10 @@ interface EditProps {
 }
 
 export default function EditEnrollment({ enrollment, onSave }: EditProps) {
-  const [formData, setFormData] = useState<EnrollmentEditType>({ ...enrollment });
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
+
+  const [formData, setFormData] = useState<EnrollmentEditType>({ ...enrollment });
+  const [errors, setErrors] = useState<ValidationErrors<EnrollmentEditType>>({});
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -23,36 +25,36 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
     }));
   }
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setErrors({});
-
-    const newErrors: Record<string, string> = {};
+  function validate(): boolean {
+    const newErrors: ValidationErrors<EnrollmentEditType> = {};
     if (!formData.studentId) newErrors.studentId = 'Aluno é obrigatório.';
     if (!formData.classRoomId) newErrors.classRoomId = 'Turma é obrigatória.';
     if (!formData.enrollmentDate) newErrors.enrollmentDate = 'Data da matrícula é obrigatória.';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!validate()) return;
 
     try {
       await onSave(formData);
       navigate('/enrollments');
     } catch (error) {
       console.error('Erro ao salvar matrícula:', error);
+      alert('Ocorreu um erro ao salvar a matrícula. Tente novamente.');
     }
   }
 
   return (
-    <>
+    <div className={styles.pageContainer}>
       <h1 className={styles.title}>Editar Matrícula</h1>
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <input type="hidden" name="id" value={formData.id} />
 
-        <div className={styles.formGroup}>
+        <div className={styles['form-group']}>
           <label htmlFor="studentId">Aluno</label>
           <input
             id="studentId"
@@ -62,10 +64,10 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
             onChange={handleChange}
             className={styles.input}
           />
-          {errors.studentId && <span className={styles.textDanger}>{errors.studentId}</span>}
+          {errors.studentId && <span className={styles['text-danger']}>{errors.studentId}</span>}
         </div>
 
-        <div className={styles.formGroup}>
+        <div className={styles['form-group']}>
           <label htmlFor="classRoomId">Turma</label>
           <input
             id="classRoomId"
@@ -75,10 +77,10 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
             onChange={handleChange}
             className={styles.input}
           />
-          {errors.classRoomId && <span className={styles.textDanger}>{errors.classRoomId}</span>}
+          {errors.classRoomId && <span className={styles['text-danger']}>{errors.classRoomId}</span>}
         </div>
 
-        <div className={styles.formGroup}>
+        <div className={styles['form-group']}>
           <label htmlFor="enrollmentDate">Data da Matrícula</label>
           <input
             id="enrollmentDate"
@@ -88,18 +90,23 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
             onChange={handleChange}
             className={styles.input}
           />
-          {errors.enrollmentDate && <span className={styles.textDanger}>{errors.enrollmentDate}</span>}
+          {errors.enrollmentDate && <span className={styles['text-danger']}>{errors.enrollmentDate}</span>}
         </div>
 
-        <button type="submit" className={styles.btnSubmit}>Salvar Alterações</button>
+        <div className={styles['form-group']}>
+          <button type="submit" className={styles['btn-submit']}>
+            Salvar Alterações
+          </button>
+        </div>
       </form>
 
       <button
-        className={styles.btnSecondary}
+        className={styles['btn-secondary']}
         onClick={() => navigate('/enrollments')}
+        type="button"
       >
         Voltar à Lista
       </button>
-    </>
+    </div>
   );
 }

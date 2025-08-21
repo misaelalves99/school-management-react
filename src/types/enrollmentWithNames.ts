@@ -1,6 +1,6 @@
 // src/types/EnrollmentWithNames.ts
 
-import type { Enrollment } from "./Enrollment";
+import type { Enrollment } from './Enrollment';
 
 export interface EnrollmentWithNames extends Enrollment {
   studentName: string;

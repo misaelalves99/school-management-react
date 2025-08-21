@@ -12,7 +12,7 @@ export default function EnrollmentDetails({ enrollment }: DetailsProps) {
   const navigate = useNavigate();
 
   return (
-    <>
+    <div className={styles.pageContainer}>
       <h1 className={styles.title}>Detalhes da Matrícula</h1>
 
       <div className={styles.detailsContainer}>
@@ -27,11 +27,11 @@ export default function EnrollmentDetails({ enrollment }: DetailsProps) {
           <dd className={styles.dd}>{enrollment.status ?? '-'}</dd>
 
           <dt className={styles.dt}>Data da Matrícula</dt>
-          <dd>{new Date(enrollment.enrollmentDate).toLocaleDateString()}</dd>
+          <dd className={styles.dd}>{new Date(enrollment.enrollmentDate).toLocaleDateString()}</dd>
         </dl>
       </div>
 
-      <div>
+      <div className={styles.buttonGroup}>
         <button
           className={`${styles.btn} ${styles.btnWarning}`}
           onClick={() => navigate(`/enrollments/edit/${enrollment.id}`)}
@@ -45,6 +45,6 @@ export default function EnrollmentDetails({ enrollment }: DetailsProps) {
           Voltar
         </button>
       </div>
-    </>
+    </div>
   );
 }

@@ -11,13 +11,14 @@ import { useEnrollments } from '../../hooks/useEnrollments';
 import { useStudents } from '../../hooks/useStudents';
 import { useClassRooms } from '../../hooks/useClassRooms';
 import type { Enrollment } from '../../types/Enrollment';
+import type { EnrollmentEdit } from '../../types/EnrollmentEdit';
 import type { EnrollmentWithNames } from '../../types/EnrollmentWithNames';
 
 // Converte Enrollment em EnrollmentWithNames
 function getEnrollmentDetails(
   enrollment: Enrollment,
-  students: ReturnType<typeof useStudents>['students'],
-  classRooms: ReturnType<typeof useClassRooms>['classRooms']
+  students: ReturnType<typeof useStudents>['students'] = [],
+  classRooms: ReturnType<typeof useClassRooms>['classRooms'] = []
 ): EnrollmentWithNames {
   const student = students.find(s => s.id === enrollment.studentId);
   const classRoom = classRooms.find(c => c.id === enrollment.classRoomId);
@@ -55,19 +56,32 @@ export function EnrollmentEditWrapper() {
   const navigate = useNavigate();
   const { enrollments, updateEnrollment } = useEnrollments();
 
-  const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
+  const [enrollment, setEnrollment] = useState<EnrollmentEdit | null>(null);
 
   useEffect(() => {
     if (!id) { navigate('/enrollments'); return; }
     const found = enrollments.find(e => e.id === Number(id));
     if (!found) { alert('Matrícula não encontrada'); navigate('/enrollments'); return; }
-    setEnrollment(found);
+
+    // Converte Enrollment para EnrollmentEdit
+    setEnrollment({
+      id: found.id,
+      studentId: found.studentId,
+      classRoomId: found.classRoomId,
+      enrollmentDate: found.enrollmentDate,
+      status: found.status,
+    });
   }, [id, enrollments, navigate]);
 
-  async function onSave(updatedEnrollment: Enrollment): Promise<void> {
-    const updated = await updateEnrollment(updatedEnrollment);
-    if (!updated) { alert('Erro ao atualizar matrícula'); return; }
-    navigate('/enrollments');
+  async function onSave(updatedEnrollment: EnrollmentEdit): Promise<void> {
+    try {
+      const updated = await updateEnrollment(updatedEnrollment);
+      if (!updated) { alert('Erro ao atualizar matrícula'); return; }
+      navigate('/enrollments');
+    } catch (error) {
+      console.error('Erro ao salvar matrícula:', error);
+      alert('Ocorreu um erro ao salvar a matrícula.');
+    }
   }
 
   if (!enrollment) return <div>Carregando matrícula...</div>;
@@ -92,8 +106,13 @@ export function EnrollmentDeleteWrapper() {
   }, [id, enrollments, navigate, students, classRooms]);
 
   async function onDelete(idToDelete: number) {
-    removeEnrollment(idToDelete);
-    navigate('/enrollments');
+    try {
+      await removeEnrollment(idToDelete);
+      navigate('/enrollments');
+    } catch (error) {
+      console.error('Erro ao excluir matrícula:', error);
+      alert('Ocorreu um erro ao excluir a matrícula.');
+    }
   }
 
   if (!enrollment) return <div>Carregando matrícula...</div>;

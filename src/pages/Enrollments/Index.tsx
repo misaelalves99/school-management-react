@@ -17,8 +17,8 @@ export default function EnrollmentIndexPage() {
   const currentPage = Number(searchParams.get('page') || '1');
 
   const { enrollments, removeEnrollment } = useEnrollments();
-  const { students } = useStudents();
-  const { classRooms } = useClassRooms();
+  const { students = [] } = useStudents();
+  const { classRooms = [] } = useClassRooms();
 
   const [data, setData] = useState<{
     items: EnrollmentWithNames[];
@@ -74,10 +74,14 @@ export default function EnrollmentIndexPage() {
     setSearchParams({ searchString: e.target.value, page: '1' });
   };
 
-  const handleDelete = (id: number) => {
-    if (confirm('Deseja realmente excluir esta matrícula?')) {
-      removeEnrollment(id);
+  const handleDelete = async (id: number) => {
+    if (!confirm('Deseja realmente excluir esta matrícula?')) return;
+    try {
+      await removeEnrollment(id);
       loadData();
+    } catch (error) {
+      console.error('Erro ao excluir matrícula:', error);
+      alert('Ocorreu um erro ao excluir a matrícula. Tente novamente.');
     }
   };
 
@@ -85,7 +89,7 @@ export default function EnrollmentIndexPage() {
     <div className={styles.pageContainer}>
       <div className={styles.leftPanel}>
         <h2 className={styles.title}>Buscar Matrículas</h2>
-        <form className={styles.searchForm} onSubmit={(e) => e.preventDefault()}>
+        <form className={styles.searchForm} onSubmit={e => e.preventDefault()}>
           <input
             type="text"
             value={searchString}
@@ -129,10 +133,16 @@ export default function EnrollmentIndexPage() {
                   <td>{e.status}</td>
                   <td>{new Date(e.enrollmentDate).toLocaleDateString()}</td>
                   <td>
-                    <Link to={`/enrollments/details/${e.id}`} className={`${styles.btn} ${styles.btnInfo}`}>
+                    <Link
+                      to={`/enrollments/details/${e.id}`}
+                      className={`${styles.btn} ${styles.btnInfo}`}
+                    >
                       Detalhes
                     </Link>{' '}
-                    <Link to={`/enrollments/edit/${e.id}`} className={`${styles.btn} ${styles.btnWarning}`}>
+                    <Link
+                      to={`/enrollments/edit/${e.id}`}
+                      className={`${styles.btn} ${styles.btnWarning}`}
+                    >
                       Editar
                     </Link>{' '}
                     <button

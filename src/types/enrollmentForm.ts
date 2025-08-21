@@ -1,12 +1,8 @@
 // src/types/EnrollmentForm.ts
-export interface EnrollmentForm {
+
+export interface EnrollmentFormData {
   studentId: number;
   classRoomId: number;
   enrollmentDate: string;
+  status: string;
 }
-
-// export interface EnrollmentForm {
-//   studentId: number | '';
-//   classRoomId: number | '';
-//   enrollmentDate: string;
-// }

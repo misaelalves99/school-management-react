@@ -6,7 +6,7 @@ import styles from './CreatePage.module.css';
 
 import { useStudents } from '../../../hooks/useStudents';
 import { useClassRooms } from '../../../hooks/useClassRooms';
-import type { EnrollmentForm } from '../../../types/EnrollmentForm';
+import type { EnrollmentFormData } from '../../../types/EnrollmentForm';
 import type { ValidationErrors } from '../../../types/ValidationErrors';
 import { useEnrollments } from '../../../hooks/useEnrollments';
 
@@ -16,16 +16,17 @@ export default function CreateEnrollmentPage() {
   const { classRooms = [] } = useClassRooms();
   const { createEnrollment } = useEnrollments();
 
-  const [form, setForm] = useState<EnrollmentForm>({
-    studentId: '',
-    classRoomId: '',
+  const [form, setForm] = useState<EnrollmentFormData>({
+    studentId: 0,
+    classRoomId: 0,
     enrollmentDate: new Date().toISOString().slice(0, 10),
+    status: 'Ativa',
   });
 
-  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [errors, setErrors] = useState<ValidationErrors<EnrollmentFormData>>({});
 
   function validate(): boolean {
-    const newErrors: ValidationErrors = {};
+    const newErrors: ValidationErrors<EnrollmentFormData> = {};
     if (!form.studentId) newErrors.studentId = 'Aluno é obrigatório.';
     if (!form.classRoomId) newErrors.classRoomId = 'Turma é obrigatória.';
     if (!form.enrollmentDate) newErrors.enrollmentDate = 'Data da matrícula é obrigatória.';
@@ -38,11 +39,7 @@ export default function CreateEnrollmentPage() {
     if (!validate()) return;
 
     try {
-      await createEnrollment({
-        studentId: Number(form.studentId),
-        classRoomId: Number(form.classRoomId),
-        enrollmentDate: form.enrollmentDate,
-      });
+      await createEnrollment(form);
       navigate('/enrollments');
     } catch (error) {
       console.error('Erro ao criar matrícula:', error);
@@ -53,14 +50,11 @@ export default function CreateEnrollmentPage() {
     const { name, value } = e.target;
     setForm(prev => ({
       ...prev,
-      [name]: name === 'studentId' || name === 'classRoomId' ? (value ? Number(value) : '') : value,
+      [name]: name === 'studentId' || name === 'classRoomId' ? Number(value) : value,
     }));
   }
 
-  // Renderiza só quando students e classRooms estiverem carregados
-  if (!students || !classRooms) {
-    return <p>Carregando...</p>;
-  }
+  if (!students.length || !classRooms.length) return <p>Carregando...</p>;
 
   return (
     <>
@@ -68,7 +62,7 @@ export default function CreateEnrollmentPage() {
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles['form-group']}>
           <label htmlFor="studentId">Aluno</label>
-          <select id="studentId" name="studentId" value={form.studentId} onChange={handleChange}>
+          <select id="studentId" name="studentId" value={form.studentId || ''} onChange={handleChange}>
             <option value="">Selecione o Aluno</option>
             {students.map(s => (
               <option key={s.id} value={s.id}>{s.name}</option>
@@ -79,7 +73,7 @@ export default function CreateEnrollmentPage() {
 
         <div className={styles['form-group']}>
           <label htmlFor="classRoomId">Turma</label>
-          <select id="classRoomId" name="classRoomId" value={form.classRoomId} onChange={handleChange}>
+          <select id="classRoomId" name="classRoomId" value={form.classRoomId || ''} onChange={handleChange}>
             <option value="">Selecione a Turma</option>
             {classRooms.map(c => (
               <option key={c.id} value={c.id}>{c.name}</option>
@@ -90,7 +84,13 @@ export default function CreateEnrollmentPage() {
 
         <div className={styles['form-group']}>
           <label htmlFor="enrollmentDate">Data da Matrícula</label>
-          <input id="enrollmentDate" name="enrollmentDate" type="date" value={form.enrollmentDate} onChange={handleChange} />
+          <input
+            id="enrollmentDate"
+            name="enrollmentDate"
+            type="date"
+            value={form.enrollmentDate}
+            onChange={handleChange}
+          />
           {errors.enrollmentDate && <span className={styles['text-danger']}>{errors.enrollmentDate}</span>}
         </div>
 
@@ -99,7 +99,11 @@ export default function CreateEnrollmentPage() {
         </div>
       </form>
 
-      <button className={styles['btn-secondary']} onClick={() => navigate('/enrollments')} type="button">
+      <button
+        className={styles['btn-secondary']}
+        onClick={() => navigate('/enrollments')}
+        type="button"
+      >
         Voltar à Lista
       </button>
     </>

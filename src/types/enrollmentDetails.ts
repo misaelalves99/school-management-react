@@ -1,9 +1,12 @@
 // src/types/enrollmentDetails.ts
 
-export interface EnrollmentDetails {
+import type { Enrollment } from './Enrollment';
+
+
+export interface EnrollmentDetails extends Enrollment {
   id: number;
-  studentName: string | null;
-  classRoomName: string | null;
+  studentName: string;
+  classRoomName: string;
   enrollmentDate: string;
   status: string;
 }
