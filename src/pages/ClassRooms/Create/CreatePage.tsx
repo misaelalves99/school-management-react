@@ -34,7 +34,7 @@ export default function CreateClassRoom() {
       schedule,
       subjects: [],
       teachers: [],
-      classTeacher: null,
+      classTeacher: undefined,
     });
 
     alert('Sala cadastrada com sucesso!');

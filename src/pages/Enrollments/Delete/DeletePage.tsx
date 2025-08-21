@@ -1,5 +1,6 @@
 // src/pages/Enrollments/Delete/DeletePage.tsx
 
+// src/pages/Enrollments/Delete/DeletePage.tsx
 import { useNavigate } from 'react-router-dom';
 import styles from './DeletePage.module.css';
 import type { EnrollmentWithNames } from '../../../types/EnrollmentWithNames';
