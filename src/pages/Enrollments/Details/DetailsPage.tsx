@@ -2,10 +2,10 @@
 
 import { useNavigate } from 'react-router-dom';
 import styles from './DetailsPage.module.css';
-import type { EnrollmentDetails as EnrollmentDetailsType } from '../../../types/EnrollmentDetails';
+import type { EnrollmentWithNames } from '../../../types/EnrollmentWithNames';
 
 interface DetailsProps {
-  enrollment: EnrollmentDetailsType;
+  enrollment: EnrollmentWithNames;
 }
 
 export default function EnrollmentDetails({ enrollment }: DetailsProps) {
@@ -18,13 +18,13 @@ export default function EnrollmentDetails({ enrollment }: DetailsProps) {
       <div className={styles.detailsContainer}>
         <dl className={styles.dlRow}>
           <dt className={styles.dt}>Aluno</dt>
-          <dd className={styles.dd}>{enrollment.studentName ?? 'Aluno não informado'}</dd>
+          <dd className={styles.dd}>{enrollment.studentName}</dd>
 
           <dt className={styles.dt}>Turma</dt>
-          <dd className={styles.dd}>{enrollment.classRoomName ?? 'Turma não informada'}</dd>
+          <dd className={styles.dd}>{enrollment.classRoomName}</dd>
 
           <dt className={styles.dt}>Status</dt>
-          <dd className={styles.dd}>{enrollment.status ?? '-'}</dd>
+          <dd className={styles.dd}>{enrollment.status}</dd>
 
           <dt className={styles.dt}>Data da Matrícula</dt>
           <dd className={styles.dd}>{new Date(enrollment.enrollmentDate).toLocaleDateString()}</dd>

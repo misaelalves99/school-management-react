@@ -2,10 +2,10 @@
 
 import { useNavigate } from 'react-router-dom';
 import styles from './DeletePage.module.css';
-import type { EnrollmentDetails } from '../../../types/EnrollmentDetails';
+import type { EnrollmentWithNames } from '../../../types/EnrollmentWithNames';
 
 interface DeleteEnrollmentProps {
-  enrollment: EnrollmentDetails;
+  enrollment: EnrollmentWithNames;
   onDelete: (id: number) => Promise<void>;
 }
 
@@ -31,21 +31,15 @@ export default function DeleteEnrollment({ enrollment, onDelete }: DeleteEnrollm
       </h3>
 
       <div className={styles.detailsContainer}>
-        <p><strong>Aluno:</strong> {enrollment.studentName ?? 'Aluno não informado'}</p>
-        <p><strong>Turma:</strong> {enrollment.classRoomName ?? 'Turma não informada'}</p>
+        <p><strong>Aluno:</strong> {enrollment.studentName}</p>
+        <p><strong>Turma:</strong> {enrollment.classRoomName}</p>
         <p><strong>Data da Matrícula:</strong> {new Date(enrollment.enrollmentDate).toLocaleDateString()}</p>
         <p><strong>Status:</strong> {enrollment.status}</p>
       </div>
 
       <form onSubmit={handleDelete} className={styles.form}>
-        <button type="submit" className={styles.btnDanger}>
-          Excluir
-        </button>
-        <button
-          type="button"
-          className={styles.btnSecondary}
-          onClick={() => navigate('/enrollments')}
-        >
+        <button type="submit" className={styles.btnDanger}>Excluir</button>
+        <button type="button" className={styles.btnSecondary} onClick={() => navigate('/enrollments')}>
           Cancelar
         </button>
       </form>

@@ -14,7 +14,7 @@ import type { Enrollment } from '../../types/Enrollment';
 import type { EnrollmentEdit } from '../../types/EnrollmentEdit';
 import type { EnrollmentWithNames } from '../../types/EnrollmentWithNames';
 
-// Converte Enrollment em EnrollmentWithNames
+// Função auxiliar para mapear Enrollment → EnrollmentWithNames
 function getEnrollmentDetails(
   enrollment: Enrollment,
   students: ReturnType<typeof useStudents>['students'] = [],
@@ -29,7 +29,9 @@ function getEnrollmentDetails(
   };
 }
 
+// ==============================
 // Wrapper Detalhes
+// ==============================
 export function EnrollmentDetailsWrapper() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -40,17 +42,26 @@ export function EnrollmentDetailsWrapper() {
   const [enrollment, setEnrollment] = useState<EnrollmentWithNames | null>(null);
 
   useEffect(() => {
-    if (!id) { navigate('/enrollments'); return; }
+    if (!id) {
+      navigate('/enrollments');
+      return;
+    }
     const found = enrollments.find(e => e.id === Number(id));
-    if (!found) { alert('Matrícula não encontrada'); navigate('/enrollments'); return; }
+    if (!found) {
+      alert('Matrícula não encontrada');
+      navigate('/enrollments');
+      return;
+    }
     setEnrollment(getEnrollmentDetails(found, students, classRooms));
-  }, [id, enrollments, navigate, students, classRooms]);
+  }, [id, enrollments, students, classRooms, navigate]);
 
   if (!enrollment) return <div>Carregando matrícula...</div>;
   return <EnrollmentDetails enrollment={enrollment} />;
 }
 
+// ==============================
 // Wrapper Edição
+// ==============================
 export function EnrollmentEditWrapper() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -59,11 +70,18 @@ export function EnrollmentEditWrapper() {
   const [enrollment, setEnrollment] = useState<EnrollmentEdit | null>(null);
 
   useEffect(() => {
-    if (!id) { navigate('/enrollments'); return; }
+    if (!id) {
+      navigate('/enrollments');
+      return;
+    }
     const found = enrollments.find(e => e.id === Number(id));
-    if (!found) { alert('Matrícula não encontrada'); navigate('/enrollments'); return; }
+    if (!found) {
+      alert('Matrícula não encontrada');
+      navigate('/enrollments');
+      return;
+    }
 
-    // Converte Enrollment para EnrollmentEdit
+    // Converte Enrollment → EnrollmentEdit
     setEnrollment({
       id: found.id,
       studentId: found.studentId,
@@ -74,9 +92,23 @@ export function EnrollmentEditWrapper() {
   }, [id, enrollments, navigate]);
 
   async function onSave(updatedEnrollment: EnrollmentEdit): Promise<void> {
+    if (!enrollment) return;
+
+    // Merge com os campos obrigatórios
+    const payload: Enrollment = {
+      id: updatedEnrollment.id,
+      studentId: updatedEnrollment.studentId || 0,
+      classRoomId: updatedEnrollment.classRoomId || 0,
+      enrollmentDate: updatedEnrollment.enrollmentDate || new Date().toISOString(),
+      status: updatedEnrollment.status || 'Ativa',
+    };
+
     try {
-      const updated = await updateEnrollment(updatedEnrollment);
-      if (!updated) { alert('Erro ao atualizar matrícula'); return; }
+      const updated = await updateEnrollment(payload);
+      if (!updated) {
+        alert('Erro ao atualizar matrícula');
+        return;
+      }
       navigate('/enrollments');
     } catch (error) {
       console.error('Erro ao salvar matrícula:', error);
@@ -88,7 +120,9 @@ export function EnrollmentEditWrapper() {
   return <EditEnrollment enrollment={enrollment} onSave={onSave} />;
 }
 
+// ==============================
 // Wrapper Exclusão
+// ==============================
 export function EnrollmentDeleteWrapper() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -99,11 +133,18 @@ export function EnrollmentDeleteWrapper() {
   const [enrollment, setEnrollment] = useState<EnrollmentWithNames | null>(null);
 
   useEffect(() => {
-    if (!id) { navigate('/enrollments'); return; }
+    if (!id) {
+      navigate('/enrollments');
+      return;
+    }
     const found = enrollments.find(e => e.id === Number(id));
-    if (!found) { alert('Matrícula não encontrada'); navigate('/enrollments'); return; }
+    if (!found) {
+      alert('Matrícula não encontrada');
+      navigate('/enrollments');
+      return;
+    }
     setEnrollment(getEnrollmentDetails(found, students, classRooms));
-  }, [id, enrollments, navigate, students, classRooms]);
+  }, [id, enrollments, students, classRooms, navigate]);
 
   async function onDelete(idToDelete: number) {
     try {

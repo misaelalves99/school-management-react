@@ -3,19 +3,18 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './EditPage.module.css';
-import type { EnrollmentEdit as EnrollmentEditType } from '../../../types/EnrollmentEdit';
+import type { EnrollmentEdit } from '../../../types/EnrollmentEdit';
 import type { ValidationErrors } from '../../../types/ValidationErrors';
 
 interface EditProps {
-  enrollment: EnrollmentEditType;
-  onSave: (data: EnrollmentEditType) => Promise<void>;
+  enrollment: EnrollmentEdit;
+  onSave: (data: EnrollmentEdit) => Promise<void>;
 }
 
 export default function EditEnrollment({ enrollment, onSave }: EditProps) {
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState<EnrollmentEditType>({ ...enrollment });
-  const [errors, setErrors] = useState<ValidationErrors<EnrollmentEditType>>({});
+  const [formData, setFormData] = useState<EnrollmentEdit>({ ...enrollment });
+  const [errors, setErrors] = useState<ValidationErrors<EnrollmentEdit>>({});
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -26,7 +25,7 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
   }
 
   function validate(): boolean {
-    const newErrors: ValidationErrors<EnrollmentEditType> = {};
+    const newErrors: ValidationErrors<EnrollmentEdit> = {};
     if (!formData.studentId) newErrors.studentId = 'Aluno é obrigatório.';
     if (!formData.classRoomId) newErrors.classRoomId = 'Turma é obrigatória.';
     if (!formData.enrollmentDate) newErrors.enrollmentDate = 'Data da matrícula é obrigatória.';
@@ -37,14 +36,7 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!validate()) return;
-
-    try {
-      await onSave(formData);
-      navigate('/enrollments');
-    } catch (error) {
-      console.error('Erro ao salvar matrícula:', error);
-      alert('Ocorreu um erro ao salvar a matrícula. Tente novamente.');
-    }
+    await onSave(formData);
   }
 
   return (
@@ -94,9 +86,7 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
         </div>
 
         <div className={styles['form-group']}>
-          <button type="submit" className={styles['btn-submit']}>
-            Salvar Alterações
-          </button>
+          <button type="submit" className={styles['btn-submit']}>Salvar Alterações</button>
         </div>
       </form>
 

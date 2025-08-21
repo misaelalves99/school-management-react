@@ -43,6 +43,7 @@ export default function CreateEnrollmentPage() {
       navigate('/enrollments');
     } catch (error) {
       console.error('Erro ao criar matrícula:', error);
+      alert('Ocorreu um erro ao criar a matrícula.');
     }
   }
 
@@ -57,7 +58,7 @@ export default function CreateEnrollmentPage() {
   if (!students.length || !classRooms.length) return <p>Carregando...</p>;
 
   return (
-    <>
+    <div className={styles.pageContainer}>
       <h1 className={styles.title}>Nova Matrícula</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles['form-group']}>
@@ -106,6 +107,6 @@ export default function CreateEnrollmentPage() {
       >
         Voltar à Lista
       </button>
-    </>
+    </div>
   );
 }
