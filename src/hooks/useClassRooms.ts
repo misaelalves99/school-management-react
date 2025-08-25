@@ -1,10 +1,10 @@
 // src/hooks/useClassRooms.ts
 
 import { useContext } from "react";
-import { ClassRoomsContext, ClassRoomsContextType } from "../contexts/ClassRooms/ClassRoomContext";
+import { ClassRoomContext, ClassRoomContextType } from "../contexts/ClassRooms/ClassRoomContext";
 
-export function useClassRooms(): ClassRoomsContextType {
-  const context = useContext(ClassRoomsContext);
+export function useClassRooms(): ClassRoomContextType {
+  const context = useContext(ClassRoomContext);
   if (!context) {
     throw new Error("useClassRooms deve ser usado dentro de um ClassRoomsProvider");
   }

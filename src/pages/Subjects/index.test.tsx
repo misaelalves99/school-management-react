@@ -1,0 +1,103 @@
+// src/pages/Subjects/index.test.tsx
+
+import { render, screen, fireEvent } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import SubjectsIndexPage from "./index";
+import { useSubjects } from "../../hooks/useSubjects";
+
+jest.mock("../../hooks/useSubjects");
+
+describe("SubjectsIndexPage", () => {
+  const subjectsMock = [
+    { id: 1, name: "Matemática", description: "Álgebra e Geometria", workloadHours: 60 },
+    { id: 2, name: "Física", description: "Mecânica e Termodinâmica", workloadHours: 80 },
+    { id: 3, name: "Química", description: "Química Orgânica", workloadHours: 50 },
+  ];
+
+  beforeEach(() => {
+    (useSubjects as jest.Mock).mockReturnValue({ subjects: subjectsMock });
+  });
+
+  it("renderiza lista de disciplinas", () => {
+    render(
+      <MemoryRouter>
+        <SubjectsIndexPage />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText("Matemática")).toBeInTheDocument();
+    expect(screen.getByText("Física")).toBeInTheDocument();
+    expect(screen.getByText("Química")).toBeInTheDocument();
+  });
+
+  it("filtra disciplinas pelo nome", () => {
+    render(
+      <MemoryRouter>
+        <SubjectsIndexPage />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByPlaceholderText(/Digite o nome ou descrição/i), {
+      target: { value: "Física" },
+    });
+
+    expect(screen.getByText("Física")).toBeInTheDocument();
+    expect(screen.queryByText("Matemática")).not.toBeInTheDocument();
+    expect(screen.queryByText("Química")).not.toBeInTheDocument();
+  });
+
+  it("filtra disciplinas pela descrição", () => {
+    render(
+      <MemoryRouter>
+        <SubjectsIndexPage />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByPlaceholderText(/Digite o nome ou descrição/i), {
+      target: { value: "Orgânica" },
+    });
+
+    expect(screen.getByText("Química")).toBeInTheDocument();
+    expect(screen.queryByText("Matemática")).not.toBeInTheDocument();
+    expect(screen.queryByText("Física")).not.toBeInTheDocument();
+  });
+
+  it("mostra mensagem quando não há disciplinas correspondentes", () => {
+    render(
+      <MemoryRouter>
+        <SubjectsIndexPage />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByPlaceholderText(/Digite o nome ou descrição/i), {
+      target: { value: "Biologia" },
+    });
+
+    expect(screen.getByText("Nenhuma disciplina encontrada.")).toBeInTheDocument();
+  });
+
+  it("mostra paginação corretamente", () => {
+    const manySubjects = Array.from({ length: 25 }, (_, i) => ({
+      id: i + 1,
+      name: `Disciplina ${i + 1}`,
+      description: "Teste",
+      workloadHours: 10,
+    }));
+
+    (useSubjects as jest.Mock).mockReturnValue({ subjects: manySubjects });
+
+    render(
+      <MemoryRouter>
+        <SubjectsIndexPage />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText("Página 1 de 3")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("Próxima"));
+    expect(screen.getByText("Página 2 de 3")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("Anterior"));
+    expect(screen.getByText("Página 1 de 3")).toBeInTheDocument();
+  });
+});

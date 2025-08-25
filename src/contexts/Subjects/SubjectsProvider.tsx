@@ -1,7 +1,7 @@
 // src/contexts/Subjects/SubjectsProvider.tsx
 
-import { useState, useCallback, ReactNode } from "react";
-import { SubjectsContext } from "./SubjectsContext";
+import { useState, ReactNode } from "react";
+import { SubjectsContext, SubjectsContextData } from "./SubjectsContext";
 import type { Subject } from "../../types/Subject";
 import { mockSubjects } from "../../mocks/Subjects";
 
@@ -12,42 +12,37 @@ interface SubjectsProviderProps {
 export function SubjectsProvider({ children }: SubjectsProviderProps) {
   const [subjects, setSubjects] = useState<Subject[]>(mockSubjects.list());
 
-  const reloadSubjects = useCallback(() => {
-    setSubjects(mockSubjects.list());
-  }, []);
+  const reloadSubjects = () => setSubjects(mockSubjects.list());
 
-  const createSubject = useCallback((data: Omit<Subject, "id">) => {
-    const newSubject = mockSubjects.create(data);
-    setSubjects(prev => [...prev, newSubject]);
-    return newSubject;
-  }, []);
+  const createSubject = (data: Omit<Subject, "id">) => {
+    const created = mockSubjects.create(data);
+    reloadSubjects();
+    return created;
+  };
 
-  const updateSubject = useCallback((id: number, data: Partial<Omit<Subject, "id">>) => {
+  const updateSubject = (id: number, data: Partial<Omit<Subject, "id">>) => {
     const updated = mockSubjects.update(id, data);
-    if (updated) setSubjects(prev => prev.map(s => (s.id === id ? updated : s)));
+    reloadSubjects();
     return updated;
-  }, []);
+  };
 
-  const deleteSubject = useCallback((id: number) => {
+  const deleteSubject = (id: number) => {
     const deleted = mockSubjects.delete(id);
-    if (deleted) setSubjects(prev => prev.filter(s => s.id !== id));
+    reloadSubjects();
     return deleted;
-  }, []);
+  };
 
-  const getSubjectById = useCallback((id: number) => subjects.find(s => s.id === id), [subjects]);
+  // CORREÇÃO: aqui era getById, mas o mock define como get
+  const getSubjectById = (id: number) => mockSubjects.get(id);
 
-  return (
-    <SubjectsContext.Provider
-      value={{
-        subjects,
-        createSubject,
-        updateSubject,
-        deleteSubject,
-        getSubjectById,
-        reloadSubjects,
-      }}
-    >
-      {children}
-    </SubjectsContext.Provider>
-  );
+  const contextValue: SubjectsContextData = {
+    subjects,
+    createSubject,
+    updateSubject,
+    deleteSubject,
+    getSubjectById,
+    reloadSubjects,
+  };
+
+  return <SubjectsContext.Provider value={contextValue}>{children}</SubjectsContext.Provider>;
 }

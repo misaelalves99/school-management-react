@@ -1,37 +1,33 @@
 // src/mocks/subjects.ts
-
-import type { Subject } from '../types/Subject';
+import type { Subject } from "../types/Subject";
 
 let subjectsData: Subject[] = [
-  { id: 1, name: "Matemática", description: "Disciplina de matemática básica", workloadHours: 60 },
-  { id: 2, name: "Física", description: "Fundamentos de física moderna", workloadHours: 60 },
-  { id: 3, name: "Química", description: "Introdução à química orgânica", workloadHours: 60 },
-  { id: 4, name: "Biologia", description: "Biologia celular e molecular", workloadHours: 60 },
+  { id: 1, name: "Matemática", description: "Álgebra e geometria", workloadHours: 60 },
+  { id: 2, name: "Física", description: "Mecânica e termodinâmica", workloadHours: 50 },
 ];
-
-const getNextId = (): number => {
-  return subjectsData.length > 0 ? Math.max(...subjectsData.map(s => s.id)) + 1 : 1;
-};
 
 export const mockSubjects = {
   list: (): Subject[] => [...subjectsData],
-  get: (id: number): Subject | undefined => subjectsData.find(s => s.id === id),
-  create: (subject: Omit<Subject, 'id'>): Subject => {
-    const newSubject: Subject = { id: getNextId(), ...subject };
-    subjectsData = [...subjectsData, newSubject];
+
+  create: (data: Omit<Subject, "id">): Subject => {
+    const newId = subjectsData.length ? Math.max(...subjectsData.map(s => s.id)) + 1 : 1;
+    const newSubject: Subject = { ...data, id: newId };
+    subjectsData.push(newSubject);
     return newSubject;
   },
-  update: (id: number, updated: Partial<Omit<Subject, 'id'>>): Subject | undefined => {
+
+  update: (id: number, data: Partial<Omit<Subject, "id">>): Subject | undefined => {
     const index = subjectsData.findIndex(s => s.id === id);
     if (index === -1) return undefined;
-    const updatedSubject = { ...subjectsData[index], ...updated };
-    subjectsData = subjectsData.map(s => s.id === id ? updatedSubject : s);
-    return updatedSubject;
+    subjectsData[index] = { ...subjectsData[index], ...data };
+    return subjectsData[index];
   },
+
   delete: (id: number): boolean => {
-    const index = subjectsData.findIndex(s => s.id === id);
-    if (index === -1) return false;
+    const originalLength = subjectsData.length;
     subjectsData = subjectsData.filter(s => s.id !== id);
-    return true;
-  }
+    return subjectsData.length < originalLength;
+  },
+
+  get: (id: number): Subject | undefined => subjectsData.find(s => s.id === id), // renomeado para get
 };
