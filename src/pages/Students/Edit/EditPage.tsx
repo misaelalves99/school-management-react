@@ -6,10 +6,10 @@ import styles from "./EditPage.module.css";
 import type { Student } from "../../../types/Student";
 import { useStudents } from "../../../hooks/useStudents";
 
-export default function StudentEdit() {
+export default function StudentEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { students, editStudent } = useStudents(); // ⚡ usando contexto
+  const { students, editStudent } = useStudents();
 
   const [formData, setFormData] = useState<Omit<Student, "id">>({
     name: "",
@@ -20,7 +20,7 @@ export default function StudentEdit() {
     address: "",
   });
 
-  const [errors, setErrors] = useState<Partial<Record<keyof Student, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof Omit<Student, "id">, string>>>({});
 
   useEffect(() => {
     if (!id) return;
@@ -47,54 +47,55 @@ export default function StudentEdit() {
 
   const validate = () => {
     const newErrors: typeof errors = {};
-    if (!formData.name) newErrors.name = "Nome é obrigatório.";
-    if (!formData.email) newErrors.email = "Email é obrigatório.";
+    if (!formData.name.trim()) newErrors.name = "Nome é obrigatório.";
+    if (!formData.email.trim()) newErrors.email = "Email é obrigatório.";
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email inválido.";
     if (!formData.dateOfBirth) newErrors.dateOfBirth = "Data de nascimento é obrigatória.";
-    if (!formData.enrollmentNumber) newErrors.enrollmentNumber = "Matrícula é obrigatória.";
-    return newErrors;
+    if (!formData.enrollmentNumber.trim()) newErrors.enrollmentNumber = "Matrícula é obrigatória.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
+    if (!validate()) return;
     if (!id) return;
+
     const updated = editStudent(Number(id), formData);
     if (!updated) {
       alert("Erro ao atualizar aluno");
       return;
     }
+
     alert("Aluno atualizado com sucesso!");
     navigate("/students");
   };
 
   return (
-    <div className={styles.container}>
-      <h1>Editar Aluno</h1>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        {Object.entries(formData).map(([key, val]) => (
+    <div className={styles.createContainer}>
+      <h1 className={styles.createTitle}>Editar Aluno</h1>
+      <form onSubmit={handleSubmit} className={styles.createForm}>
+        {Object.entries(formData).map(([key, value]) => (
           <div key={key} className={styles.formGroup}>
-            <label htmlFor={key}>{key}</label>
+            <label htmlFor={key} className={styles.formLabel}>
+              {key.charAt(0).toUpperCase() + key.slice(1)}:
+            </label>
             <input
               id={key}
               name={key}
               type={key === "dateOfBirth" ? "date" : "text"}
-              value={val}
+              value={value}
               onChange={handleChange}
+              className={styles.formInput}
             />
-            {errors[key as keyof Student] && (
-              <span className={styles.error}>{errors[key as keyof Student]}</span>
+            {errors[key as keyof typeof formData] && (
+              <span className={styles.formError}>{errors[key as keyof typeof formData]}</span>
             )}
           </div>
         ))}
-        <div className={styles.actions}>
-          <button type="submit" className={styles.btnPrimary}>
-            Salvar Alterações
-          </button>
+
+        <div className={styles.formActions}>
+          <button type="submit" className={styles.btnPrimary}>Salvar Alterações</button>
           <button
             type="button"
             className={styles.btnSecondary}

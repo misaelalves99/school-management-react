@@ -1,10 +1,12 @@
 // src/pages/ClassRooms/Details/DetailsPage.tsx
 
-import { Link } from 'react-router-dom';
-import styles from './DetailsPage.module.css';
+// src/pages/ClassRooms/Details/DetailsPage.tsx
+
 import { useClassRooms } from '../../../hooks/useClassRooms';
 import type { Subject } from '../../../types/Subject';
 import type { Teacher } from '../../../types/Teacher';
+import styles from './DetailsPage.module.css';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   id: number;
@@ -12,6 +14,7 @@ interface Props {
 
 const ClassRoomDetailsPage: React.FC<Props> = ({ id }) => {
   const { getById } = useClassRooms();
+  const navigate = useNavigate();
   const classRoom = getById(id);
 
   if (!classRoom) return <p>Turma não encontrada.</p>;
@@ -20,18 +23,24 @@ const ClassRoomDetailsPage: React.FC<Props> = ({ id }) => {
     <div className={styles.container}>
       <h1 className={styles.title}>Detalhes da Turma</h1>
 
-      <dl className={styles.details}>
-        <dt>Nome</dt>
-        <dd>{classRoom.name}</dd>
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Nome:</span>
+        <span className={styles.detailsValue}>{classRoom.name}</span>
+      </div>
 
-        <dt>Capacidade</dt>
-        <dd>{classRoom.capacity}</dd>
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Capacidade:</span>
+        <span className={styles.detailsValue}>{classRoom.capacity}</span>
+      </div>
 
-        <dt>Horário</dt>
-        <dd>{classRoom.schedule}</dd>
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Horário:</span>
+        <span className={styles.detailsValue}>{classRoom.schedule}</span>
+      </div>
 
-        <dt>Disciplinas</dt>
-        <dd>
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Disciplinas:</span>
+        <span className={styles.detailsValue}>
           {classRoom.subjects?.length ? (
             <ul>
               {classRoom.subjects.map((s: Subject) => (
@@ -39,12 +48,14 @@ const ClassRoomDetailsPage: React.FC<Props> = ({ id }) => {
               ))}
             </ul>
           ) : (
-            <span className={styles.muted}>Sem disciplinas vinculadas.</span>
+            <span className={styles.muted}>Sem disciplinas vinculadas</span>
           )}
-        </dd>
+        </span>
+      </div>
 
-        <dt>Professores</dt>
-        <dd>
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Professores:</span>
+        <span className={styles.detailsValue}>
           {classRoom.teachers?.length ? (
             <ul>
               {classRoom.teachers.map((t: Teacher) => (
@@ -52,21 +63,31 @@ const ClassRoomDetailsPage: React.FC<Props> = ({ id }) => {
               ))}
             </ul>
           ) : (
-            <span className={styles.muted}>Sem professores vinculados.</span>
+            <span className={styles.muted}>Sem professores vinculados</span>
           )}
-        </dd>
+        </span>
+      </div>
 
-        <dt>Professor Responsável</dt>
-        <dd>{classRoom.classTeacher?.name ?? 'Não definido'}</dd>
-      </dl>
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Professor Responsável:</span>
+        <span className={styles.detailsValue}>
+          {classRoom.classTeacher?.name ?? 'Não definido'}
+        </span>
+      </div>
 
       <div className={styles.actions}>
-        <Link to={`/classrooms/edit/${classRoom.id}`} className={`${styles.btn} ${styles.btnWarning}`}>
+        <button
+          className={styles.btnWarning}
+          onClick={() => navigate(`/classrooms/edit/${classRoom.id}`)}
+        >
           Editar
-        </Link>
-        <Link to="/classrooms" className={`${styles.btn} ${styles.btnSecondary}`}>
+        </button>
+        <button
+          className={styles.btnSecondary}
+          onClick={() => navigate('/classrooms')}
+        >
           Voltar
-        </Link>
+        </button>
       </div>
     </div>
   );

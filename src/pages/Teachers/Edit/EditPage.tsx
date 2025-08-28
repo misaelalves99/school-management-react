@@ -6,7 +6,7 @@ import styles from "./EditPage.module.css";
 import { useTeachers } from "../../../hooks/useTeachers";
 import type { TeacherFormData } from "../../../types/TeacherFormData";
 
-export default function TeacherEdit() {
+export default function TeacherEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getTeacher, editTeacher } = useTeachers();
@@ -42,6 +42,11 @@ export default function TeacherEdit() {
     setLoading(false);
   }, [id, navigate, getTeacher]);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
   const validate = (): boolean => {
     const newErrors: Partial<Record<keyof TeacherFormData, string>> = {};
     if (!formData.name.trim()) newErrors.name = "Nome é obrigatório.";
@@ -52,10 +57,6 @@ export default function TeacherEdit() {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -76,44 +77,38 @@ export default function TeacherEdit() {
   if (loading) return <div>Carregando...</div>;
 
   return (
-    <>
-      <h1 className={styles.title}>Editar Professor</h1>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles["edit-container"]}>
-          {[
-            { label: "Nome", name: "name", type: "text" },
-            { label: "Email", name: "email", type: "email" },
-            { label: "Data de Nascimento", name: "dateOfBirth", type: "date" },
-            { label: "Disciplina", name: "subject", type: "text" },
-            { label: "Telefone", name: "phone", type: "tel" },
-            { label: "Endereço", name: "address", type: "text" },
-          ].map(({ label, name, type }) => (
-            <div key={name} className={styles["form-group"]}>
-              <label htmlFor={name}>{label}</label>
-              <input
-                id={name}
-                name={name}
-                type={type}
-                value={formData[name as keyof TeacherFormData]}
-                onChange={handleChange}
-              />
-              {errors[name as keyof TeacherFormData] && (
-                <span className={styles["text-danger"]}>
-                  {errors[name as keyof TeacherFormData]}
-                </span>
-              )}
-            </div>
-          ))}
-          <button type="submit">Salvar</button>
+    <div className={styles.createContainer}>
+      <h1 className={styles.createTitle}>Editar Professor</h1>
+      <form onSubmit={handleSubmit} className={styles.createForm}>
+        {Object.entries(formData).map(([key, value]) => (
+          <div key={key} className={styles.formGroup}>
+            <label htmlFor={key} className={styles.formLabel}>
+              {key.charAt(0).toUpperCase() + key.slice(1)}:
+            </label>
+            <input
+              id={key}
+              name={key}
+              type={key === "dateOfBirth" ? "date" : key === "email" ? "email" : "text"}
+              value={value}
+              onChange={handleChange}
+              className={styles.formInput}
+            />
+            {errors[key as keyof TeacherFormData] && (
+              <span className={styles.formError}>{errors[key as keyof TeacherFormData]}</span>
+            )}
+          </div>
+        ))}
+        <div className={styles.formActions}>
+          <button type="submit" className={styles.btnPrimary}>Salvar Alterações</button>
+          <button
+            type="button"
+            className={styles.btnSecondary}
+            onClick={() => navigate("/teachers")}
+          >
+            Voltar
+          </button>
         </div>
       </form>
-      <button
-        className={styles["btn-secondary"]}
-        onClick={() => navigate("/teachers")}
-        type="button"
-      >
-        Voltar à Lista
-      </button>
-    </>
+    </div>
   );
 }

@@ -18,9 +18,6 @@ const DeleteClassRoom: React.FC<Props> = ({ id }) => {
   if (!classRoom) return <p>Turma não encontrada.</p>;
 
   const handleDelete = () => {
-    const confirmed = window.confirm(`Deseja realmente excluir a turma "${classRoom.name}"?`);
-    if (!confirmed) return;
-
     try {
       remove(classRoom.id);
       alert('Turma excluída com sucesso!');

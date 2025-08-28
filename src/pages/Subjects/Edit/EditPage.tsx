@@ -26,11 +26,7 @@ export default function SubjectEditPage() {
       return;
     }
 
-    const subjectId = Number(id);
-
-    // USAR O HOOK CORRETAMENTE
-    const found = getSubjectById(subjectId);
-
+    const found = getSubjectById(Number(id));
     if (!found) {
       alert("Disciplina não encontrada.");
       navigate("/subjects");
@@ -56,9 +52,7 @@ export default function SubjectEditPage() {
 
   const validate = () => {
     const newErrors: typeof errors = {};
-    if (!subject.name.trim()) {
-      newErrors.name = "O nome da disciplina é obrigatório.";
-    }
+    if (!subject.name.trim()) newErrors.name = "O nome da disciplina é obrigatório.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -78,57 +72,54 @@ export default function SubjectEditPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Editar Disciplina</h1>
-      <form onSubmit={handleSubmit} className={styles.form}>
+    <div className={styles.createContainer}>
+      <h1 className={styles.createTitle}>Editar Disciplina</h1>
+      <form onSubmit={handleSubmit} className={styles.createForm}>
         <div className={styles.formGroup}>
-          <label htmlFor="name">Nome da Disciplina</label>
+          <label htmlFor="name" className={styles.formLabel}>Nome da Disciplina:</label>
           <input
             type="text"
             id="name"
             name="name"
             value={subject.name}
             onChange={handleChange}
+            className={styles.formInput}
           />
-          {errors.name && (
-            <span className={styles.textDanger}>{errors.name}</span>
-          )}
+          {errors.name && <span className={styles.formError}>{errors.name}</span>}
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="description">Descrição</label>
+          <label htmlFor="description" className={styles.formLabel}>Descrição:</label>
           <textarea
             id="description"
             name="description"
             value={subject.description}
             onChange={handleChange}
+            className={styles.formInput}
+            rows={3}
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="workloadHours">Carga Horária</label>
+          <label htmlFor="workloadHours" className={styles.formLabel}>Carga Horária:</label>
           <input
             type="number"
             id="workloadHours"
             name="workloadHours"
             value={subject.workloadHours}
             onChange={handleChange}
+            className={styles.formInput}
           />
         </div>
 
-        <div className={styles.actions}>
-          <button
-            type="submit"
-            className={`${styles.btn} ${styles.btnPrimary}`}
-          >
-            Salvar Alterações
-          </button>
+        <div className={styles.formActions}>
+          <button type="submit" className={styles.btnPrimary}>Salvar Alterações</button>
           <button
             type="button"
-            className={`${styles.btn} ${styles.btnSecondary}`}
+            className={styles.btnSecondary}
             onClick={() => navigate("/subjects")}
           >
-            Voltar à Lista
+            Voltar
           </button>
         </div>
       </form>

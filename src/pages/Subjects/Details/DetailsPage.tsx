@@ -1,27 +1,39 @@
 // src/pages/Subjects/Details/DetailsPage.tsx
 
-import { useNavigate, useParams } from 'react-router-dom';
-import styles from './DetailsPage.module.css';
-import { useSubjects } from '../../../hooks/useSubjects';
+// src/pages/Subjects/Details/DetailsPage.tsx
+
+import { useNavigate, useParams } from "react-router-dom";
+import styles from "./DetailsPage.module.css";
+import { useSubjects } from "../../../hooks/useSubjects";
 
 export default function SubjectDetails() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { getSubjectById } = useSubjects();
 
-  // Converter o ID de string para número
-  const subjectId = Number(id);
+  if (!id) {
+    return (
+      <div className={styles.container}>
+        <h2 className={styles.title}>ID inválido</h2>
+        <button
+          className={styles.btnSecondary}
+          onClick={() => navigate("/subjects")}
+        >
+          Voltar
+        </button>
+      </div>
+    );
+  }
 
-  // Buscar o subject pelo contexto
-  const subject = getSubjectById(subjectId);
+  const subject = getSubjectById(Number(id));
 
   if (!subject) {
     return (
       <div className={styles.container}>
-        <h2>Disciplina não encontrada.</h2>
+        <h2 className={styles.title}>Disciplina não encontrada</h2>
         <button
-          className={`${styles.btn} ${styles.btnSecondary}`}
-          onClick={() => navigate('/subjects')}
+          className={styles.btnSecondary}
+          onClick={() => navigate("/subjects")}
         >
           Voltar
         </button>
@@ -30,35 +42,40 @@ export default function SubjectDetails() {
   }
 
   return (
-    <>
+    <div className={styles.container}>
       <h1 className={styles.title}>Detalhes da Disciplina</h1>
 
-      <div className={styles.container}>
-        <dl className={styles.row}>
-          <dt>Nome</dt>
-          <dd>{subject.name}</dd>
-
-          <dt>Descrição</dt>
-          <dd>{subject.description}</dd>
-
-          <dt>Carga Horária</dt>
-          <dd>{subject.workloadHours} horas</dd>
-        </dl>
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Nome:</span>
+        <span className={styles.detailsValue}>{subject.name}</span>
       </div>
 
-      <button
-        className={`${styles.btn} ${styles.btnWarning}`}
-        onClick={() => navigate(`/subjects/edit/${subject.id}`)}
-      >
-        Editar
-      </button>
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Descrição:</span>
+        <span className={styles.detailsValue}>{subject.description}</span>
+      </div>
 
-      <button
-        className={`${styles.btn} ${styles.btnSecondary}`}
-        onClick={() => navigate('/subjects')}
-      >
-        Voltar
-      </button>
-    </>
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Carga Horária:</span>
+        <span className={styles.detailsValue}>
+          {subject.workloadHours} horas
+        </span>
+      </div>
+
+      <div className={styles.actions}>
+        <button
+          className={styles.btnWarning}
+          onClick={() => navigate(`/subjects/edit/${subject.id}`)}
+        >
+          Editar
+        </button>
+        <button
+          className={styles.btnSecondary}
+          onClick={() => navigate("/subjects")}
+        >
+          Voltar à Lista
+        </button>
+      </div>
+    </div>
   );
 }

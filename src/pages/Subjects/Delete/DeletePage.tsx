@@ -13,10 +13,7 @@ export default function SubjectDeletePage() {
     return (
       <div className={styles.container}>
         <h2>ID inválido.</h2>
-        <button
-          className={`${styles.btn} ${styles.btnSecondary}`}
-          onClick={() => navigate("/subjects")}
-        >
+        <button className={`${styles.btnSecondary}`} onClick={() => navigate("/subjects")}>
           Voltar
         </button>
       </div>
@@ -30,10 +27,7 @@ export default function SubjectDeletePage() {
     return (
       <div className={styles.container}>
         <h2>Disciplina não encontrada.</h2>
-        <button
-          className={`${styles.btn} ${styles.btnSecondary}`}
-          onClick={() => navigate("/subjects")}
-        >
+        <button className={`${styles.btnSecondary}`} onClick={() => navigate("/subjects")}>
           Voltar
         </button>
       </div>
@@ -41,21 +35,13 @@ export default function SubjectDeletePage() {
   }
 
   const handleDelete = () => {
-    const confirmed = window.confirm(
-      `Deseja realmente excluir a disciplina "${subject.name}"?`
-    );
-    if (!confirmed) return;
-
     const deleted = deleteSubject(subject.id);
-
     if (!deleted) {
       alert("Erro ao excluir a disciplina.");
       return;
     }
 
-    // Atualiza a lista do contexto
     reloadSubjects();
-
     alert("Disciplina excluída com sucesso!");
     navigate("/subjects");
   };
@@ -63,9 +49,7 @@ export default function SubjectDeletePage() {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Excluir Disciplina</h1>
-      <h3 className={styles.warning}>
-        Tem certeza que deseja excluir esta disciplina?
-      </h3>
+      <h3 className={styles.warning}>Tem certeza que deseja excluir esta disciplina?</h3>
 
       <div className={styles.subjectBox}>
         <h4>{subject.name}</h4>
@@ -74,18 +58,10 @@ export default function SubjectDeletePage() {
       </div>
 
       <div className={styles.actions}>
-        <button
-          type="button"
-          className={`${styles.btn} ${styles.btnDanger}`}
-          onClick={handleDelete}
-        >
+        <button type="button" className={styles.btnDanger} onClick={handleDelete}>
           Excluir
         </button>
-        <button
-          type="button"
-          className={`${styles.btn} ${styles.btnSecondary}`}
-          onClick={() => navigate("/subjects")}
-        >
+        <button type="button" className={styles.btnSecondary} onClick={() => navigate("/subjects")}>
           Cancelar
         </button>
       </div>

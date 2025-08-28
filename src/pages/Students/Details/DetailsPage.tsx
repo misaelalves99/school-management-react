@@ -35,12 +35,36 @@ export default function StudentDetails() {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Detalhes do Aluno</h1>
-      <div><strong>Nome:</strong> {student.name}</div>
-      <div><strong>Email:</strong> {student.email}</div>
-      <div><strong>Data de Nascimento:</strong> {student.dateOfBirth}</div>
-      <div><strong>Número de Matrícula:</strong> {student.enrollmentNumber}</div>
-      <div><strong>Telefone:</strong> {student.phone || "-"}</div>
-      <div><strong>Endereço:</strong> {student.address || "-"}</div>
+
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Nome:</span>
+        <span className={styles.detailsValue}>{student.name}</span>
+      </div>
+
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Email:</span>
+        <span className={styles.detailsValue}>{student.email}</span>
+      </div>
+
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Data de Nascimento:</span>
+        <span className={styles.detailsValue}>{student.dateOfBirth}</span>
+      </div>
+
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Número de Matrícula:</span>
+        <span className={styles.detailsValue}>{student.enrollmentNumber}</span>
+      </div>
+
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Telefone:</span>
+        <span className={styles.detailsValue}>{student.phone || '-'}</span>
+      </div>
+
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Endereço:</span>
+        <span className={styles.detailsValue}>{student.address || '-'}</span>
+      </div>
 
       <div className={styles.actions}>
         <button
@@ -49,7 +73,7 @@ export default function StudentDetails() {
         >
           Editar
         </button>
-        <button className={styles.btnSecondary} onClick={() => navigate("/students")}>
+        <button className={styles.btnSecondary} onClick={() => navigate('/students')}>
           Voltar à Lista
         </button>
       </div>

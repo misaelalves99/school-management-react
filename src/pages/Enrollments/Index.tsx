@@ -1,5 +1,7 @@
 // src/pages/Enrollments/index.tsx
 
+// src/pages/Enrollments/index.tsx
+
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import styles from './EnrollmentsPage.module.css';
@@ -16,7 +18,7 @@ export default function EnrollmentIndexPage() {
   const [searchString, setSearchString] = useState(searchParams.get('searchString') || '');
   const currentPage = Number(searchParams.get('page') || '1');
 
-  const { enrollments, removeEnrollment } = useEnrollments();
+  const { enrollments } = useEnrollments();
   const { students = [] } = useStudents();
   const { classRooms = [] } = useClassRooms();
 
@@ -72,17 +74,6 @@ export default function EnrollmentIndexPage() {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchString(e.target.value);
     setSearchParams({ searchString: e.target.value, page: '1' });
-  };
-
-  const handleDelete = async (id: number) => {
-    if (!confirm('Deseja realmente excluir esta matrícula?')) return;
-    try {
-      await removeEnrollment(id);
-      loadData();
-    } catch (error) {
-      console.error('Erro ao excluir matrícula:', error);
-      alert('Ocorreu um erro ao excluir a matrícula. Tente novamente.');
-    }
   };
 
   return (
@@ -145,12 +136,12 @@ export default function EnrollmentIndexPage() {
                     >
                       Editar
                     </Link>{' '}
-                    <button
+                    <Link
+                      to={`/enrollments/delete/${e.id}`}
                       className={`${styles.btn} ${styles.btnDanger}`}
-                      onClick={() => handleDelete(e.id)}
                     >
                       Excluir
-                    </button>
+                    </Link>
                   </td>
                 </tr>
               ))

@@ -45,25 +45,30 @@ export default function StudentCreatePage() {
   };
 
   return (
-    <div className={styles.container}>
-      <h1>Cadastrar Novo Aluno</h1>
-      <form onSubmit={handleSubmit} className={styles.form}>
+    <div className={styles.createContainer}>
+      <h1 className={styles.createTitle}>Cadastrar Novo Aluno</h1>
+      <form onSubmit={handleSubmit} className={styles.createForm}>
         {Object.entries(formData).map(([key, value]) => (
           <div key={key} className={styles.formGroup}>
-            <label htmlFor={key}>{key.charAt(0).toUpperCase() + key.slice(1)}:</label>
+            <label htmlFor={key} className={styles.formLabel}>
+              {key.charAt(0).toUpperCase() + key.slice(1)}:
+            </label>
             <input
               id={key}
               name={key}
               type={key === "dateOfBirth" ? "date" : "text"}
               value={value}
               onChange={handleChange}
+              className={styles.formInput}
             />
             {errors[key as keyof typeof formData] && (
-              <span className={styles.error}>{errors[key as keyof typeof formData]}</span>
+              <span className={styles.formError}>
+                {errors[key as keyof typeof formData]}
+              </span>
             )}
           </div>
         ))}
-        <div className={styles.actions}>
+        <div className={styles.formActions}>
           <button type="submit" className={styles.btnPrimary}>Salvar</button>
           <button type="button" className={styles.btnSecondary} onClick={() => navigate("/students")}>
             Cancelar

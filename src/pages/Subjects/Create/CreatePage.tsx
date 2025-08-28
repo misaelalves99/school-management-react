@@ -37,56 +37,60 @@ export default function CreateSubject() {
     e.preventDefault();
     if (!validate()) return;
 
-    createSubject(subject); // salva no contexto
+    createSubject(subject);
     alert('Disciplina cadastrada com sucesso!');
     navigate('/subjects');
   };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Cadastrar Nova Disciplina</h1>
-      <form onSubmit={handleSubmit} className={styles.form}>
+    <div className={styles.createContainer}>
+      <h1 className={styles.createTitle}>Cadastrar Nova Disciplina</h1>
+      <form onSubmit={handleSubmit} className={styles.createForm}>
         <div className={styles.formGroup}>
-          <label htmlFor="name">Nome da Disciplina</label>
+          <label htmlFor="name" className={styles.formLabel}>Nome da Disciplina</label>
           <input
             type="text"
             id="name"
             name="name"
             value={subject.name}
             onChange={handleChange}
+            className={styles.formInput}
           />
-          {errors.name && <span className={styles.textDanger}>{errors.name}</span>}
+          {errors.name && <span className={styles.formError}>{errors.name}</span>}
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="description">Descrição</label>
+          <label htmlFor="description" className={styles.formLabel}>Descrição</label>
           <textarea
             id="description"
             name="description"
             value={subject.description}
             onChange={handleChange}
+            className={styles.formInput}
+            rows={3}
           />
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="workloadHours">Carga Horária</label>
+          <label htmlFor="workloadHours" className={styles.formLabel}>Carga Horária</label>
           <input
             type="number"
             id="workloadHours"
             name="workloadHours"
             value={subject.workloadHours}
             onChange={handleChange}
+            className={styles.formInput}
           />
         </div>
 
-        <div className={styles.actions}>
-          <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>Salvar</button>
+        <div className={styles.formActions}>
+          <button type="submit" className={styles.btnPrimary}>Salvar</button>
           <button
             type="button"
-            className={`${styles.btn} ${styles.btnSecondary}`}
+            className={styles.btnSecondary}
             onClick={() => navigate('/subjects')}
           >
-            Voltar à Lista
+            Cancelar
           </button>
         </div>
       </form>

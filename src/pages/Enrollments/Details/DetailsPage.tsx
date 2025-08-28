@@ -1,5 +1,7 @@
 // src/pages/Enrollments/Details/DetailsPage.tsx
 
+// src/pages/Enrollments/Details/DetailsPage.tsx
+
 import { useNavigate } from 'react-router-dom';
 import styles from './DetailsPage.module.css';
 import type { EnrollmentWithNames } from '../../../types/EnrollmentWithNames';
@@ -12,34 +14,40 @@ export default function EnrollmentDetails({ enrollment }: DetailsProps) {
   const navigate = useNavigate();
 
   return (
-    <div className={styles.pageContainer}>
+    <div className={styles.container}>
       <h1 className={styles.title}>Detalhes da Matrícula</h1>
 
-      <div className={styles.detailsContainer}>
-        <dl className={styles.dlRow}>
-          <dt className={styles.dt}>Aluno</dt>
-          <dd className={styles.dd}>{enrollment.studentName}</dd>
-
-          <dt className={styles.dt}>Turma</dt>
-          <dd className={styles.dd}>{enrollment.classRoomName}</dd>
-
-          <dt className={styles.dt}>Status</dt>
-          <dd className={styles.dd}>{enrollment.status}</dd>
-
-          <dt className={styles.dt}>Data da Matrícula</dt>
-          <dd className={styles.dd}>{new Date(enrollment.enrollmentDate).toLocaleDateString()}</dd>
-        </dl>
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Aluno:</span>
+        <span className={styles.detailsValue}>{enrollment.studentName}</span>
       </div>
 
-      <div className={styles.buttonGroup}>
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Turma:</span>
+        <span className={styles.detailsValue}>{enrollment.classRoomName}</span>
+      </div>
+
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Status:</span>
+        <span className={styles.detailsValue}>{enrollment.status}</span>
+      </div>
+
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Data da Matrícula:</span>
+        <span className={styles.detailsValue}>
+          {new Date(enrollment.enrollmentDate).toLocaleDateString()}
+        </span>
+      </div>
+
+      <div className={styles.actions}>
         <button
-          className={`${styles.btn} ${styles.btnWarning}`}
+          className={styles.btnWarning}
           onClick={() => navigate(`/enrollments/edit/${enrollment.id}`)}
         >
           Editar
         </button>
         <button
-          className={`${styles.btn} ${styles.btnSecondary}`}
+          className={styles.btnSecondary}
           onClick={() => navigate('/enrollments')}
         >
           Voltar

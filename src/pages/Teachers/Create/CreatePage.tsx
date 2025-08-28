@@ -1,4 +1,4 @@
-// src/pages/Teachers/CreatePage.tsx
+// src/pages/Teachers/Create/CreatePage.tsx
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +6,7 @@ import styles from "./CreatePage.module.css";
 import type { TeacherFormData } from "../../../types/TeacherFormData";
 import { useTeachers } from "../../../hooks/useTeachers";
 
-export default function TeacherCreate() {
+export default function TeacherCreatePage() {
   const navigate = useNavigate();
   const { addTeacher } = useTeachers();
 
@@ -43,49 +43,51 @@ export default function TeacherCreate() {
     if (!validate()) return;
 
     addTeacher(formData);
-    alert("Professor salvo com sucesso!");
+    alert("Professor cadastrado com sucesso!");
     navigate("/teachers");
   };
 
   return (
-    <>
-      <h1 className={styles.title}>Cadastrar Novo Professor</h1>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles["create-container"]}>
-          {[
-            { label: "Nome", name: "name", type: "text" },
-            { label: "Email", name: "email", type: "email" },
-            { label: "Data de Nascimento", name: "dateOfBirth", type: "date" },
-            { label: "Disciplina", name: "subject", type: "text" },
-            { label: "Telefone", name: "phone", type: "tel" },
-            { label: "Endereço", name: "address", type: "text" },
-          ].map(({ label, name, type }) => (
-            <div key={name} className={styles["form-group"]}>
-              <label htmlFor={name}>{label}</label>
-              <input
-                id={name}
-                name={name}
-                type={type}
-                value={formData[name as keyof TeacherFormData]}
-                onChange={handleChange}
-              />
-              {errors[name as keyof TeacherFormData] && (
-                <span className={styles["text-danger"]}>
-                  {errors[name as keyof TeacherFormData]}
-                </span>
-              )}
-            </div>
-          ))}
-          <button type="submit">Salvar</button>
+    <div className={styles.createContainer}>
+      <h1 className={styles.createTitle}>Cadastrar Novo Professor</h1>
+      <form onSubmit={handleSubmit} className={styles.createForm}>
+        {[
+          { label: "Nome", name: "name", type: "text" },
+          { label: "Email", name: "email", type: "email" },
+          { label: "Data de Nascimento", name: "dateOfBirth", type: "date" },
+          { label: "Disciplina", name: "subject", type: "text" },
+          { label: "Telefone", name: "phone", type: "tel" },
+          { label: "Endereço", name: "address", type: "text" },
+        ].map(({ label, name, type }) => (
+          <div key={name} className={styles.formGroup}>
+            <label htmlFor={name} className={styles.formLabel}>{label}</label>
+            <input
+              id={name}
+              name={name}
+              type={type}
+              className={styles.formInput}
+              value={formData[name as keyof TeacherFormData]}
+              onChange={handleChange}
+            />
+            {errors[name as keyof TeacherFormData] && (
+              <span className={styles.formError}>
+                {errors[name as keyof TeacherFormData]}
+              </span>
+            )}
+          </div>
+        ))}
+
+        <div className={styles.formActions}>
+          <button type="submit" className={styles.btnPrimary}>Salvar</button>
+          <button
+            type="button"
+            className={styles.btnSecondary}
+            onClick={() => navigate("/teachers")}
+          >
+            Cancelar
+          </button>
         </div>
       </form>
-      <button
-        className={styles["btn-secondary"]}
-        onClick={() => navigate("/teachers")}
-        type="button"
-      >
-        Voltar à Lista
-      </button>
-    </>
+    </div>
   );
 }

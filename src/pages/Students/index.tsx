@@ -1,12 +1,14 @@
 // src/pages/Students/index.tsx
 
+// src/pages/Students/index.tsx
+
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import styles from "./StudentsPage.module.css";
 import { useStudents } from "../../hooks/useStudents";
 
 export default function StudentIndex() {
-  const { students, removeStudent, refreshStudents } = useStudents();
+  const { students, refreshStudents } = useStudents();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 10;
@@ -33,12 +35,6 @@ export default function StudentIndex() {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setPage(1);
-  };
-
-  const handleDelete = (id: number) => {
-    if (window.confirm("Deseja realmente excluir este aluno?")) {
-      removeStudent(id);
-    }
   };
 
   return (
@@ -96,12 +92,12 @@ export default function StudentIndex() {
                       >
                         Editar
                       </Link>{" "}
-                      <button
-                        onClick={() => handleDelete(student.id)}
+                      <Link
+                        to={`/students/delete/${student.id}`}
                         className={`${styles.btn} ${styles.btnDanger}`}
                       >
                         Excluir
-                      </button>
+                      </Link>
                     </td>
                   </tr>
                 ))}

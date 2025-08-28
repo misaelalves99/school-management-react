@@ -7,7 +7,7 @@ import { useStudents } from "../../../hooks/useStudents";
 export default function StudentDelete() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { students, removeStudent } = useStudents(); // ⚡ usando contexto
+  const { students, removeStudent } = useStudents();
 
   if (!id) return <div>ID inválido</div>;
 
@@ -15,19 +15,31 @@ export default function StudentDelete() {
   if (!student) return <div>Aluno não encontrado</div>;
 
   const handleDelete = () => {
-    removeStudent(student.id); // ⚡ usando contexto
+    removeStudent(student.id);
     alert("Aluno excluído com sucesso!");
     navigate("/students");
   };
 
   return (
     <div className={styles.container}>
-      <h1>Excluir Aluno</h1>
-      <p className={styles.warning}>
+      <h1 className={styles.title}>Excluir Aluno</h1>
+      <h3 className={styles.warning}>
         Tem certeza que deseja excluir <strong>{student.name}</strong>?
-      </p>
-      <button onClick={handleDelete} className={styles.btnDelete}>Confirmar Exclusão</button>
-      <button onClick={() => navigate("/students")} className={styles.btnCancel}>Cancelar</button>
+      </h3>
+
+      <div className={styles.infoBox}>
+        <p>Email: {student.email}</p>
+        <p>Telefone: {student.phone || "-"}</p>
+      </div>
+
+      <div className={styles.actions}>
+        <button onClick={handleDelete} className={styles.btnDelete}>
+          Confirmar Exclusão
+        </button>
+        <button onClick={() => navigate("/students")} className={styles.btnCancel}>
+          Cancelar
+        </button>
+      </div>
     </div>
   );
 }
