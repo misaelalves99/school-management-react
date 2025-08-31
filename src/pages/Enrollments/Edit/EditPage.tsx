@@ -1,12 +1,12 @@
 // src/pages/Enrollments/Edit/EditPage.tsx
 
-// src/pages/Enrollments/Edit/EditPage.tsx
-
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./EditPage.module.css";
 import type { EnrollmentEdit } from "../../../types/EnrollmentEdit";
 import type { ValidationErrors } from "../../../types/ValidationErrors";
+import { useStudents } from "../../../hooks/useStudents";
+import { useClassRooms } from "../../../hooks/useClassRooms";
 
 interface EditProps {
   enrollment: EnrollmentEdit;
@@ -15,12 +15,15 @@ interface EditProps {
 
 export default function EditEnrollment({ enrollment, onSave }: EditProps) {
   const navigate = useNavigate();
+  const { students = [] } = useStudents();
+  const { classRooms = [] } = useClassRooms();
+
   const [formData, setFormData] = useState<EnrollmentEdit>({ ...enrollment });
   const [errors, setErrors] = useState<ValidationErrors<EnrollmentEdit>>({});
 
-  function handleChange(e: ChangeEvent<HTMLInputElement>) {
+  function handleChange(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]:
         name === "studentId" || name === "classRoomId" ? Number(value) : value,
@@ -54,45 +57,43 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
 
         {/* Aluno */}
         <div className={styles.formGroup}>
-          <label htmlFor="studentId" className={styles.formLabel}>
-            Aluno:
-          </label>
-          <input
+          <label htmlFor="studentId" className={styles.formLabel}>Aluno:</label>
+          <select
             id="studentId"
             name="studentId"
-            type="number"
-            value={formData.studentId}
+            value={formData.studentId === 0 ? "" : formData.studentId}
             onChange={handleChange}
             className={styles.formInput}
-          />
-          {errors.studentId && (
-            <span className={styles.formError}>{errors.studentId}</span>
-          )}
+          >
+            <option value="">Selecione o Aluno</option>
+            {students.map(s => (
+              <option key={s.id} value={s.id}>{s.name}</option>
+            ))}
+          </select>
+          {errors.studentId && <span className={styles.formError}>{errors.studentId}</span>}
         </div>
 
         {/* Turma */}
         <div className={styles.formGroup}>
-          <label htmlFor="classRoomId" className={styles.formLabel}>
-            Turma:
-          </label>
-          <input
+          <label htmlFor="classRoomId" className={styles.formLabel}>Turma:</label>
+          <select
             id="classRoomId"
             name="classRoomId"
-            type="number"
-            value={formData.classRoomId}
+            value={formData.classRoomId === 0 ? "" : formData.classRoomId}
             onChange={handleChange}
             className={styles.formInput}
-          />
-          {errors.classRoomId && (
-            <span className={styles.formError}>{errors.classRoomId}</span>
-          )}
+          >
+            <option value="">Selecione a Turma</option>
+            {classRooms.map(c => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+          {errors.classRoomId && <span className={styles.formError}>{errors.classRoomId}</span>}
         </div>
 
         {/* Data da matrícula */}
         <div className={styles.formGroup}>
-          <label htmlFor="enrollmentDate" className={styles.formLabel}>
-            Data da Matrícula:
-          </label>
+          <label htmlFor="enrollmentDate" className={styles.formLabel}>Data da Matrícula:</label>
           <input
             id="enrollmentDate"
             name="enrollmentDate"
@@ -107,9 +108,7 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
         </div>
 
         <div className={styles.formActions}>
-          <button type="submit" className={styles.btnPrimary}>
-            Salvar Alterações
-          </button>
+          <button type="submit" className={styles.btnPrimary}>Salvar Alterações</button>
           <button
             type="button"
             className={styles.btnSecondary}

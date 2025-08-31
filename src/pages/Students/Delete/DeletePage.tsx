@@ -27,14 +27,9 @@ export default function StudentDelete() {
         Tem certeza que deseja excluir <strong>{student.name}</strong>?
       </h3>
 
-      <div className={styles.infoBox}>
-        <p>Email: {student.email}</p>
-        <p>Telefone: {student.phone || "-"}</p>
-      </div>
-
       <div className={styles.actions}>
         <button onClick={handleDelete} className={styles.btnDelete}>
-          Confirmar Exclusão
+          Excluir
         </button>
         <button onClick={() => navigate("/students")} className={styles.btnCancel}>
           Cancelar

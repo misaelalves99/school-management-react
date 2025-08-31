@@ -28,15 +28,11 @@ export default function TeacherDelete() {
   };
 
   return (
-    <>
+    <div className={styles.container}>
       <h1 className={styles.title}>Excluir Professor</h1>
-      <h3 className={styles.warning}>Tem certeza que deseja excluir este professor?</h3>
-
-      <div className={styles.infoBox}>
-        <h4>{teacher.name}</h4>
-        <p>E-mail: {teacher.email}</p>
-        <p>Telefone: {teacher.phone}</p>
-      </div>
+      <h3 className={styles.warning}>
+        Tem certeza que deseja excluir <strong>{teacher.name}</strong>?
+      </h3>
 
       <form
         onSubmit={e => {
@@ -56,6 +52,6 @@ export default function TeacherDelete() {
           Cancelar
         </button>
       </form>
-    </>
+    </div>
   );
 }

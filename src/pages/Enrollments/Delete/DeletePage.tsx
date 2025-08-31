@@ -27,15 +27,8 @@ export default function DeleteEnrollment({ enrollment, onDelete }: DeleteEnrollm
     <div className={styles.pageContainer}>
       <h1 className={styles.title}>Excluir Matrícula</h1>
       <h3 className={styles.warning}>
-        Tem certeza que deseja excluir esta matrícula?
+        Tem certeza que deseja excluir <strong>{enrollment.studentName}</strong>?
       </h3>
-
-      <div className={styles.detailsContainer}>
-        <p><strong>Aluno:</strong> {enrollment.studentName}</p>
-        <p><strong>Turma:</strong> {enrollment.classRoomName}</p>
-        <p><strong>Data da Matrícula:</strong> {new Date(enrollment.enrollmentDate).toLocaleDateString()}</p>
-        <p><strong>Status:</strong> {enrollment.status}</p>
-      </div>
 
       <form onSubmit={handleDelete} className={styles.form}>
         <button type="submit" className={styles.btnDanger}>Excluir</button>

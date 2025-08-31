@@ -21,6 +21,15 @@ export default function StudentCreatePage() {
 
   const [errors, setErrors] = useState<Partial<Record<keyof Omit<Student, "id">, string>>>({});
 
+  const fieldLabels: Record<string, string> = {
+    name: "Nome",
+    email: "Email",
+    dateOfBirth: "Data de Nascimento",
+    enrollmentNumber: "Matrícula",
+    phone: "Telefone",
+    address: "Endereço",
+  };
+
   const validate = () => {
     const newErrors: typeof errors = {};
     if (!formData.name.trim()) newErrors.name = "Nome é obrigatório.";
@@ -51,7 +60,7 @@ export default function StudentCreatePage() {
         {Object.entries(formData).map(([key, value]) => (
           <div key={key} className={styles.formGroup}>
             <label htmlFor={key} className={styles.formLabel}>
-              {key.charAt(0).toUpperCase() + key.slice(1)}:
+              {fieldLabels[key] || key}:
             </label>
             <input
               id={key}

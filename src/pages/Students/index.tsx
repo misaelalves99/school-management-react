@@ -1,11 +1,9 @@
 // src/pages/Students/index.tsx
 
-// src/pages/Students/index.tsx
-
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import styles from "./StudentsPage.module.css";
 import { useStudents } from "../../hooks/useStudents";
+import styles from "./StudentsPage.module.css";
 
 export default function StudentIndex() {
   const { students, refreshStudents } = useStudents();
@@ -13,21 +11,21 @@ export default function StudentIndex() {
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
-  // Filtra os alunos pelo nome
   const filteredStudents = useMemo(() => {
     const term = search.toLowerCase();
-    return students.filter(s => s.name.toLowerCase().includes(term));
+    return students.filter((s) => s.name.toLowerCase().includes(term));
   }, [students, search]);
 
   const totalPages = Math.max(1, Math.ceil(filteredStudents.length / pageSize));
-  const pagedStudents = filteredStudents.slice((page - 1) * pageSize, page * pageSize);
+  const pagedStudents = filteredStudents.slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
 
-  // Atualiza a página se necessário ao mudar o filtro
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
   }, [page, totalPages]);
 
-  // Chama refreshStudents na montagem inicial
   useEffect(() => {
     refreshStudents();
   }, [refreshStudents]);
@@ -39,14 +37,15 @@ export default function StudentIndex() {
 
   return (
     <div className={styles.pageContainer}>
-      <div className={styles.leftPanel}>
+      <aside className={styles.leftPanel}>
         <h2 className={styles.title}>Buscar Alunos</h2>
         <form onSubmit={handleSearchSubmit} className={styles.searchForm}>
           <input
             type="text"
-            placeholder="Digite o nome..."
+            placeholder="Digite o nome do aluno..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
+            className={styles.input}
           />
           <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
             Buscar
@@ -55,61 +54,54 @@ export default function StudentIndex() {
         <Link to="/students/create" className={`${styles.btn} ${styles.btnSuccess}`}>
           Cadastrar Novo Aluno
         </Link>
-      </div>
+      </aside>
 
-      <div className={styles.rightPanel}>
+      <main className={styles.rightPanel}>
         <h2 className={styles.title}>Lista de Alunos</h2>
 
         {pagedStudents.length > 0 ? (
           <>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Matrícula</th>
-                  <th>Telefone</th>
-                  <th>Endereço</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pagedStudents.map(student => (
-                  <tr key={student.id}>
-                    <td>{student.name}</td>
-                    <td>{student.enrollmentNumber}</td>
-                    <td>{student.phone || "-"}</td>
-                    <td>{student.address || "-"}</td>
-                    <td>
-                      <Link
-                        to={`/students/details/${student.id}`}
-                        className={`${styles.btn} ${styles.btnInfo}`}
-                      >
-                        Detalhes
-                      </Link>{" "}
-                      <Link
-                        to={`/students/edit/${student.id}`}
-                        className={`${styles.btn} ${styles.btnWarning}`}
-                      >
-                        Editar
-                      </Link>{" "}
-                      <Link
-                        to={`/students/delete/${student.id}`}
-                        className={`${styles.btn} ${styles.btnDanger}`}
-                      >
-                        Excluir
-                      </Link>
-                    </td>
+            <div className={styles.tableWrapper}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Matrícula</th> {/* Adicionado */}
+                    <th>Telefone</th>
+                    <th>Ações</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {pagedStudents.map((student) => (
+                    <tr key={student.id}>
+                      <td>{student.id}</td>
+                      <td>{student.name}</td>
+                      <td>{student.enrollmentNumber || '-'}</td> {/* Adicionado */}
+                      <td>{student.phone || '-'}</td>
+                      <td className={styles.actionsCell}>
+                        <Link to={`/students/details/${student.id}`} className={`${styles.btn} ${styles.btnInfo}`}>
+                          Detalhes
+                        </Link>
+                        <Link to={`/students/edit/${student.id}`} className={`${styles.btn} ${styles.btnWarning}`}>
+                          Editar
+                        </Link>
+                        <Link to={`/students/delete/${student.id}`} className={`${styles.btn} ${styles.btnDanger}`}>
+                          Excluir
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             {totalPages > 1 && (
               <div className={styles.pagination}>
                 <button
                   className={styles.pageLink}
                   disabled={page === 1}
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
                 >
                   Anterior
                 </button>
@@ -119,7 +111,7 @@ export default function StudentIndex() {
                 <button
                   className={styles.pageLink}
                   disabled={page === totalPages}
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 >
                   Próxima
                 </button>
@@ -129,7 +121,7 @@ export default function StudentIndex() {
         ) : (
           <p className={styles.noResults}>Nenhum aluno encontrado.</p>
         )}
-      </div>
+      </main>
     </div>
   );
 }

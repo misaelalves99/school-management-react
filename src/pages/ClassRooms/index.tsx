@@ -2,28 +2,32 @@
 
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import styles from './ClassRoomList.module.css';
 import { useClassRooms } from '../../hooks/useClassRooms';
+import styles from './ClassRoomList.module.css';
 import type { ClassRoom } from '../../types/ClassRoom';
 
 const PAGE_SIZE = 10;
 
-const ClassroomsPage: React.FC = () => {
+export default function ClassroomsPage() {
   const { classRooms } = useClassRooms();
   const [searchString, setSearchString] = useState('');
   const [page, setPage] = useState(1);
 
   const filteredData: ClassRoom[] = useMemo(() => {
     const term = searchString.toLowerCase();
-    return classRooms.filter((c: ClassRoom) =>
-      c.name.toLowerCase().includes(term) ||
-      c.schedule.toLowerCase().includes(term) ||
-      c.capacity.toString().includes(term)
+    return classRooms.filter(
+      (c: ClassRoom) =>
+        c.name.toLowerCase().includes(term) ||
+        c.schedule.toLowerCase().includes(term) ||
+        c.capacity.toString().includes(term)
     );
   }, [searchString, classRooms]);
 
   const totalPages = Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE));
-  const pagedData: ClassRoom[] = filteredData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const pagedData: ClassRoom[] = filteredData.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE
+  );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchString(e.target.value);
@@ -37,14 +41,15 @@ const ClassroomsPage: React.FC = () => {
 
   return (
     <div className={styles.pageContainer}>
-      <div className={styles.leftPanel}>
+      <aside className={styles.leftPanel}>
         <h2 className={styles.title}>Buscar Salas</h2>
-        <form onSubmit={(e) => e.preventDefault()} className={styles.searchForm}>
+        <form onSubmit={e => e.preventDefault()} className={styles.searchForm}>
           <input
             type="text"
             value={searchString}
             onChange={handleSearchChange}
-            placeholder="Digite o nome, horário ou capacidade..."
+            placeholder="Digite nome, horário ou capacidade..."
+            className={styles.input}
           />
           <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>Buscar</button>
         </form>
@@ -52,42 +57,51 @@ const ClassroomsPage: React.FC = () => {
         <Link to="/classrooms/create" className={`${styles.btn} ${styles.btnSuccess}`}>
           Cadastrar Nova Sala
         </Link>
-      </div>
+      </aside>
 
-      <div className={styles.rightPanel}>
+      <main className={styles.rightPanel}>
         <h2 className={styles.title}>Lista de Salas</h2>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Capacidade</th>
-              <th>Horário</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pagedData.length === 0 ? (
+
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
               <tr>
-                <td colSpan={4} style={{ textAlign: 'center', padding: '20px' }}>
-                  Nenhuma sala encontrada.
-                </td>
+                <th>Nome</th>
+                <th>Capacidade</th>
+                <th>Horário</th>
+                <th>Ações</th>
               </tr>
-            ) : (
-              pagedData.map((room: ClassRoom) => (
-                <tr key={room.id}>
-                  <td>{room.name}</td>
-                  <td>{room.capacity}</td>
-                  <td>{room.schedule}</td>
-                  <td>
-                    <Link to={`/classrooms/details/${room.id}`} className={`${styles.btn} ${styles.btnInfo}`}>Detalhes</Link>{' '}
-                    <Link to={`/classrooms/edit/${room.id}`} className={`${styles.btn} ${styles.btnWarning}`}>Editar</Link>{' '}
-                    <Link to={`/classrooms/delete/${room.id}`} className={`${styles.btn} ${styles.btnDanger}`}>Excluir</Link>
+            </thead>
+            <tbody>
+              {pagedData.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className={styles.noResults}>
+                    Nenhuma sala encontrada.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                pagedData.map((room: ClassRoom) => (
+                  <tr key={room.id}>
+                    <td>{room.name}</td>
+                    <td>{room.capacity}</td>
+                    <td>{room.schedule}</td>
+                    <td className={styles.actionsCell}>
+                      <Link to={`/classrooms/details/${room.id}`} className={`${styles.btn} ${styles.btnInfo}`}>
+                        Detalhes
+                      </Link>
+                      <Link to={`/classrooms/edit/${room.id}`} className={`${styles.btn} ${styles.btnWarning}`}>
+                        Editar
+                      </Link>
+                      <Link to={`/classrooms/delete/${room.id}`} className={`${styles.btn} ${styles.btnDanger}`}>
+                        Excluir
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {totalPages > 1 && (
           <div className={styles.pagination}>
@@ -100,9 +114,7 @@ const ClassroomsPage: React.FC = () => {
             </button>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
-};
-
-export default ClassroomsPage;
+}

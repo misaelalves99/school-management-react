@@ -5,16 +5,19 @@ import { useNavigate } from "react-router-dom";
 import styles from "./CreatePage.module.css";
 import type { TeacherFormData } from "../../../types/TeacherFormData";
 import { useTeachers } from "../../../hooks/useTeachers";
+import { useSubjects } from "../../../hooks/useSubjects";
+import type { Subject } from "../../../types/Subject";
 
 export default function TeacherCreatePage() {
   const navigate = useNavigate();
   const { addTeacher } = useTeachers();
+  const { subjects } = useSubjects(); // obtém todas as disciplinas cadastradas
 
   const [formData, setFormData] = useState<TeacherFormData>({
     name: "",
     email: "",
     dateOfBirth: "",
-    subject: "",
+    subject: "", // vai armazenar o id ou nome da disciplina selecionada
     phone: "",
     address: "",
   });
@@ -34,7 +37,7 @@ export default function TeacherCreatePage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
@@ -51,11 +54,11 @@ export default function TeacherCreatePage() {
     <div className={styles.createContainer}>
       <h1 className={styles.createTitle}>Cadastrar Novo Professor</h1>
       <form onSubmit={handleSubmit} className={styles.createForm}>
+        {/* Campos de input comuns */}
         {[
           { label: "Nome", name: "name", type: "text" },
           { label: "Email", name: "email", type: "email" },
           { label: "Data de Nascimento", name: "dateOfBirth", type: "date" },
-          { label: "Disciplina", name: "subject", type: "text" },
           { label: "Telefone", name: "phone", type: "tel" },
           { label: "Endereço", name: "address", type: "text" },
         ].map(({ label, name, type }) => (
@@ -76,6 +79,26 @@ export default function TeacherCreatePage() {
             )}
           </div>
         ))}
+
+        {/* Campo select para disciplinas */}
+        <div className={styles.formGroup}>
+          <label htmlFor="subject" className={styles.formLabel}>Disciplina</label>
+          <select
+            id="subject"
+            name="subject"
+            value={formData.subject}
+            onChange={handleChange}
+            className={styles.formInput}
+          >
+            <option value="">Selecione uma disciplina</option>
+            {subjects.map((subj: Subject) => (
+              <option key={subj.id} value={subj.name}>
+                {subj.name}
+              </option>
+            ))}
+          </select>
+          {errors.subject && <span className={styles.formError}>{errors.subject}</span>}
+        </div>
 
         <div className={styles.formActions}>
           <button type="submit" className={styles.btnPrimary}>Salvar</button>

@@ -49,13 +49,9 @@ export default function SubjectDeletePage() {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Excluir Disciplina</h1>
-      <h3 className={styles.warning}>Tem certeza que deseja excluir esta disciplina?</h3>
-
-      <div className={styles.subjectBox}>
-        <h4>{subject.name}</h4>
-        <p>Carga Horária: {subject.workloadHours} horas</p>
-        {subject.description && <p>{subject.description}</p>}
-      </div>
+      <h3 className={styles.warning}>
+        Tem certeza que deseja excluir <strong>{subject.name}</strong>?
+      </h3>
 
       <div className={styles.actions}>
         <button type="button" className={styles.btnDanger} onClick={handleDelete}>
