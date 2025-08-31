@@ -34,15 +34,6 @@ export let classRoomsData: ClassRoom[] = [
     ] as Teacher[],
     classTeacher: { id: 3, name: 'Carlos Pereira', email: 'carlos@email.com', dateOfBirth: '1978-02-10', subject: 'História', phone: '111222333', address: 'Rua C' } as Teacher,
   },
-  {
-    id: 3,
-    name: 'Sala C',
-    capacity: 20,
-    schedule: 'Qua - 13:00 às 15:00',
-    subjects: [] as Subject[],
-    teachers: [] as Teacher[],
-    classTeacher: undefined,
-  },
 ];
 
 // Funções CRUD

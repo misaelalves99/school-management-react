@@ -54,15 +54,13 @@ export default function TeacherEditPage() {
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email inválido.";
     if (!formData.dateOfBirth) newErrors.dateOfBirth = "Data de nascimento é obrigatória.";
     if (!formData.subject.trim()) newErrors.subject = "Disciplina é obrigatória.";
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
-    if (!id) return;
+    if (!validate() || !id) return;
 
     const updated = editTeacher(Number(id), formData);
     if (!updated) {
@@ -76,21 +74,29 @@ export default function TeacherEditPage() {
 
   if (loading) return <div>Carregando...</div>;
 
+  const fields = [
+    { key: "name", label: "Nome", placeholder: "Digite o nome do professor", type: "text" },
+    { key: "email", label: "Email", placeholder: "Digite o email", type: "email" },
+    { key: "dateOfBirth", label: "Data de Nascimento", placeholder: "", type: "date" },
+    { key: "subject", label: "Disciplina", placeholder: "Digite a disciplina", type: "text" },
+    { key: "phone", label: "Telefone", placeholder: "Digite o telefone", type: "tel" },
+    { key: "address", label: "Endereço", placeholder: "Digite o endereço", type: "text" },
+  ];
+
   return (
     <div className={styles.createContainer}>
       <h1 className={styles.createTitle}>Editar Professor</h1>
       <form onSubmit={handleSubmit} className={styles.createForm}>
-        {Object.entries(formData).map(([key, value]) => (
+        {fields.map(({ key, label, placeholder, type }) => (
           <div key={key} className={styles.formGroup}>
-            <label htmlFor={key} className={styles.formLabel}>
-              {key.charAt(0).toUpperCase() + key.slice(1)}:
-            </label>
+            <label htmlFor={key} className={styles.formLabel}>{label}</label>
             <input
               id={key}
               name={key}
-              type={key === "dateOfBirth" ? "date" : key === "email" ? "email" : "text"}
-              value={value}
+              type={type}
+              value={formData[key as keyof TeacherFormData]}
               onChange={handleChange}
+              placeholder={placeholder}
               className={styles.formInput}
             />
             {errors[key as keyof TeacherFormData] && (
@@ -98,13 +104,10 @@ export default function TeacherEditPage() {
             )}
           </div>
         ))}
+
         <div className={styles.formActions}>
           <button type="submit" className={styles.btnPrimary}>Salvar Alterações</button>
-          <button
-            type="button"
-            className={styles.btnSecondary}
-            onClick={() => navigate("/teachers")}
-          >
+          <button type="button" className={styles.btnSecondary} onClick={() => navigate("/teachers")}>
             Voltar
           </button>
         </div>

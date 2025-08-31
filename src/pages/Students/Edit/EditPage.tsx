@@ -1,5 +1,7 @@
 // src/pages/Students/Edit/EditPage.tsx
 
+// src/pages/Students/Edit/EditPage.tsx
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./EditPage.module.css";
@@ -58,8 +60,7 @@ export default function StudentEditPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
-    if (!id) return;
+    if (!validate() || !id) return;
 
     const updated = editStudent(Number(id), formData);
     if (!updated) {
@@ -71,21 +72,29 @@ export default function StudentEditPage() {
     navigate("/students");
   };
 
+  const fields = [
+    { key: "name", label: "Nome", placeholder: "Digite o nome do aluno", type: "text" },
+    { key: "email", label: "Email", placeholder: "Digite o email", type: "email" },
+    { key: "dateOfBirth", label: "Data de Nascimento", placeholder: "", type: "date" },
+    { key: "enrollmentNumber", label: "Matrícula", placeholder: "Número de matrícula", type: "text" },
+    { key: "phone", label: "Telefone", placeholder: "Digite o telefone", type: "tel" },
+    { key: "address", label: "Endereço", placeholder: "Digite o endereço", type: "text" },
+  ];
+
   return (
     <div className={styles.createContainer}>
       <h1 className={styles.createTitle}>Editar Aluno</h1>
       <form onSubmit={handleSubmit} className={styles.createForm}>
-        {Object.entries(formData).map(([key, value]) => (
+        {fields.map(({ key, label, placeholder, type }) => (
           <div key={key} className={styles.formGroup}>
-            <label htmlFor={key} className={styles.formLabel}>
-              {key.charAt(0).toUpperCase() + key.slice(1)}:
-            </label>
+            <label htmlFor={key} className={styles.formLabel}>{label}</label>
             <input
               id={key}
               name={key}
-              type={key === "dateOfBirth" ? "date" : "text"}
-              value={value}
+              type={type}
+              value={formData[key as keyof typeof formData]}
               onChange={handleChange}
+              placeholder={placeholder}
               className={styles.formInput}
             />
             {errors[key as keyof typeof formData] && (
@@ -96,11 +105,7 @@ export default function StudentEditPage() {
 
         <div className={styles.formActions}>
           <button type="submit" className={styles.btnPrimary}>Salvar Alterações</button>
-          <button
-            type="button"
-            className={styles.btnSecondary}
-            onClick={() => navigate("/students")}
-          >
+          <button type="button" className={styles.btnSecondary} onClick={() => navigate("/students")}>
             Voltar
           </button>
         </div>
