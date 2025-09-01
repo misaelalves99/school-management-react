@@ -90,7 +90,7 @@ export default function CreateSubject() {
             className={styles.btnSecondary}
             onClick={() => navigate('/subjects')}
           >
-            Cancelar
+            Voltar
           </button>
         </div>
       </form>

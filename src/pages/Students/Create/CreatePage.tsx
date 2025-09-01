@@ -80,7 +80,7 @@ export default function StudentCreatePage() {
         <div className={styles.formActions}>
           <button type="submit" className={styles.btnPrimary}>Salvar</button>
           <button type="button" className={styles.btnSecondary} onClick={() => navigate("/students")}>
-            Cancelar
+            Voltar
           </button>
         </div>
       </form>

@@ -131,7 +131,7 @@ export default function CreateEnrollmentPage() {
             className={styles.btnSecondary}
             onClick={() => navigate('/enrollments')}
           >
-            Cancelar
+            Voltar
           </button>
         </div>
       </form>

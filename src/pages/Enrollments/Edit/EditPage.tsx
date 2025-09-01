@@ -114,7 +114,7 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
             className={styles.btnSecondary}
             onClick={() => navigate("/enrollments")}
           >
-            Cancelar
+            Voltar
           </button>
         </div>
       </form>

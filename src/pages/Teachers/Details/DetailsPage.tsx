@@ -79,7 +79,7 @@ export default function TeacherDetails() {
           className={`${styles.btn} ${styles.btnSecondary}`}
           onClick={() => navigate("/teachers")}
         >
-          Voltar à Lista
+          Voltar
         </button>
       </div>
     </div>

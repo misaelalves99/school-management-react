@@ -107,7 +107,7 @@ export default function TeacherCreatePage() {
             className={styles.btnSecondary}
             onClick={() => navigate("/teachers")}
           >
-            Cancelar
+            Voltar
           </button>
         </div>
       </form>

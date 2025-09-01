@@ -1,7 +1,5 @@
 // src/pages/Enrollments/Details/DetailsPage.tsx
 
-// src/pages/Enrollments/Details/DetailsPage.tsx
-
 import { useNavigate } from 'react-router-dom';
 import styles from './DetailsPage.module.css';
 import type { EnrollmentWithNames } from '../../../types/EnrollmentWithNames';
