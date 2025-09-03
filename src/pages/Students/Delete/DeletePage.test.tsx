@@ -25,7 +25,15 @@ import { useParams } from 'react-router-dom';
 describe('StudentDelete', () => {
   const removeStudentMock = jest.fn();
   const studentsMock = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', dateOfBirth: '2000-01-01', enrollmentNumber: '123', phone: '', address: '' },
+    {
+      id: 1,
+      name: 'John Doe',
+      email: 'john@example.com',
+      dateOfBirth: '2000-01-01',
+      enrollmentNumber: '123',
+      phone: '',
+      address: '',
+    },
   ];
 
   beforeEach(() => {
@@ -63,7 +71,7 @@ describe('StudentDelete', () => {
     renderWithRouter('1');
     expect(screen.getByText(/Excluir Aluno/i)).toBeInTheDocument();
     expect(screen.getByText(/Tem certeza que deseja excluir/i)).toHaveTextContent('John Doe');
-    expect(screen.getByText(/Confirmar Exclusão/i)).toBeInTheDocument();
+    expect(screen.getByText(/Excluir/i)).toBeInTheDocument();
     expect(screen.getByText(/Cancelar/i)).toBeInTheDocument();
   });
 
@@ -71,7 +79,7 @@ describe('StudentDelete', () => {
     const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
     renderWithRouter('1');
 
-    fireEvent.click(screen.getByText(/Confirmar Exclusão/i));
+    fireEvent.click(screen.getByText(/^Excluir$/i));
 
     expect(removeStudentMock).toHaveBeenCalledWith(1);
     expect(alertMock).toHaveBeenCalledWith('Aluno excluído com sucesso!');

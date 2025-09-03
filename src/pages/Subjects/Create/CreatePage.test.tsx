@@ -40,7 +40,7 @@ describe('CreateSubject', () => {
     expect(screen.getByLabelText(/Descrição/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Carga Horária/i)).toBeInTheDocument();
     expect(screen.getByText(/Salvar/i)).toBeInTheDocument();
-    expect(screen.getByText(/Voltar à Lista/i)).toBeInTheDocument();
+    expect(screen.getByText(/Voltar/i)).toBeInTheDocument();
   });
 
   it('exibe erro quando nome da disciplina está vazio', () => {
@@ -90,7 +90,7 @@ describe('CreateSubject', () => {
       </MemoryRouter>
     );
 
-    fireEvent.click(screen.getByText(/Voltar à Lista/i));
+    fireEvent.click(screen.getByText(/Voltar/i));
     expect(navigateMock).toHaveBeenCalledWith('/subjects');
   });
 });

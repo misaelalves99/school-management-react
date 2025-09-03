@@ -16,7 +16,7 @@ jest.mock('react-router-dom', () => {
   return {
     ...actual,
     useNavigate: () => navigateMock,
-    useParams: jest.fn(() => ({ id: '1' })), // Valor padrão, sobrescreve se necessário
+    useParams: jest.fn(() => ({ id: '1' })), // Valor padrão
   };
 });
 
@@ -24,7 +24,15 @@ import { useParams } from 'react-router-dom';
 
 describe('StudentDetails', () => {
   const studentsMock = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', dateOfBirth: '2000-01-01', enrollmentNumber: '123', phone: '1111-1111', address: 'Rua A' },
+    {
+      id: 1,
+      name: 'John Doe',
+      email: 'john@example.com',
+      dateOfBirth: '2000-01-01',
+      enrollmentNumber: '123',
+      phone: '1111-1111',
+      address: 'Rua A',
+    },
   ];
 
   beforeEach(() => {
@@ -48,6 +56,7 @@ describe('StudentDetails', () => {
   it('exibe mensagem quando ID não é fornecido', () => {
     renderWithRouter();
     expect(screen.getByText(/ID do aluno não fornecido/i)).toBeInTheDocument();
+
     fireEvent.click(screen.getByText(/Voltar à Lista/i));
     expect(navigateMock).toHaveBeenCalledWith('/students');
   });
@@ -55,6 +64,7 @@ describe('StudentDetails', () => {
   it('exibe mensagem quando aluno não é encontrado', () => {
     renderWithRouter('999');
     expect(screen.getByText(/Aluno não encontrado/i)).toBeInTheDocument();
+
     fireEvent.click(screen.getByText(/Voltar à Lista/i));
     expect(navigateMock).toHaveBeenCalledWith('/students');
   });

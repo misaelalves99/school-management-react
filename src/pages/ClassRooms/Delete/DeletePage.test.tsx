@@ -26,7 +26,6 @@ describe('DeleteClassRoom', () => {
     removeMock.mockClear();
     getByIdMock.mockClear();
     window.alert = jest.fn();
-    window.confirm = jest.fn();
   });
 
   it('exibe mensagem de não encontrado se turma não existir', () => {
@@ -57,15 +56,13 @@ describe('DeleteClassRoom', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('Sala Teste')).toBeInTheDocument();
-    expect(screen.getByText('20')).toBeInTheDocument();
-    expect(screen.getByText('Seg - 08:00 às 10:00')).toBeInTheDocument();
-    expect(screen.getByText('Matemática')).toBeInTheDocument();
-    expect(screen.getByText('Prof. A')).toBeInTheDocument();
+    expect(screen.getByText(/Sala Teste/i)).toBeInTheDocument();
+    expect(screen.getByText(/Seg - 08:00 às 10:00/i)).toBeInTheDocument();
+    expect(screen.getByText(/Matemática/i)).toBeInTheDocument();
+    expect(screen.getByText(/Prof. A/i)).toBeInTheDocument();
   });
 
-  it('cancela exclusão se usuário não confirmar', () => {
-    window.confirm = jest.fn(() => false);
+  it('exclui a turma ao clicar em Excluir', () => {
     getByIdMock.mockReturnValue({ id: 1, name: 'Sala Teste', capacity: 20, schedule: 'Horário', subjects: [], teachers: [], classTeacher: undefined });
 
     render(
@@ -74,23 +71,8 @@ describe('DeleteClassRoom', () => {
       </BrowserRouter>
     );
 
-    fireEvent.click(screen.getByText(/Confirmar Exclusão/i));
-    expect(removeMock).not.toHaveBeenCalled();
-    expect(window.alert).not.toHaveBeenCalled();
-    expect(mockedNavigate).not.toHaveBeenCalled();
-  });
+    fireEvent.click(screen.getByText(/Excluir/i));
 
-  it('exclui a turma quando confirmado', () => {
-    window.confirm = jest.fn(() => true);
-    getByIdMock.mockReturnValue({ id: 1, name: 'Sala Teste', capacity: 20, schedule: 'Horário', subjects: [], teachers: [], classTeacher: undefined });
-
-    render(
-      <BrowserRouter>
-        <DeleteClassRoom id={1} />
-      </BrowserRouter>
-    );
-
-    fireEvent.click(screen.getByText(/Confirmar Exclusão/i));
     expect(removeMock).toHaveBeenCalledWith(1);
     expect(window.alert).toHaveBeenCalledWith('Turma excluída com sucesso!');
     expect(mockedNavigate).toHaveBeenCalledWith('/classrooms');

@@ -1,7 +1,5 @@
 // src/pages/Students/Edit/EditPage.tsx
 
-// src/pages/Students/Edit/EditPage.tsx
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./EditPage.module.css";

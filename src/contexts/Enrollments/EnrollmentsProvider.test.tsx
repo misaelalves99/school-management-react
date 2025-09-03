@@ -5,6 +5,7 @@ import { ReactNode, useContext } from 'react';
 import { EnrollmentsProvider } from './EnrollmentsProvider';
 import { EnrollmentsContext } from './EnrollmentsContext';
 import * as mockEnrollments from '../../mocks/Enrollments';
+import type { Enrollment } from '../../types/Enrollment';
 
 describe('EnrollmentsProvider', () => {
   const wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (
@@ -18,64 +19,96 @@ describe('EnrollmentsProvider', () => {
   it('deve fornecer valores iniciais corretamente', () => {
     const { result } = renderHook(() => useContext(EnrollmentsContext), { wrapper });
     expect(result.current).toBeDefined();
-    expect(result.current?.enrollments.length).toBe(mockEnrollments.getEnrollments().length);
+    expect(result.current?.enrollments).toEqual(mockEnrollments.getEnrollments());
   });
 
-  it('deve criar um novo enrollment', async () => {
-    const createSpy = jest.spyOn(mockEnrollments, 'createEnrollment'); // corrigido
+  it('deve criar um novo enrollment e atualizar estado', async () => {
+    const createSpy = jest.spyOn(mockEnrollments, 'createEnrollment');
     const { result } = renderHook(() => useContext(EnrollmentsContext), { wrapper });
 
-    const newData = { studentId: 99, classRoomId: 1, enrollmentDate: '2025-08-21', status: 'active' };
-
-    let newEnrollment;
-    await act(async () => {
-      newEnrollment = await result.current!.createEnrollment(newData);
-    });
-
-    expect(createSpy).toHaveBeenCalledWith({
+    const newData = {
       studentId: 99,
       classRoomId: 1,
       enrollmentDate: '2025-08-21',
       status: 'active',
+    };
+
+    let newEnrollment: Enrollment | null = null; // ✅ inicializado
+    await act(async () => {
+      newEnrollment = await result.current!.createEnrollment(newData);
     });
-    expect(newEnrollment).toHaveProperty('id');
+
+    expect(createSpy).toHaveBeenCalledWith(newData);
+    expect(newEnrollment).not.toBeNull();
+    expect(newEnrollment!).toHaveProperty('id');
+    expect(result.current!.enrollments.some(e => e.id === newEnrollment!.id)).toBe(true);
   });
 
-  it('deve atualizar um enrollment existente', async () => {
-    const updateSpy = jest.spyOn(mockEnrollments, 'updateEnrollment'); // corrigido
+  it('deve atualizar um enrollment existente e refletir no estado', async () => {
+    const updateSpy = jest.spyOn(mockEnrollments, 'updateEnrollment');
     const { result } = renderHook(() => useContext(EnrollmentsContext), { wrapper });
 
-    const updateData = { id: 1, studentId: 1, classRoomId: 2, enrollmentDate: '2025-08-21', status: 'inactive' };
+    const firstId = result.current!.enrollments[0].id;
+    const updateData = {
+      id: firstId,
+      studentId: 1,
+      classRoomId: 2,
+      enrollmentDate: '2025-08-21',
+      status: 'inactive',
+    };
 
-    let updated;
+    let updated: Enrollment | null = null; // ✅ inicializado
     await act(async () => {
       updated = await result.current!.updateEnrollment(updateData);
     });
 
-    expect(updateSpy).toHaveBeenCalledWith(1, updateData);
+    expect(updateSpy).toHaveBeenCalledWith(firstId, updateData);
+    expect(updated).not.toBeNull();
     expect(updated).toMatchObject(updateData);
+    expect(result.current!.enrollments.find(e => e.id === firstId)?.status).toBe('inactive');
   });
 
-  it('deve remover um enrollment', () => {
-    const deleteSpy = jest.spyOn(mockEnrollments, 'deleteEnrollment'); // corrigido
+  it('deve retornar null se tentar atualizar um enrollment inexistente', async () => {
+    jest.spyOn(mockEnrollments, 'updateEnrollment').mockReturnValueOnce(null);
     const { result } = renderHook(() => useContext(EnrollmentsContext), { wrapper });
 
-    act(() => {
-      result.current!.removeEnrollment(1);
+    let updated: Enrollment | null = null; // ✅ inicializado
+    await act(async () => {
+      updated = await result.current!.updateEnrollment({
+        id: 9999,
+        studentId: 1,
+        classRoomId: 1,
+        enrollmentDate: '2025-08-21',
+        status: 'inactive',
+      });
     });
 
-    expect(deleteSpy).toHaveBeenCalledWith(1);
+    expect(updated).toBeNull();
+  });
+
+  it('deve remover um enrollment e atualizar estado', () => {
+    const deleteSpy = jest.spyOn(mockEnrollments, 'deleteEnrollment');
+    const { result } = renderHook(() => useContext(EnrollmentsContext), { wrapper });
+
+    const firstId = result.current!.enrollments[0].id;
+
+    act(() => {
+      result.current!.removeEnrollment(firstId);
+    });
+
+    expect(deleteSpy).toHaveBeenCalledWith(firstId);
+    expect(result.current!.enrollments.find(e => e.id === firstId)).toBeUndefined();
   });
 
   it('deve atualizar a lista após refresh', () => {
+    const spyGet = jest.spyOn(mockEnrollments, 'getEnrollments');
     const { result } = renderHook(() => useContext(EnrollmentsContext), { wrapper });
-
-    const originalLength = result.current!.enrollments.length;
 
     act(() => {
       result.current!.refresh();
     });
 
-    expect(result.current!.enrollments.length).toBe(originalLength);
+    expect(spyGet).toHaveBeenCalled();
+    expect(result.current!.enrollments).toEqual(mockEnrollments.getEnrollments());
   });
 });

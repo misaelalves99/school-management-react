@@ -1,7 +1,5 @@
 // src/hooks/useSubjects.test.tsx
 
-// src/hooks/useSubjects.test.tsx
-
 import { renderHook } from "@testing-library/react";
 import { useSubjects } from "./useSubjects";
 import { SubjectsProvider } from "../contexts/Subjects/SubjectsProvider";

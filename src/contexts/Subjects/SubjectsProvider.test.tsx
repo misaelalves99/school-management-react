@@ -61,7 +61,16 @@ describe("SubjectsProvider", () => {
     expect(result.current!.subjects.find(s => s.id === id)?.name).toBe("Física Avançada");
   });
 
-  it("deve deletar um subject", () => {
+  it("não deve atualizar se o subject não existir", () => {
+    const { result } = renderHook(() => useContext(SubjectsContext), { wrapper });
+    let updated: Subject | undefined;
+    act(() => {
+      updated = result.current!.updateSubject(999, { name: "Inexistente" });
+    });
+    expect(updated).toBeUndefined();
+  });
+
+  it("deve deletar um subject existente", () => {
     const spyDelete = jest.spyOn(mockSubjects, "delete");
     const { result } = renderHook(() => useContext(SubjectsContext), { wrapper });
 
@@ -76,7 +85,16 @@ describe("SubjectsProvider", () => {
     expect(result.current!.subjects.find(s => s.id === id)).toBeUndefined();
   });
 
-  it("deve buscar subject por id", () => {
+  it("deve retornar false ao tentar deletar subject inexistente", () => {
+    const { result } = renderHook(() => useContext(SubjectsContext), { wrapper });
+    let deleted = true;
+    act(() => {
+      deleted = result.current!.deleteSubject(999);
+    });
+    expect(deleted).toBe(false);
+  });
+
+  it("deve buscar subject por id existente", () => {
     const { result } = renderHook(() => useContext(SubjectsContext), { wrapper });
     const id = result.current!.subjects[0].id;
     const subject = result.current!.getSubjectById(id);
@@ -84,11 +102,19 @@ describe("SubjectsProvider", () => {
     expect(subject?.id).toBe(id);
   });
 
+  it("deve retornar undefined ao buscar subject inexistente", () => {
+    const { result } = renderHook(() => useContext(SubjectsContext), { wrapper });
+    const subject = result.current!.getSubjectById(999);
+    expect(subject).toBeUndefined();
+  });
+
   it("deve recarregar subjects", () => {
+    const spyList = jest.spyOn(mockSubjects, "list");
     const { result } = renderHook(() => useContext(SubjectsContext), { wrapper });
     act(() => {
       result.current!.reloadSubjects();
     });
+    expect(spyList).toHaveBeenCalled();
     expect(result.current!.subjects.length).toBe(mockSubjects.list().length);
   });
 });

@@ -68,11 +68,17 @@ describe("TeachersContext", () => {
       id: 2,
       ...data,
     })),
-    editTeacher: jest.fn().mockImplementation((id: number, data: Partial<TeacherFormData>) =>
-      id === 1 ? { ...mockTeacher, ...data } : null
-    ),
+    editTeacher: jest
+      .fn()
+      .mockImplementation((id: number, data: Partial<TeacherFormData>) =>
+        id === 1 ? { ...mockTeacher, ...data } : null
+      ),
     removeTeacher: jest.fn(),
   };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it("should provide context values to consumer", async () => {
     render(
@@ -109,5 +115,31 @@ describe("TeachersContext", () => {
   it("should render fallback if context is undefined", () => {
     render(<TestConsumer />);
     expect(screen.getByText("No Context")).toBeInTheDocument();
+  });
+
+  it("should return null when editing non-existent teacher", () => {
+    render(
+      <TeachersContext.Provider value={mockContextValue}>
+        <TestConsumer />
+      </TeachersContext.Provider>
+    );
+
+    const result = mockContextValue.editTeacher(999, { name: "Inexistente" });
+    expect(result).toBeNull();
+  });
+
+  it("should return undefined when getting non-existent teacher", () => {
+    const customContext: TeachersContextType = {
+      ...mockContextValue,
+      getTeacher: jest.fn().mockReturnValue(undefined),
+    };
+
+    render(
+      <TeachersContext.Provider value={customContext}>
+        <TestConsumer />
+      </TeachersContext.Provider>
+    );
+
+    expect(customContext.getTeacher(999)).toBeUndefined();
   });
 });

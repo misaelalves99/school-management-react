@@ -72,7 +72,6 @@ describe('StudentIndex', () => {
   });
 
   it('botões de navegação de página funcionam', () => {
-    // Criar 15 alunos para testar paginação
     const manyStudents = Array.from({ length: 15 }, (_, i) => ({
       id: i + 1,
       name: `Student ${i + 1}`,
@@ -115,5 +114,17 @@ describe('StudentIndex', () => {
     );
 
     expect(screen.getByText(/Nenhum aluno encontrado/i)).toBeInTheDocument();
+  });
+
+  it('botão Cadastrar Novo Aluno existe e tem link correto', () => {
+    render(
+      <MemoryRouter>
+        <StudentIndex />
+      </MemoryRouter>
+    );
+
+    const createButton = screen.getByText(/Cadastrar Novo Aluno/i);
+    expect(createButton).toBeInTheDocument();
+    expect(createButton.closest('a')).toHaveAttribute('href', '/students/create');
   });
 });

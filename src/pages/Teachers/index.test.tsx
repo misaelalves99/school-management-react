@@ -1,6 +1,3 @@
-// src/pages/Teachers/index.test.tsx
-
-// src/pages/Teachers/index.test.tsx
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import TeachersPage from "./index";
@@ -24,11 +21,13 @@ describe("TeachersPage", () => {
 
   it("exibe mensagem quando não há professores", () => {
     (useTeachers as jest.Mock).mockReturnValue({ teachers: [] });
+
     render(
       <MemoryRouter>
         <TeachersPage />
       </MemoryRouter>
     );
+
     expect(screen.getByText("Nenhum professor encontrado.")).toBeInTheDocument();
   });
 
@@ -123,16 +122,17 @@ describe("TeachersPage", () => {
       </MemoryRouter>
     );
 
+    // Página 1
     expect(screen.getByText("Teacher 1")).toBeInTheDocument();
     expect(screen.queryByText("Teacher 11")).not.toBeInTheDocument();
 
+    // Próxima página
     fireEvent.click(screen.getByText("Próxima"));
-
     expect(screen.getByText("Teacher 11")).toBeInTheDocument();
     expect(screen.queryByText("Teacher 1")).not.toBeInTheDocument();
 
+    // Voltar para página anterior
     fireEvent.click(screen.getByText("Anterior"));
-
     expect(screen.getByText("Teacher 1")).toBeInTheDocument();
   });
 });

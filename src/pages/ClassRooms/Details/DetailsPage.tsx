@@ -1,7 +1,5 @@
 // src/pages/ClassRooms/Details/DetailsPage.tsx
 
-// src/pages/ClassRooms/Details/DetailsPage.tsx
-
 import { useClassRooms } from '../../../hooks/useClassRooms';
 import type { Subject } from '../../../types/Subject';
 import type { Teacher } from '../../../types/Teacher';

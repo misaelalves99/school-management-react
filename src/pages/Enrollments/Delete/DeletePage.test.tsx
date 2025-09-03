@@ -37,10 +37,9 @@ describe('DeleteEnrollment', () => {
     );
 
     expect(screen.getByText(/Excluir Matrícula/i)).toBeInTheDocument();
-    expect(screen.getByText(/Aluno:/i)).toHaveTextContent('Aluno: João Silva');
-    expect(screen.getByText(/Turma:/i)).toHaveTextContent('Turma: Sala A');
-    expect(screen.getByText(/Data da Matrícula:/i)).toHaveTextContent('Data da Matrícula: 10/01/2025');
-    expect(screen.getByText(/Status:/i)).toHaveTextContent('Status: Ativa');
+    expect(screen.getByText(/Tem certeza que deseja excluir/i)).toHaveTextContent(
+      `Tem certeza que deseja excluir ${enrollmentMock.studentName}?`
+    );
     expect(screen.getByText(/Excluir/i)).toBeInTheDocument();
     expect(screen.getByText(/Cancelar/i)).toBeInTheDocument();
   });

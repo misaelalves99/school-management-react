@@ -16,9 +16,7 @@ describe('ClassroomsPage', () => {
   ];
 
   beforeEach(() => {
-    (useClassRooms as jest.Mock).mockReturnValue({
-      classRooms: mockRooms,
-    });
+    (useClassRooms as jest.Mock).mockReturnValue({ classRooms: mockRooms });
   });
 
   it('renderiza a lista de salas', () => {
@@ -46,18 +44,30 @@ describe('ClassroomsPage', () => {
     expect(screen.getByText(/Nenhuma sala encontrada/i)).toBeInTheDocument();
   });
 
-  it('filtra salas pelo nome', () => {
+  it('filtra salas pelo nome, horário e capacidade', () => {
     render(
       <BrowserRouter>
         <ClassroomsPage />
       </BrowserRouter>
     );
 
-    const input = screen.getByPlaceholderText(/Digite o nome, horário ou capacidade/i);
-    fireEvent.change(input, { target: { value: 'Sala B' } });
+    const input = screen.getByPlaceholderText(/Digite nome, horário ou capacidade/i);
 
+    // Filtrar pelo nome
+    fireEvent.change(input, { target: { value: 'Sala B' } });
     expect(screen.queryByText(/Sala A/i)).not.toBeInTheDocument();
     expect(screen.getByText(/Sala B/i)).toBeInTheDocument();
+
+    // Filtrar pelo horário
+    fireEvent.change(input, { target: { value: 'Qua - 13:00' } });
+    expect(screen.queryByText(/Sala A/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Sala B/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Sala C/i)).toBeInTheDocument();
+
+    // Filtrar pela capacidade
+    fireEvent.change(input, { target: { value: '30' } });
+    expect(screen.getByText(/Sala A/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Sala B/i)).not.toBeInTheDocument();
   });
 
   it('botões de links para detalhes, editar e excluir existem', () => {

@@ -16,7 +16,7 @@ jest.mock("react-router-dom", () => {
   };
 });
 
-describe("TeacherEdit", () => {
+describe("TeacherEditPage", () => {
   const getTeacherMock = jest.fn();
   const editTeacherMock = jest.fn();
 
@@ -69,7 +69,9 @@ describe("TeacherEdit", () => {
       phone: "123",
       address: "Rua A",
     });
+
     renderComponent("1");
+
     await waitFor(() => {
       expect(screen.getByDisplayValue("Professor X")).toBeInTheDocument();
       expect(screen.getByDisplayValue("x@example.com")).toBeInTheDocument();
@@ -90,8 +92,11 @@ describe("TeacherEdit", () => {
       phone: "",
       address: "",
     });
+
     renderComponent("1");
-    fireEvent.click(screen.getByText("Salvar"));
+
+    fireEvent.click(screen.getByText("Salvar Alterações"));
+
     await waitFor(() => {
       expect(screen.getByText("Nome é obrigatório.")).toBeInTheDocument();
       expect(screen.getByText("Email é obrigatório.")).toBeInTheDocument();
@@ -114,7 +119,7 @@ describe("TeacherEdit", () => {
 
     renderComponent("1");
 
-    fireEvent.click(screen.getByText("Salvar"));
+    fireEvent.click(screen.getByText("Salvar Alterações"));
 
     await waitFor(() => {
       expect(editTeacherMock).toHaveBeenCalledWith(1, {
@@ -144,14 +149,14 @@ describe("TeacherEdit", () => {
 
     renderComponent("1");
 
-    fireEvent.click(screen.getByText("Salvar"));
+    fireEvent.click(screen.getByText("Salvar Alterações"));
 
     await waitFor(() => {
       expect(window.alert).toHaveBeenCalledWith("Erro ao atualizar professor");
     });
   });
 
-  it("navega ao clicar em Voltar à Lista", async () => {
+  it("navega ao clicar em Voltar", async () => {
     getTeacherMock.mockReturnValue({
       id: 1,
       name: "Professor X",
@@ -163,7 +168,8 @@ describe("TeacherEdit", () => {
     });
 
     renderComponent("1");
-    fireEvent.click(screen.getByText("Voltar à Lista"));
+
+    fireEvent.click(screen.getByText("Voltar"));
     expect(navigateMock).toHaveBeenCalledWith("/teachers");
   });
 });

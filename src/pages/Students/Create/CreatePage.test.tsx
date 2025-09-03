@@ -31,7 +31,7 @@ describe('StudentCreatePage', () => {
       </MemoryRouter>
     );
 
-    const fields = ['name', 'email', 'dateOfBirth', 'enrollmentNumber', 'phone', 'address'];
+    const fields = ['Nome', 'Email', 'Data de Nascimento', 'Matrícula', 'Telefone', 'Endereço'];
     fields.forEach(field => {
       expect(screen.getByLabelText(new RegExp(field, 'i'))).toBeInTheDocument();
     });
@@ -52,6 +52,20 @@ describe('StudentCreatePage', () => {
     expect(screen.getByText(/Matrícula é obrigatória/i)).toBeInTheDocument();
   });
 
+  it('mostra erro para email inválido', () => {
+    render(
+      <MemoryRouter>
+        <StudentCreatePage />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'invalid-email' } });
+    fireEvent.click(screen.getByText(/Salvar/i));
+
+    expect(screen.getByText(/Email inválido/i)).toBeInTheDocument();
+    expect(addStudentMock).not.toHaveBeenCalled();
+  });
+
   it('chama addStudent e navegação ao submeter formulário válido', () => {
     const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
 
@@ -61,10 +75,10 @@ describe('StudentCreatePage', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/Name/i), { target: { value: 'John Doe' } });
+    fireEvent.change(screen.getByLabelText(/Nome/i), { target: { value: 'John Doe' } });
     fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'john@example.com' } });
-    fireEvent.change(screen.getByLabelText(/DateOfBirth/i), { target: { value: '2000-01-01' } });
-    fireEvent.change(screen.getByLabelText(/EnrollmentNumber/i), { target: { value: '12345' } });
+    fireEvent.change(screen.getByLabelText(/Data de Nascimento/i), { target: { value: '2000-01-01' } });
+    fireEvent.change(screen.getByLabelText(/Matrícula/i), { target: { value: '12345' } });
 
     fireEvent.click(screen.getByText(/Salvar/i));
 
@@ -81,5 +95,16 @@ describe('StudentCreatePage', () => {
     expect(navigateMock).toHaveBeenCalledWith('/students');
 
     alertMock.mockRestore();
+  });
+
+  it('navega de volta ao clicar em Voltar', () => {
+    render(
+      <MemoryRouter>
+        <StudentCreatePage />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByText(/Voltar/i));
+    expect(navigateMock).toHaveBeenCalledWith('/students');
   });
 });

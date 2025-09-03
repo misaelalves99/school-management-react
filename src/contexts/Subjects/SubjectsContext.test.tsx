@@ -5,7 +5,7 @@ import { ReactNode, useContext } from "react";
 import { SubjectsProvider } from "./SubjectsProvider";
 import { SubjectsContext } from "./SubjectsContext";
 import type { Subject } from "../../types/Subject";
-import { mockSubjects } from "../../mocks/Subjects"; // import corrigido
+import { mockSubjects } from "../../mocks/Subjects";
 
 describe("SubjectsProvider", () => {
   const wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (
@@ -59,6 +59,19 @@ describe("SubjectsProvider", () => {
     expect(updated?.name).toBe("Física Avançada");
   });
 
+  it("não deve atualizar subject inexistente", () => {
+    jest.spyOn(mockSubjects, "update").mockReturnValue(undefined);
+
+    const { result } = renderHook(() => useContext(SubjectsContext), { wrapper });
+    let updated: Subject | undefined;
+
+    act(() => {
+      updated = result.current!.updateSubject(999, { name: "Inexistente" });
+    });
+
+    expect(updated).toBeUndefined();
+  });
+
   it("deve deletar um subject", () => {
     const spyDelete = jest.spyOn(mockSubjects, "delete");
     const { result } = renderHook(() => useContext(SubjectsContext), { wrapper });
@@ -73,12 +86,18 @@ describe("SubjectsProvider", () => {
     expect(deleted).toBe(true);
   });
 
-  it("deve buscar subject por id", () => {
+  it("deve buscar subject por id existente", () => {
     const { result } = renderHook(() => useContext(SubjectsContext), { wrapper });
     const id = result.current!.subjects[1].id;
     const subject = result.current!.getSubjectById(id);
     expect(subject).toBeDefined();
     expect(subject?.id).toBe(id);
+  });
+
+  it("deve retornar undefined ao buscar subject inexistente", () => {
+    const { result } = renderHook(() => useContext(SubjectsContext), { wrapper });
+    const subject = result.current!.getSubjectById(999);
+    expect(subject).toBeUndefined();
   });
 
   it("deve recarregar subjects", () => {
@@ -87,5 +106,10 @@ describe("SubjectsProvider", () => {
       result.current!.reloadSubjects();
     });
     expect(result.current!.subjects.length).toBe(mockSubjects.list().length);
+  });
+
+  it("deve retornar undefined se usado sem provider", () => {
+    const { result } = renderHook(() => useContext(SubjectsContext));
+    expect(result.current).toBeUndefined();
   });
 });

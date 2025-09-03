@@ -1,13 +1,12 @@
 // src/contexts/Students/StudentsProvider.test.tsx
 
-// src/contexts/Students/StudentsProvider.test.tsx
-
 import { useContext } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { StudentsProvider } from "./StudentsProvider";
 import { StudentsContext } from "./StudentsContext";
 import * as StudentsMock from "../../mocks/Students";
+import type { Student } from "../../types/Student";
 
 // Componente de teste que consome o contexto
 function TestConsumer() {
@@ -48,7 +47,7 @@ function TestConsumer() {
 }
 
 describe("StudentsProvider", () => {
-  const initialStudent = {
+  const initialStudent: Student = {
     id: 1,
     name: "John",
     enrollmentNumber: "2023001",
@@ -65,13 +64,11 @@ describe("StudentsProvider", () => {
       .spyOn(StudentsMock, "createStudent")
       .mockImplementation((student) => ({ id: 2, ...student }));
 
-    // Corrigido: preencher todos os campos obrigatórios
     jest
       .spyOn(StudentsMock, "updateStudent")
       .mockImplementation((id, student) => {
-        const original = id === initialStudent.id ? initialStudent : null;
-        if (!original) return null;
-        return { ...original, ...student };
+        if (id !== initialStudent.id) return null;
+        return { ...initialStudent, ...student };
       });
 
     jest.spyOn(StudentsMock, "deleteStudent").mockImplementation(() => undefined);
@@ -88,8 +85,10 @@ describe("StudentsProvider", () => {
       </StudentsProvider>
     );
 
+    // estado inicial
     expect(screen.getByTestId("students-count").textContent).toBe("1");
 
+    // adicionar estudante
     await userEvent.click(screen.getByText("Add"));
     expect(StudentsMock.createStudent).toHaveBeenCalledWith({
       name: "Alice",
@@ -99,14 +98,40 @@ describe("StudentsProvider", () => {
       dateOfBirth: "2000-02-02",
       address: "Rua Alice, 1",
     });
+    expect(StudentsMock.getStudents).toHaveBeenCalledTimes(2); // inicial + refresh
 
+    // editar estudante
     await userEvent.click(screen.getByText("Edit"));
     expect(StudentsMock.updateStudent).toHaveBeenCalledWith(1, { name: "Bob" });
+    expect(StudentsMock.getStudents).toHaveBeenCalledTimes(3);
 
+    // remover estudante
     await userEvent.click(screen.getByText("Remove"));
     expect(StudentsMock.deleteStudent).toHaveBeenCalledWith(1);
+    expect(StudentsMock.getStudents).toHaveBeenCalledTimes(4);
 
+    // refresh manual
     await userEvent.click(screen.getByText("Refresh"));
-    expect(StudentsMock.getStudents).toHaveBeenCalled();
+    expect(StudentsMock.getStudents).toHaveBeenCalledTimes(5);
+  });
+
+  it("returns null when editing non-existent student", () => {
+    (StudentsMock.updateStudent as jest.Mock).mockImplementation(() => null);
+
+    render(
+      <StudentsProvider>
+        <TestConsumer />
+      </StudentsProvider>
+    );
+
+    const context = useContext(StudentsContext);
+    const result = context?.editStudent(999, { name: "Ghost" });
+
+    expect(result).toBeNull();
+  });
+
+  it("renders fallback when context is undefined", () => {
+    render(<TestConsumer />);
+    expect(screen.getByText("No Context")).toBeInTheDocument();
   });
 });

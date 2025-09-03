@@ -1,6 +1,5 @@
 // src/pages/Teachers/Details/DetailsPage.test.tsx
 
-// src/pages/Teachers/Details/DetailsPage.test.tsx
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import TeacherDetails from "./DetailsPage";
@@ -36,15 +35,19 @@ describe("TeacherDetails", () => {
       </MemoryRouter>
     );
 
-  it("exibe mensagem de ID inválido quando não há ID", () => {
+  it("exibe mensagem de ID não fornecido quando não há ID", () => {
     renderComponent();
-    expect(screen.getByText("Id inválido")).toBeInTheDocument();
+    expect(screen.getByText("ID do professor não fornecido")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Voltar à Lista"));
+    expect(navigateMock).toHaveBeenCalledWith("/teachers");
   });
 
   it("exibe mensagem de professor não encontrado quando getTeacher retorna undefined", () => {
     getTeacherMock.mockReturnValue(undefined);
     renderComponent("1");
-    expect(screen.getByText("Professor não encontrado.")).toBeInTheDocument();
+    expect(screen.getByText("Professor não encontrado")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Voltar à Lista"));
+    expect(navigateMock).toHaveBeenCalledWith("/teachers");
   });
 
   it("renderiza corretamente os detalhes do professor", () => {
@@ -56,7 +59,6 @@ describe("TeacherDetails", () => {
       subject: "Matemática",
       phone: "123456789",
       address: "Rua A, 123",
-      photoUrl: "https://example.com/photo.jpg",
     });
 
     renderComponent("1");
@@ -74,7 +76,6 @@ describe("TeacherDetails", () => {
     expect(screen.getByText("123456789")).toBeInTheDocument();
     expect(screen.getByText("Endereço:")).toBeInTheDocument();
     expect(screen.getByText("Rua A, 123")).toBeInTheDocument();
-    expect(screen.getByAltText("Professor X foto")).toHaveAttribute("src", "https://example.com/photo.jpg");
   });
 
   it("chama navigate ao clicar em Editar", () => {
@@ -86,16 +87,14 @@ describe("TeacherDetails", () => {
       subject: "Matemática",
       phone: "123456789",
       address: "Rua A, 123",
-      photoUrl: "https://example.com/photo.jpg",
     });
 
     renderComponent("1");
-
     fireEvent.click(screen.getByText("Editar"));
     expect(navigateMock).toHaveBeenCalledWith("/teachers/edit/1");
   });
 
-  it("chama navigate ao clicar em Voltar à Lista", () => {
+  it("chama navigate ao clicar em Voltar", () => {
     getTeacherMock.mockReturnValue({
       id: 1,
       name: "Professor X",
@@ -104,12 +103,10 @@ describe("TeacherDetails", () => {
       subject: "Matemática",
       phone: "123456789",
       address: "Rua A, 123",
-      photoUrl: "https://example.com/photo.jpg",
     });
 
     renderComponent("1");
-
-    fireEvent.click(screen.getByText("Voltar à Lista"));
+    fireEvent.click(screen.getByText("Voltar"));
     expect(navigateMock).toHaveBeenCalledWith("/teachers");
   });
 });

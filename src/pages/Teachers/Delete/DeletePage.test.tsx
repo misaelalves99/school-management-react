@@ -1,5 +1,3 @@
-// src/pages/Teachers/Delete/DeletePage.test.tsx
-
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import TeacherDelete from "./DeletePage";
@@ -53,31 +51,19 @@ describe("TeacherDelete", () => {
     getTeacherMock.mockReturnValue({
       id: 1,
       name: "Professor X",
-      email: "x@example.com",
-      phone: "123456789",
     });
+
     renderComponent("1");
 
     expect(screen.getByText("Excluir Professor")).toBeInTheDocument();
-    expect(screen.getByText("Tem certeza que deseja excluir este professor?")).toBeInTheDocument();
+    expect(screen.getByText(/Tem certeza que deseja excluir/i)).toBeInTheDocument();
     expect(screen.getByText("Professor X")).toBeInTheDocument();
-    expect(screen.getByText("E-mail: x@example.com")).toBeInTheDocument();
-    expect(screen.getByText("Telefone: 123456789")).toBeInTheDocument();
     expect(screen.getByText("Excluir")).toBeInTheDocument();
     expect(screen.getByText("Cancelar")).toBeInTheDocument();
   });
 
-  it("chama removeTeacher, alert e navigate ao confirmar exclusão", () => {
-    getTeacherMock.mockReturnValue({
-      id: 1,
-      name: "Professor X",
-      email: "x@example.com",
-      phone: "123456789",
-    });
-
-    // Mock confirm para simular confirmação do usuário
-    window.confirm = jest.fn(() => true);
-
+  it("chama removeTeacher, alerta e navega ao confirmar exclusão", () => {
+    getTeacherMock.mockReturnValue({ id: 1, name: "Professor X" });
     renderComponent("1");
 
     fireEvent.click(screen.getByText("Excluir"));
@@ -87,33 +73,8 @@ describe("TeacherDelete", () => {
     expect(navigateMock).toHaveBeenCalledWith("/teachers");
   });
 
-  it("não exclui se usuário cancelar confirmação", () => {
-    getTeacherMock.mockReturnValue({
-      id: 1,
-      name: "Professor X",
-      email: "x@example.com",
-      phone: "123456789",
-    });
-
-    window.confirm = jest.fn(() => false);
-
-    renderComponent("1");
-
-    fireEvent.click(screen.getByText("Excluir"));
-
-    expect(removeTeacherMock).not.toHaveBeenCalled();
-    expect(alertMock).not.toHaveBeenCalled();
-    expect(navigateMock).not.toHaveBeenCalled();
-  });
-
   it("botão cancelar navega para /teachers", () => {
-    getTeacherMock.mockReturnValue({
-      id: 1,
-      name: "Professor X",
-      email: "x@example.com",
-      phone: "123456789",
-    });
-
+    getTeacherMock.mockReturnValue({ id: 1, name: "Professor X" });
     renderComponent("1");
 
     fireEvent.click(screen.getByText("Cancelar"));

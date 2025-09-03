@@ -1,9 +1,15 @@
 // src/pages/ClassRooms/Details/DetailsPage.test.tsx
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import ClassRoomDetailsPage from './DetailsPage';
 import { useClassRooms } from '../../../hooks/useClassRooms';
+
+const mockedNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockedNavigate,
+}));
 
 jest.mock('../../../hooks/useClassRooms');
 
@@ -13,6 +19,7 @@ describe('ClassRoomDetailsPage', () => {
   beforeEach(() => {
     (useClassRooms as jest.Mock).mockReturnValue({ getById: getByIdMock });
     getByIdMock.mockClear();
+    mockedNavigate.mockClear();
   });
 
   it('exibe mensagem se turma não for encontrada', () => {
@@ -44,21 +51,21 @@ describe('ClassRoomDetailsPage', () => {
       </BrowserRouter>
     );
 
-    // Checagem de títulos e valores
     expect(screen.getByText('Sala Teste')).toBeInTheDocument();
     expect(screen.getByText('30')).toBeInTheDocument();
     expect(screen.getByText('Seg - 08:00 às 10:00')).toBeInTheDocument();
 
-    // Checagem de disciplinas e professores
     expect(screen.getByText('Matemática')).toBeInTheDocument();
     expect(screen.getByText('Prof. A')).toBeInTheDocument();
 
-    // Professor responsável
     expect(screen.getByText('Prof. A')).toBeInTheDocument();
 
-    // Links de ação
-    expect(screen.getByText(/Editar/i).closest('a')).toHaveAttribute('href', '/classrooms/edit/1');
-    expect(screen.getByText(/Voltar/i).closest('a')).toHaveAttribute('href', '/classrooms');
+    // Testar navegação nos botões
+    fireEvent.click(screen.getByText(/Editar/i));
+    expect(mockedNavigate).toHaveBeenCalledWith('/classrooms/edit/1');
+
+    fireEvent.click(screen.getByText(/Voltar/i));
+    expect(mockedNavigate).toHaveBeenCalledWith('/classrooms');
   });
 
   it('exibe mensagens padrão se não houver disciplinas ou professores', () => {

@@ -1,11 +1,8 @@
-// src/pages/ClassRoom/Edit/EditPage.test.tsx
-
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import EditClassRoom from "./EditPage";
 import { useClassRooms } from "../../../hooks/useClassRooms";
 
-// Mocks
 const mockUpdate = jest.fn();
 const mockNavigate = jest.fn();
 
@@ -91,9 +88,7 @@ describe("EditClassRoom", () => {
     fireEvent.change(screen.getByLabelText(/Capacidade/i), { target: { value: "25" } });
     fireEvent.change(screen.getByLabelText(/Horário/i), { target: { value: "Ter - 10:00 às 12:00" } });
 
-    act(() => {
-      fireEvent.click(screen.getByText(/Salvar Alterações/i));
-    });
+    fireEvent.click(screen.getByText(/Salvar Alterações/i));
 
     expect(mockUpdate).toHaveBeenCalledWith(1, {
       name: "Turma B",
@@ -103,14 +98,14 @@ describe("EditClassRoom", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/classrooms");
   });
 
-  it("botão 'Voltar à Lista' deve navegar para /classrooms", () => {
+  it("botão 'Cancelar' deve navegar para /classrooms", () => {
     render(
       <MemoryRouter>
         <EditClassRoom id={1} />
       </MemoryRouter>
     );
 
-    fireEvent.click(screen.getByText(/Voltar à Lista/i));
+    fireEvent.click(screen.getByText(/Cancelar/i));
     expect(mockNavigate).toHaveBeenCalledWith("/classrooms");
   });
 });

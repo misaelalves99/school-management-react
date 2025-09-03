@@ -1,12 +1,10 @@
 // src/contexts/Teachers/TeachersProvider.test.tsx
 
-// src/contexts/Teachers/TeachersProvider.test.tsx
-
 import { render, screen, act } from "@testing-library/react";
 import { useContext } from "react";
 import { TeachersProvider } from "./TeachersProvider";
 import { TeachersContext, TeachersContextType } from "./TeachersContext";
-import { getTeachers } from "../../mocks/Teachers";
+import { getTeachers, getTeacherById } from "../../mocks/Teachers";
 import type { TeacherFormData } from "../../types/TeacherFormData";
 import type { Teacher } from "../../types/Teacher";
 
@@ -96,6 +94,29 @@ describe("TeachersProvider", () => {
     expect(listItems.some((li) => li.textContent === "Professor Editado")).toBe(true);
   });
 
+  it("deve retornar null ao tentar editar teacher inexistente", () => {
+    let editFn: ((id: number, data: Partial<TeacherFormData>) => Teacher | null) | undefined;
+
+    const EditComponent = () => {
+      const context = useContext(TeachersContext) as TeachersContextType;
+      editFn = context.editTeacher;
+      return null;
+    };
+
+    render(
+      <TeachersProvider>
+        <EditComponent />
+      </TeachersProvider>
+    );
+
+    let result: Teacher | null = null;
+    act(() => {
+      result = editFn?.(999, { name: "Inexistente" }) ?? null;
+    });
+
+    expect(result).toBeNull();
+  });
+
   it("deve remover um teacher", () => {
     let removeFn: ((id: number) => void) | undefined;
 
@@ -119,5 +140,68 @@ describe("TeachersProvider", () => {
 
     const listItems = screen.queryAllByRole("listitem");
     expect(listItems.some((li) => li.textContent === firstTeacher.name)).toBe(false);
+  });
+
+  it("deve buscar teacher por id", () => {
+    let getFn: ((id: number) => Teacher | undefined) | undefined;
+
+    const GetComponent = () => {
+      const context = useContext(TeachersContext) as TeachersContextType;
+      getFn = context.getTeacher;
+      return null;
+    };
+
+    render(
+      <TeachersProvider>
+        <GetComponent />
+      </TeachersProvider>
+    );
+
+    const firstTeacher = getTeachers()[0];
+    const teacher = getFn?.(firstTeacher.id);
+    expect(teacher).toEqual(getTeacherById(firstTeacher.id));
+  });
+
+  it("deve retornar undefined ao buscar teacher inexistente", () => {
+    let getFn: ((id: number) => Teacher | undefined) | undefined;
+
+    const GetComponent = () => {
+      const context = useContext(TeachersContext) as TeachersContextType;
+      getFn = context.getTeacher;
+      return null;
+    };
+
+    render(
+      <TeachersProvider>
+        <GetComponent />
+      </TeachersProvider>
+    );
+
+    const teacher = getFn?.(999);
+    expect(teacher).toBeUndefined();
+  });
+
+  it("deve executar fetchTeachers e atualizar lista", () => {
+    let fetchFn: (() => void) | undefined;
+
+    const FetchComponent = () => {
+      const context = useContext(TeachersContext) as TeachersContextType;
+      fetchFn = context.fetchTeachers;
+      return null;
+    };
+
+    render(
+      <TeachersProvider>
+        <FetchComponent />
+        <TestComponent />
+      </TeachersProvider>
+    );
+
+    act(() => {
+      fetchFn?.();
+    });
+
+    const listItems = screen.getAllByRole("listitem");
+    expect(listItems.length).toBe(getTeachers().length);
   });
 });

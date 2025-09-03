@@ -1,7 +1,5 @@
 // src/hooks/useTeachers.test.tsx
 
-// src/hooks/useTeachers.test.tsx
-
 import { renderHook } from "@testing-library/react";
 import { useTeachers } from "./useTeachers";
 import { TeachersProvider } from "../contexts/Teachers/TeachersProvider";

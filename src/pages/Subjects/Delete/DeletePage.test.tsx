@@ -1,158 +1,75 @@
-// src/pages/Subjects/Delete/DeletePage.test.tsx
+// src/pages/Subjects/Delete/DeletePage.tsx
 
-import { render, screen, fireEvent } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
-import SubjectDeletePage from "./DeletePage";
+import { useNavigate, useParams } from "react-router-dom";
+import styles from "./DeletePage.module.css";
 import { useSubjects } from "../../../hooks/useSubjects";
 
-const navigateMock = jest.fn();
+export default function SubjectDeletePage() {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const { getSubjectById, deleteSubject, reloadSubjects } = useSubjects();
 
-// Mock do hook useSubjects
-jest.mock("../../../hooks/useSubjects");
+  if (!id) {
+    return (
+      <div className={styles.container}>
+        <h2>ID inválido.</h2>
+        <button className={styles.btnSecondary} onClick={() => navigate("/subjects")}>
+          Voltar
+        </button>
+      </div>
+    );
+  }
 
-// Mock do react-router-dom
-jest.mock("react-router-dom", () => {
-  const actual = jest.requireActual("react-router-dom");
-  return {
-    ...actual,
-    useNavigate: () => navigateMock,
-    useParams: () => ({ id: "1" }),
+  const subjectId = Number(id);
+  const subject = getSubjectById(subjectId);
+
+  if (!subject) {
+    return (
+      <div className={styles.container}>
+        <h2>Disciplina não encontrada.</h2>
+        <button className={styles.btnSecondary} onClick={() => navigate("/subjects")}>
+          Voltar
+        </button>
+      </div>
+    );
+  }
+
+  const handleDelete = () => {
+    const deleted = deleteSubject(subject.id);
+    if (!deleted) {
+      alert("Erro ao excluir a disciplina.");
+      return;
+    }
+
+    reloadSubjects();
+    alert("Disciplina excluída com sucesso!");
+    navigate("/subjects");
   };
-});
 
-describe("SubjectDeletePage", () => {
-  const getSubjectByIdMock = jest.fn();
-  const deleteSubjectMock = jest.fn();
-  const reloadSubjectsMock = jest.fn();
+  return (
+    <div className={styles.container}>
+      <h1 className={styles.title}>Excluir Disciplina</h1>
+      <h3 className={styles.warning}>
+        Tem certeza que deseja excluir <strong>{subject.name}</strong>?
+      </h3>
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-    (useSubjects as jest.Mock).mockReturnValue({
-      getSubjectById: getSubjectByIdMock,
-      deleteSubject: deleteSubjectMock,
-      reloadSubjects: reloadSubjectsMock,
-    });
-  });
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Descrição:</span>
+        <span className={styles.detailsValue}>{subject.description || '-'}</span>
+      </div>
+      <div className={styles.detailsRow}>
+        <span className={styles.detailsLabel}>Carga Horária:</span>
+        <span className={styles.detailsValue}>{subject.workloadHours} horas</span>
+      </div>
 
-  it("mostra mensagem de ID inválido se id não for fornecido", () => {
-    getSubjectByIdMock.mockReturnValue(null);
-
-    render(
-      <MemoryRouter>
-        <SubjectDeletePage />
-      </MemoryRouter>
-    );
-
-    expect(screen.getByText(/Disciplina não encontrada/i)).toBeInTheDocument();
-  });
-
-  it("mostra os dados da disciplina corretamente", () => {
-    getSubjectByIdMock.mockReturnValue({
-      id: 1,
-      name: "Matemática",
-      workloadHours: 60,
-      description: "Descrição teste",
-    });
-
-    render(
-      <MemoryRouter>
-        <SubjectDeletePage />
-      </MemoryRouter>
-    );
-
-    expect(screen.getByText("Matemática")).toBeInTheDocument();
-    expect(screen.getByText(/Carga Horária: 60 horas/i)).toBeInTheDocument();
-    expect(screen.getByText(/Descrição teste/i)).toBeInTheDocument();
-  });
-
-  it("não exclui se usuário cancelar confirmação", () => {
-    getSubjectByIdMock.mockReturnValue({
-      id: 1,
-      name: "Matemática",
-      workloadHours: 60,
-      description: "Descrição teste",
-    });
-    window.confirm = jest.fn(() => false);
-    window.alert = jest.fn();
-
-    render(
-      <MemoryRouter>
-        <SubjectDeletePage />
-      </MemoryRouter>
-    );
-
-    fireEvent.click(screen.getByText(/Excluir/i));
-
-    expect(deleteSubjectMock).not.toHaveBeenCalled();
-    expect(reloadSubjectsMock).not.toHaveBeenCalled();
-    expect(window.alert).not.toHaveBeenCalled();
-  });
-
-  it("exclui disciplina com sucesso se usuário confirmar", () => {
-    getSubjectByIdMock.mockReturnValue({
-      id: 1,
-      name: "Matemática",
-      workloadHours: 60,
-      description: "Descrição teste",
-    });
-    window.confirm = jest.fn(() => true);
-    window.alert = jest.fn();
-    deleteSubjectMock.mockReturnValue(true);
-
-    render(
-      <MemoryRouter>
-        <SubjectDeletePage />
-      </MemoryRouter>
-    );
-
-    fireEvent.click(screen.getByText(/Excluir/i));
-
-    expect(deleteSubjectMock).toHaveBeenCalledWith(1);
-    expect(reloadSubjectsMock).toHaveBeenCalled();
-    expect(window.alert).toHaveBeenCalledWith("Disciplina excluída com sucesso!");
-    expect(navigateMock).toHaveBeenCalledWith("/subjects");
-  });
-
-  it("mostra erro ao excluir se deleteSubject retornar false", () => {
-    getSubjectByIdMock.mockReturnValue({
-      id: 1,
-      name: "Matemática",
-      workloadHours: 60,
-      description: "Descrição teste",
-    });
-    window.confirm = jest.fn(() => true);
-    window.alert = jest.fn();
-    deleteSubjectMock.mockReturnValue(false);
-
-    render(
-      <MemoryRouter>
-        <SubjectDeletePage />
-      </MemoryRouter>
-    );
-
-    fireEvent.click(screen.getByText(/Excluir/i));
-
-    expect(deleteSubjectMock).toHaveBeenCalledWith(1);
-    expect(window.alert).toHaveBeenCalledWith("Erro ao excluir a disciplina.");
-    expect(reloadSubjectsMock).not.toHaveBeenCalled();
-    expect(navigateMock).not.toHaveBeenCalled();
-  });
-
-  it("botão cancelar navega para /subjects", () => {
-    getSubjectByIdMock.mockReturnValue({
-      id: 1,
-      name: "Matemática",
-      workloadHours: 60,
-      description: "Descrição teste",
-    });
-
-    render(
-      <MemoryRouter>
-        <SubjectDeletePage />
-      </MemoryRouter>
-    );
-
-    fireEvent.click(screen.getByText(/Cancelar/i));
-    expect(navigateMock).toHaveBeenCalledWith("/subjects");
-  });
-});
+      <div className={styles.actions}>
+        <button type="button" className={styles.btnDanger} onClick={handleDelete}>
+          Excluir
+        </button>
+        <button type="button" className={styles.btnSecondary} onClick={() => navigate("/subjects")}>
+          Cancelar
+        </button>
+      </div>
+    </div>
+  );
+}

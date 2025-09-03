@@ -1,4 +1,5 @@
 // src/pages/Enrollments/wrappers.test.tsx
+
 import { render, screen, act, fireEvent } from '@testing-library/react';
 import {
   EnrollmentDetailsWrapper,
@@ -51,6 +52,7 @@ describe('Enrollment Wrappers', () => {
     (useParams as jest.Mock).mockReturnValue({ id: '1' });
   });
 
+  // ===================== Details =====================
   it('EnrollmentDetailsWrapper exibe detalhes corretamente', async () => {
     render(
       <MemoryRouter>
@@ -60,26 +62,52 @@ describe('Enrollment Wrappers', () => {
 
     expect(await screen.findByText(/João/)).toBeInTheDocument();
     expect(screen.getByText(/Sala A/)).toBeInTheDocument();
+    expect(screen.getByText(/Ativa/)).toBeInTheDocument();
+    expect(screen.getByText(/01\/01\/2025/)).toBeInTheDocument();
   });
 
-  it('EnrollmentEditWrapper exibe formulário de edição e chama onSave', async () => {
+  // ===================== Edit =====================
+  it('EnrollmentEditWrapper exibe formulário e chama onSave', async () => {
     render(
       <MemoryRouter>
         <EnrollmentEditWrapper />
       </MemoryRouter>
     );
 
-    const input = await screen.findByLabelText(/Aluno/);
-    fireEvent.change(input, { target: { value: 1 } });
+    const studentSelect = await screen.findByLabelText(/Aluno/);
+    fireEvent.change(studentSelect, { target: { value: '1' } });
 
-    const form = screen.getByRole('form') || screen.getByText(/Salvar Alterações/).closest('form');
+    const dateInput = screen.getByLabelText(/Data da Matrícula/);
+    fireEvent.change(dateInput, { target: { value: '2025-02-01' } });
+
+    const saveButton = screen.getByText(/Salvar Alterações/);
     await act(async () => {
-      fireEvent.submit(form!);
+      fireEvent.click(saveButton);
     });
 
-    expect(updateEnrollmentMock).toHaveBeenCalled();
+    expect(updateEnrollmentMock).toHaveBeenCalledWith({
+      id: 1,
+      studentId: 1,
+      classRoomId: 1,
+      enrollmentDate: '2025-02-01',
+      status: 'Ativa',
+    });
+    expect(mockNavigate).toHaveBeenCalledWith('/enrollments');
   });
 
+  it('EnrollmentEditWrapper alerta quando matrícula não encontrada', async () => {
+    (useParams as jest.Mock).mockReturnValue({ id: '999' });
+    render(
+      <MemoryRouter>
+        <EnrollmentEditWrapper />
+      </MemoryRouter>
+    );
+
+    expect(mockAlert).toHaveBeenCalledWith('Matrícula não encontrada');
+    expect(mockNavigate).toHaveBeenCalledWith('/enrollments');
+  });
+
+  // ===================== Delete =====================
   it('EnrollmentDeleteWrapper exibe matrícula e chama onDelete', async () => {
     render(
       <MemoryRouter>
@@ -98,6 +126,19 @@ describe('Enrollment Wrappers', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/enrollments');
   });
 
+  it('EnrollmentDeleteWrapper alerta quando matrícula não encontrada', async () => {
+    (useParams as jest.Mock).mockReturnValue({ id: '999' });
+    render(
+      <MemoryRouter>
+        <EnrollmentDeleteWrapper />
+      </MemoryRouter>
+    );
+
+    expect(mockAlert).toHaveBeenCalledWith('Matrícula não encontrada');
+    expect(mockNavigate).toHaveBeenCalledWith('/enrollments');
+  });
+
+  // ===================== ID não informado =====================
   it('navega para /enrollments quando id não informado', async () => {
     (useParams as jest.Mock).mockReturnValue({ id: undefined });
 
