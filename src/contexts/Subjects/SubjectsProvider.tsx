@@ -32,7 +32,6 @@ export function SubjectsProvider({ children }: SubjectsProviderProps) {
     return deleted;
   };
 
-  // CORREÇÃO: aqui era getById, mas o mock define como get
   const getSubjectById = (id: number) => mockSubjects.get(id);
 
   const contextValue: SubjectsContextData = {

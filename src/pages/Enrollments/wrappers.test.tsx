@@ -19,11 +19,10 @@ jest.mock('react-router-dom', () => ({
 
 jest.spyOn(window, 'alert').mockImplementation(mockAlert);
 
-// Mock dos hooks
+// Mocks dos hooks
 const mockEnrollments = [
   { id: 1, studentId: 1, classRoomId: 1, enrollmentDate: '2025-01-01', status: 'Ativa' },
 ];
-
 const mockStudents = [{ id: 1, name: 'João' }];
 const mockClassRooms = [{ id: 1, name: 'Sala A' }];
 
@@ -107,6 +106,22 @@ describe('Enrollment Wrappers', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/enrollments');
   });
 
+  it('EnrollmentEditWrapper mostra alert em caso de erro no update', async () => {
+    updateEnrollmentMock.mockRejectedValueOnce(new Error('Falha ao atualizar'));
+    render(
+      <MemoryRouter>
+        <EnrollmentEditWrapper />
+      </MemoryRouter>
+    );
+
+    const saveButton = await screen.findByText(/Salvar Alterações/);
+    await act(async () => {
+      fireEvent.click(saveButton);
+    });
+
+    expect(mockAlert).toHaveBeenCalledWith('Ocorreu um erro ao salvar a matrícula.');
+  });
+
   // ===================== Delete =====================
   it('EnrollmentDeleteWrapper exibe matrícula e chama onDelete', async () => {
     render(
@@ -136,6 +151,22 @@ describe('Enrollment Wrappers', () => {
 
     expect(mockAlert).toHaveBeenCalledWith('Matrícula não encontrada');
     expect(mockNavigate).toHaveBeenCalledWith('/enrollments');
+  });
+
+  it('EnrollmentDeleteWrapper mostra alert em caso de erro no delete', async () => {
+    removeEnrollmentMock.mockRejectedValueOnce(new Error('Falha ao excluir'));
+    render(
+      <MemoryRouter>
+        <EnrollmentDeleteWrapper />
+      </MemoryRouter>
+    );
+
+    const deleteButton = await screen.findByText(/Excluir/);
+    await act(async () => {
+      fireEvent.click(deleteButton);
+    });
+
+    expect(mockAlert).toHaveBeenCalledWith('Ocorreu um erro ao excluir a matrícula.');
   });
 
   // ===================== ID não informado =====================

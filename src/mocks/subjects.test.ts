@@ -1,25 +1,35 @@
 // src/mocks/subjects.test.ts
-
 import { mockSubjects } from './Subjects';
+import type { Subject } from '../types/Subject';
 
 describe('mockSubjects', () => {
+  const initialData: Omit<Subject, 'id'>[] = [
+    { name: "Matemática", description: "Disciplina de matemática básica", workloadHours: 60 },
+    { name: "Física", description: "Fundamentos de física moderna", workloadHours: 60 },
+    { name: "Química", description: "Introdução à química orgânica", workloadHours: 60 },
+    { name: "Biologia", description: "Biologia celular e molecular", workloadHours: 60 },
+  ];
+
   beforeEach(() => {
-    // Resetar os dados originais
-    while (mockSubjects.list().length > 0) {
-      const last = mockSubjects.list()[mockSubjects.list().length - 1];
-      mockSubjects.delete(last.id);
-    }
-    // Recriar os dados iniciais
-    mockSubjects.create({ name: "Matemática", description: "Disciplina de matemática básica", workloadHours: 60 });
-    mockSubjects.create({ name: "Física", description: "Fundamentos de física moderna", workloadHours: 60 });
-    mockSubjects.create({ name: "Química", description: "Introdução à química orgânica", workloadHours: 60 });
-    mockSubjects.create({ name: "Biologia", description: "Biologia celular e molecular", workloadHours: 60 });
+    // Limpar todos os dados
+    mockSubjects.list().forEach(s => mockSubjects.delete(s.id));
+
+    // Recriar dados iniciais
+    initialData.forEach(d => mockSubjects.create(d));
   });
 
   it('list deve retornar todas as disciplinas', () => {
     const subjects = mockSubjects.list();
     expect(subjects.length).toBe(4);
     expect(subjects[0].name).toBe('Matemática');
+  });
+
+  it('list deve retornar uma cópia do array (imutabilidade)', () => {
+    const list1 = mockSubjects.list();
+    const list2 = mockSubjects.list();
+    expect(list1).not.toBe(list2);
+    list1.pop();
+    expect(list2.length).toBe(4);
   });
 
   it('get deve retornar disciplina pelo id', () => {
@@ -29,14 +39,20 @@ describe('mockSubjects', () => {
   });
 
   it('get deve retornar undefined se não existir', () => {
-    const subject = mockSubjects.get(999);
-    expect(subject).toBeUndefined();
+    expect(mockSubjects.get(999)).toBeUndefined();
   });
 
   it('create deve adicionar uma nova disciplina', () => {
     const newSubject = mockSubjects.create({ name: 'História', description: 'História do Brasil', workloadHours: 50 });
     expect(newSubject.id).toBeGreaterThan(0);
     expect(mockSubjects.list()).toContainEqual(newSubject);
+  });
+
+  it('create deve gerar IDs únicos mesmo após deletar', () => {
+    const s1 = mockSubjects.create({ name: 'Geografia', description: 'Geografia mundial', workloadHours: 40 });
+    mockSubjects.delete(s1.id);
+    const s2 = mockSubjects.create({ name: 'Artes', description: 'Artes visuais', workloadHours: 30 });
+    expect(s2.id).toBeGreaterThan(s1.id);
   });
 
   it('update deve atualizar disciplina existente', () => {
@@ -46,9 +62,14 @@ describe('mockSubjects', () => {
     expect(mockSubjects.get(1)?.workloadHours).toBe(100);
   });
 
+  it('update deve atualizar parcialmente os campos', () => {
+    const updated = mockSubjects.update(1, { name: 'Matemática Avançada' });
+    expect(updated?.name).toBe('Matemática Avançada');
+    expect(updated?.workloadHours).toBe(100); // mantém valor anterior
+  });
+
   it('update deve retornar undefined se disciplina não existir', () => {
-    const updated = mockSubjects.update(999, { workloadHours: 100 });
-    expect(updated).toBeUndefined();
+    expect(mockSubjects.update(999, { workloadHours: 100 })).toBeUndefined();
   });
 
   it('delete deve remover disciplina existente', () => {
@@ -59,7 +80,6 @@ describe('mockSubjects', () => {
   });
 
   it('delete deve retornar false se disciplina não existir', () => {
-    const result = mockSubjects.delete(999);
-    expect(result).toBe(false);
+    expect(mockSubjects.delete(999)).toBe(false);
   });
 });

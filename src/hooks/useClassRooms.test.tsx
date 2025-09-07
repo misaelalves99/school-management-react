@@ -1,5 +1,4 @@
 // src/hooks/useClassRooms.test.tsx
-
 import { renderHook } from "@testing-library/react";
 import { useClassRooms } from "./useClassRooms";
 import { ClassRoomProvider } from "../contexts/ClassRooms/ClassRoomProvider";
@@ -18,7 +17,9 @@ describe("useClassRooms", () => {
 
     const { result } = renderHook(() => useClassRooms(), { wrapper });
 
+    // Verifica se os métodos e estados do contexto estão definidos
     expect(result.current.classRooms).toBeDefined();
+    expect(Array.isArray(result.current.classRooms)).toBe(true);
     expect(typeof result.current.refresh).toBe("function");
     expect(typeof result.current.create).toBe("function");
     expect(typeof result.current.update).toBe("function");

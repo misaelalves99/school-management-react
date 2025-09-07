@@ -4,12 +4,14 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./EditPage.module.css";
 import { useTeachers } from "../../../hooks/useTeachers";
+import { useSubjects } from "../../../hooks/useSubjects";
 import type { TeacherFormData } from "../../../types/TeacherFormData";
 
 export default function TeacherEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getTeacher, editTeacher } = useTeachers();
+  const { subjects } = useSubjects();
 
   const [formData, setFormData] = useState<TeacherFormData>({
     name: "",
@@ -42,9 +44,8 @@ export default function TeacherEditPage() {
     setLoading(false);
   }, [id, navigate, getTeacher]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const validate = (): boolean => {
@@ -74,36 +75,53 @@ export default function TeacherEditPage() {
 
   if (loading) return <div>Carregando...</div>;
 
-  const fields = [
-    { key: "name", label: "Nome", placeholder: "Digite o nome do professor", type: "text" },
-    { key: "email", label: "Email", placeholder: "Digite o email", type: "email" },
-    { key: "dateOfBirth", label: "Data de Nascimento", placeholder: "", type: "date" },
-    { key: "subject", label: "Disciplina", placeholder: "Digite a disciplina", type: "text" },
-    { key: "phone", label: "Telefone", placeholder: "Digite o telefone", type: "tel" },
-    { key: "address", label: "Endereço", placeholder: "Digite o endereço", type: "text" },
-  ];
-
   return (
     <div className={styles.createContainer}>
       <h1 className={styles.createTitle}>Editar Professor</h1>
       <form onSubmit={handleSubmit} className={styles.createForm}>
-        {fields.map(({ key, label, placeholder, type }) => (
-          <div key={key} className={styles.formGroup}>
-            <label htmlFor={key} className={styles.formLabel}>{label}</label>
+        {/* Campos de input comuns */}
+        {[
+          { label: "Nome", name: "name", type: "text" },
+          { label: "Email", name: "email", type: "email" },
+          { label: "Data de Nascimento", name: "dateOfBirth", type: "date" },
+          { label: "Telefone", name: "phone", type: "tel" },
+          { label: "Endereço", name: "address", type: "text" },
+        ].map(({ label, name, type }) => (
+          <div key={name} className={styles.formGroup}>
+            <label htmlFor={name} className={styles.formLabel}>{label}</label>
             <input
-              id={key}
-              name={key}
+              id={name}
+              name={name}
               type={type}
-              value={formData[key as keyof TeacherFormData]}
+              value={formData[name as keyof TeacherFormData]}
               onChange={handleChange}
-              placeholder={placeholder}
               className={styles.formInput}
             />
-            {errors[key as keyof TeacherFormData] && (
-              <span className={styles.formError}>{errors[key as keyof TeacherFormData]}</span>
+            {errors[name as keyof TeacherFormData] && (
+              <span className={styles.formError}>{errors[name as keyof TeacherFormData]}</span>
             )}
           </div>
         ))}
+
+        {/* Select de disciplinas usando useSubjects */}
+        <div className={styles.formGroup}>
+          <label htmlFor="subject" className={styles.formLabel}>Disciplina</label>
+          <select
+            id="subject"
+            name="subject"
+            value={formData.subject}
+            onChange={handleChange}
+            className={styles.formInput}
+          >
+            <option value="">Selecione uma disciplina</option>
+            {subjects.map(subj => (
+              <option key={subj.id} value={subj.name}>
+                {subj.name}
+              </option>
+            ))}
+          </select>
+          {errors.subject && <span className={styles.formError}>{errors.subject}</span>}
+        </div>
 
         <div className={styles.formActions}>
           <button type="submit" className={styles.btnPrimary}>Salvar Alterações</button>

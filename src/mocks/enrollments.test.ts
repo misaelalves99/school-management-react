@@ -1,5 +1,4 @@
 // src/mocks/enrollments.test.ts
-
 import {
   getEnrollments,
   getEnrollmentById,
@@ -10,46 +9,18 @@ import {
 import type { Enrollment } from "../types/Enrollment";
 
 describe("Enrollments mocks", () => {
+  const initialData: Omit<Enrollment, "id">[] = [
+    { studentId: 1, classRoomId: 1, enrollmentDate: "2025-01-10", status: "Ativo" },
+    { studentId: 2, classRoomId: 2, enrollmentDate: "2025-01-15", status: "Inativo" },
+    { studentId: 1, classRoomId: 2, enrollmentDate: "2025-02-01", status: "Ativo" },
+  ];
+
   beforeEach(() => {
-    // Resetar dados antes de cada teste
-    const initialData: Enrollment[] = [
-      {
-        id: 1,
-        studentId: 1,
-        classRoomId: 1,
-        enrollmentDate: "2025-01-10",
-        status: "Ativo",
-      },
-      {
-        id: 2,
-        studentId: 2,
-        classRoomId: 2,
-        enrollmentDate: "2025-01-15",
-        status: "Inativo",
-      },
-      {
-        id: 3,
-        studentId: 1,
-        classRoomId: 2,
-        enrollmentDate: "2025-02-01",
-        status: "Ativo",
-      },
-    ];
+    // Limpar todos os dados atuais
+    getEnrollments().forEach(e => deleteEnrollment(e.id));
 
-    // Limpar e reinserir
-    const currentEnrollments = getEnrollments();
-    while (currentEnrollments.length > 0) {
-      deleteEnrollment(currentEnrollments[0].id);
-    }
-
-    initialData.forEach((e) =>
-      createEnrollment({
-        studentId: e.studentId,
-        classRoomId: e.classRoomId,
-        enrollmentDate: e.enrollmentDate,
-        status: e.status,
-      })
-    );
+    // Reinserir dados iniciais
+    initialData.forEach(e => createEnrollment(e));
   });
 
   it("getEnrollments deve retornar todas as matrículas", () => {
@@ -65,8 +36,7 @@ describe("Enrollments mocks", () => {
   });
 
   it("getEnrollmentById deve retornar undefined se não existir", () => {
-    const enrollment = getEnrollmentById(999);
-    expect(enrollment).toBeUndefined();
+    expect(getEnrollmentById(999)).toBeUndefined();
   });
 
   it("createEnrollment deve adicionar uma nova matrícula", () => {
@@ -80,6 +50,13 @@ describe("Enrollments mocks", () => {
     expect(getEnrollments()).toContainEqual(newEnrollment);
   });
 
+  it("createEnrollment deve gerar IDs únicos mesmo após deletar", () => {
+    const e1 = createEnrollment({ studentId: 4, classRoomId: 1, enrollmentDate: "2025-04-01", status: "Ativo" });
+    deleteEnrollment(e1.id);
+    const e2 = createEnrollment({ studentId: 5, classRoomId: 2, enrollmentDate: "2025-04-02", status: "Ativo" });
+    expect(e2.id).toBeGreaterThan(e1.id);
+  });
+
   it("updateEnrollment deve atualizar uma matrícula existente", () => {
     const updated = updateEnrollment(1, { status: "Inativo" });
     expect(updated).toBeDefined();
@@ -87,14 +64,31 @@ describe("Enrollments mocks", () => {
     expect(getEnrollmentById(1)?.status).toBe("Inativo");
   });
 
+  it("updateEnrollment deve atualizar parcialmente os dados", () => {
+    const updated = updateEnrollment(1, { enrollmentDate: "2025-05-01" });
+    expect(updated?.enrollmentDate).toBe("2025-05-01");
+    expect(getEnrollmentById(1)?.status).toBe("Ativo"); // status permanece
+  });
+
   it("updateEnrollment deve retornar null se a matrícula não existir", () => {
-    const updated = updateEnrollment(999, { status: "Ativo" });
-    expect(updated).toBeNull();
+    expect(updateEnrollment(999, { status: "Ativo" })).toBeNull();
   });
 
   it("deleteEnrollment deve remover a matrícula correta", () => {
     deleteEnrollment(2);
     expect(getEnrollmentById(2)).toBeUndefined();
     expect(getEnrollments().length).toBe(2);
+  });
+
+  it("deleteEnrollment em matrícula inexistente não deve lançar erro", () => {
+    expect(() => deleteEnrollment(999)).not.toThrow();
+  });
+
+  it("getEnrollments deve retornar uma cópia do array (imutabilidade)", () => {
+    const list1 = getEnrollments();
+    const list2 = getEnrollments();
+    expect(list1).not.toBe(list2); // arrays diferentes
+    list1.pop();
+    expect(list2.length).toBe(3); // array original não é alterado
   });
 });

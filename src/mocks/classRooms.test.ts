@@ -1,4 +1,6 @@
 // src/mocks/classRooms.test.ts
+import type { Teacher } from '../types/Teacher';
+import type { Subject } from '../types/Subject';
 import {
   classRoomsData,
   getClassRooms,
@@ -12,15 +14,26 @@ describe('classRooms mocks', () => {
   beforeEach(() => {
     // Resetar o array para estado inicial antes de cada teste
     while (classRoomsData.length > 0) classRoomsData.pop();
+
+    const mockTeachers: Teacher[] = [
+      { id: 1, name: 'Maria Silva', email: 'maria@email.com', dateOfBirth: '1980-01-01', subject: 'Matemática', phone: '123456789', address: 'Rua A' },
+      { id: 2, name: 'João Souza', email: 'joao@email.com', dateOfBirth: '1975-05-20', subject: 'Português', phone: '987654321', address: 'Rua B' },
+    ];
+
+    const mockSubjects: Subject[] = [
+      { id: 1, name: 'Matemática', description: 'Matemática básica', workloadHours: 40 },
+      { id: 2, name: 'Português', description: 'Português avançado', workloadHours: 35 },
+    ];
+
     classRoomsData.push(
       {
         id: 1,
         name: 'Sala A',
         capacity: 30,
         schedule: 'Seg - 08:00 às 10:00',
-        subjects: [],
-        teachers: [],
-        classTeacher: undefined,
+        subjects: mockSubjects,
+        teachers: mockTeachers,
+        classTeacher: mockTeachers[0],
       },
       {
         id: 2,

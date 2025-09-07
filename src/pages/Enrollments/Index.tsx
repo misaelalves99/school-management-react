@@ -1,64 +1,37 @@
 // src/pages/Enrollments/index.tsx
 
-import { useEffect, useMemo, useState, useCallback } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import styles from './EnrollmentsPage.module.css';
 import { useEnrollments } from '../../hooks/useEnrollments';
 import { useStudents } from '../../hooks/useStudents';
 import { useClassRooms } from '../../hooks/useClassRooms';
 import type { EnrollmentWithNames } from '../../types/EnrollmentWithNames';
 
-const PAGE_SIZE = 10;
-
 export default function EnrollmentIndexPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [searchString, setSearchString] = useState(searchParams.get('searchString') || '');
-  const currentPage = Number(searchParams.get('page') || '1');
-
   const { enrollments } = useEnrollments();
   const { students = [] } = useStudents();
   const { classRooms = [] } = useClassRooms();
+  const [searchString, setSearchString] = useState('');
 
-  const [data, setData] = useState<{
-    items: EnrollmentWithNames[];
-    currentPage: number;
-    totalItems: number;
-  }>({ items: [], currentPage, totalItems: 0 });
+  const filteredData: EnrollmentWithNames[] = useMemo(() => {
+    const term = searchString.toLowerCase();
 
-  const mapToWithNames = useCallback(
-    (enrollment: typeof enrollments[number]): EnrollmentWithNames => {
-      const student = students.find(s => s.id === enrollment.studentId);
-      const classRoom = classRooms.find(c => c.id === enrollment.classRoomId);
-      return {
-        ...enrollment,
-        studentName: student?.name ?? 'Aluno não informado',
-        classRoomName: classRoom?.name ?? 'Turma não informada',
-      };
-    },
-    [students, classRooms]
-  );
-
-  const loadData = useCallback(() => {
-    const filtered = enrollments.filter(e =>
-      searchString ? e.status.toLowerCase().includes(searchString.toLowerCase()) : true
-    );
-
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const paginated = filtered.slice(start, start + PAGE_SIZE);
-    const itemsWithNames = paginated.map(mapToWithNames);
-
-    setData({ items: itemsWithNames, currentPage, totalItems: filtered.length });
-  }, [enrollments, searchString, currentPage, mapToWithNames]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  const totalPages = useMemo(() => Math.max(1, Math.ceil(data.totalItems / PAGE_SIZE)), [data.totalItems]);
+    return enrollments
+      .filter(e => term === '' || e.status.toLowerCase().includes(term))
+      .map(e => {
+        const student = students.find(s => s.id === e.studentId);
+        const classRoom = classRooms.find(c => c.id === e.classRoomId);
+        return {
+          ...e,
+          studentName: student?.name ?? 'Aluno não informado',
+          classRoomName: classRoom?.name ?? 'Turma não informada',
+        };
+      });
+  }, [enrollments, students, classRooms, searchString]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchString(e.target.value);
-    setSearchParams({ searchString: e.target.value, page: '1' });
   };
 
   return (
@@ -88,6 +61,7 @@ export default function EnrollmentIndexPage() {
           <table className={styles.table}>
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Aluno</th>
                 <th>Turma</th>
                 <th>Status</th>
@@ -96,15 +70,16 @@ export default function EnrollmentIndexPage() {
               </tr>
             </thead>
             <tbody>
-              {data.items.length === 0 ? (
+              {filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className={styles.noResults}>
+                  <td colSpan={6} className={styles.noResults}>
                     Nenhuma matrícula encontrada.
                   </td>
                 </tr>
               ) : (
-                data.items.map(e => (
+                filteredData.map(e => (
                   <tr key={e.id}>
+                    <td>{e.id}</td>
                     <td>{e.studentName}</td>
                     <td>{e.classRoomName}</td>
                     <td>{e.status}</td>
@@ -112,10 +87,10 @@ export default function EnrollmentIndexPage() {
                     <td className={styles.actionsCell}>
                       <Link to={`/enrollments/details/${e.id}`} className={`${styles.btn} ${styles.btnInfo}`}>
                         Detalhes
-                      </Link>
+                      </Link>{' '}
                       <Link to={`/enrollments/edit/${e.id}`} className={`${styles.btn} ${styles.btnWarning}`}>
                         Editar
-                      </Link>
+                      </Link>{' '}
                       <Link to={`/enrollments/delete/${e.id}`} className={`${styles.btn} ${styles.btnDanger}`}>
                         Excluir
                       </Link>
@@ -126,30 +101,6 @@ export default function EnrollmentIndexPage() {
             </tbody>
           </table>
         </div>
-
-        {totalPages > 1 && (
-          <div className={styles.pagination}>
-            <Link
-              to={`?page=${Math.max(1, data.currentPage - 1)}&searchString=${searchString}`}
-              className={styles.pageLink}
-              aria-disabled={data.currentPage === 1}
-            >
-              Anterior
-            </Link>
-
-            <span className={styles.pageInfo}>
-              Página {data.currentPage} de {totalPages}
-            </span>
-
-            <Link
-              to={`?page=${Math.min(totalPages, data.currentPage + 1)}&searchString=${searchString}`}
-              className={styles.pageLink}
-              aria-disabled={data.currentPage === totalPages}
-            >
-              Próxima
-            </Link>
-          </div>
-        )}
       </main>
     </div>
   );

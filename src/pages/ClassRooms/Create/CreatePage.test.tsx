@@ -41,10 +41,10 @@ describe('CreateClassRoom', () => {
     expect(screen.getByLabelText(/Capacidade/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Horário/i)).toBeInTheDocument();
     expect(screen.getByText(/Salvar/i)).toBeInTheDocument();
-    expect(screen.getByText(/Voltar à Lista/i)).toBeInTheDocument();
+    expect(screen.getByText(/Cancelar/i)).toBeInTheDocument();
   });
 
-  it('mostra erros se campos estiverem vazios', () => {
+  it('mostra erros se campos estiverem vazios ou inválidos', () => {
     renderComponent();
 
     fireEvent.change(screen.getByLabelText(/Nome/i), { target: { value: '' } });
@@ -80,10 +80,10 @@ describe('CreateClassRoom', () => {
     expect(mockedNavigate).toHaveBeenCalledWith('/classrooms');
   });
 
-  it('botão Voltar chama navigate', () => {
+  it('botão Cancelar chama navigate', () => {
     renderComponent();
 
-    fireEvent.click(screen.getByText(/Voltar à Lista/i));
+    fireEvent.click(screen.getByText(/Cancelar/i));
     expect(mockedNavigate).toHaveBeenCalledWith('/classrooms');
   });
 });

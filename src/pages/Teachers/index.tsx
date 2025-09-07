@@ -5,14 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { useTeachers } from "../../hooks/useTeachers";
 import styles from "./TeachersPage.module.css";
 
-const PAGE_SIZE = 10;
-
 export default function TeachersPage() {
   const navigate = useNavigate();
   const { teachers } = useTeachers();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredTeachers = useMemo(() => {
     if (!searchTerm.trim()) return teachers;
@@ -22,34 +19,15 @@ export default function TeachersPage() {
     );
   }, [searchTerm, teachers]);
 
-  const totalItems = filteredTeachers.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
-  const currentItems = filteredTeachers.slice(
-    (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE
-  );
-
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1);
-  };
-
-  const goToPage = (page: number) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
   };
 
   return (
     <div className={styles.pageContainer}>
       <aside className={styles.leftPanel}>
         <h2 className={styles.title}>Buscar Professores</h2>
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            goToPage(1);
-          }}
-          className={styles.searchForm}
-        >
+        <form onSubmit={e => e.preventDefault()} className={styles.searchForm}>
           <input
             type="text"
             placeholder="Digite o nome ou disciplina..."
@@ -83,14 +61,14 @@ export default function TeachersPage() {
               </tr>
             </thead>
             <tbody>
-              {currentItems.length === 0 ? (
+              {filteredTeachers.length === 0 ? (
                 <tr>
                   <td colSpan={4} className={styles.noResults}>
                     Nenhum professor encontrado.
                   </td>
                 </tr>
               ) : (
-                currentItems.map(t => (
+                filteredTeachers.map(t => (
                   <tr key={t.id}>
                     <td>{t.id}</td>
                     <td>{t.name}</td>
@@ -121,18 +99,6 @@ export default function TeachersPage() {
             </tbody>
           </table>
         </div>
-
-        {totalPages > 1 && (
-          <div className={styles.pagination}>
-            <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
-              Anterior
-            </button>
-            <span className={styles.pageInfo}>Página {currentPage} de {totalPages}</span>
-            <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
-              Próxima
-            </button>
-          </div>
-        )}
       </main>
     </div>
   );

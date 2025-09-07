@@ -54,7 +54,6 @@ describe('ClassRoomContext', () => {
 
     const { result } = renderHook(() => useClassRoomContext(), { wrapper });
 
-    // Criando objeto válido para Omit<ClassRoom, 'id'>
     const newClassRoom: Omit<ClassRoom, 'id'> = {
       name: 'Sala 101',
       capacity: 30,

@@ -1,7 +1,5 @@
 // src/pages/Subjects/Details/DetailsPage.tsx
 
-// src/pages/Subjects/Details/DetailsPage.tsx
-
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./DetailsPage.module.css";
 import { useSubjects } from "../../../hooks/useSubjects";

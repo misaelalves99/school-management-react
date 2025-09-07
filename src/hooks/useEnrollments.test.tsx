@@ -1,5 +1,4 @@
 // src/hooks/useEnrollments.test.tsx
-
 import { renderHook } from "@testing-library/react";
 import { useEnrollments } from "./useEnrollments";
 import { EnrollmentsProvider } from "../contexts/Enrollments/EnrollmentsProvider";
@@ -18,7 +17,9 @@ describe("useEnrollments", () => {
 
     const { result } = renderHook(() => useEnrollments(), { wrapper });
 
+    // Verifica se os estados e funções estão definidos
     expect(result.current.enrollments).toBeDefined();
+    expect(Array.isArray(result.current.enrollments)).toBe(true);
     expect(typeof result.current.refresh).toBe("function");
     expect(typeof result.current.createEnrollment).toBe("function");
     expect(typeof result.current.updateEnrollment).toBe("function");
