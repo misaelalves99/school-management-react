@@ -8,7 +8,7 @@ import { useSubjects } from "../../../hooks/useSubjects";
 
 export default function SubjectEditPage() {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id?: string }>();
   const { getSubjectById, updateSubject } = useSubjects();
 
   const [subject, setSubject] = useState<Omit<Subject, "id">>({
@@ -59,7 +59,7 @@ export default function SubjectEditPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate() || !id) return;
 
     const updated = updateSubject(Number(id), subject);
     if (!updated) {

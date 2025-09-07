@@ -1,12 +1,12 @@
 // src/pages/Enrollments/wrappers.test.tsx
 
-import { render, screen, act, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import {
   EnrollmentDetailsWrapper,
   EnrollmentEditWrapper,
   EnrollmentDeleteWrapper,
 } from './wrappers';
-import { MemoryRouter, useParams } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 
 const mockNavigate = jest.fn();
 const mockAlert = jest.fn();
@@ -44,6 +44,8 @@ jest.mock('../../hooks/useStudents', () => ({
 jest.mock('../../hooks/useClassRooms', () => ({
   useClassRooms: () => ({ classRooms: mockClassRooms }),
 }));
+
+import { useParams } from 'react-router-dom';
 
 describe('Enrollment Wrappers', () => {
   beforeEach(() => {
@@ -96,6 +98,7 @@ describe('Enrollment Wrappers', () => {
 
   it('EnrollmentEditWrapper alerta quando matrícula não encontrada', async () => {
     (useParams as jest.Mock).mockReturnValue({ id: '999' });
+
     render(
       <MemoryRouter>
         <EnrollmentEditWrapper />
@@ -108,6 +111,7 @@ describe('Enrollment Wrappers', () => {
 
   it('EnrollmentEditWrapper mostra alert em caso de erro no update', async () => {
     updateEnrollmentMock.mockRejectedValueOnce(new Error('Falha ao atualizar'));
+
     render(
       <MemoryRouter>
         <EnrollmentEditWrapper />
@@ -143,6 +147,7 @@ describe('Enrollment Wrappers', () => {
 
   it('EnrollmentDeleteWrapper alerta quando matrícula não encontrada', async () => {
     (useParams as jest.Mock).mockReturnValue({ id: '999' });
+
     render(
       <MemoryRouter>
         <EnrollmentDeleteWrapper />
@@ -155,6 +160,7 @@ describe('Enrollment Wrappers', () => {
 
   it('EnrollmentDeleteWrapper mostra alert em caso de erro no delete', async () => {
     removeEnrollmentMock.mockRejectedValueOnce(new Error('Falha ao excluir'));
+
     render(
       <MemoryRouter>
         <EnrollmentDeleteWrapper />

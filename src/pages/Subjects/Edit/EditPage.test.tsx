@@ -6,6 +6,7 @@ import SubjectEditPage from "./EditPage";
 import { useSubjects } from "../../../hooks/useSubjects";
 import { useParams, useNavigate } from "react-router-dom";
 
+// Mock global de alert e navigate
 const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
 const navigateMock = jest.fn();
 
@@ -28,6 +29,7 @@ describe("SubjectEditPage", () => {
     (useNavigate as jest.Mock).mockReturnValue(navigateMock);
   });
 
+  // Helper para setar o useParams
   const setUseParams = (id: string | undefined) => {
     (useParams as jest.Mock).mockReturnValue({ id });
   };

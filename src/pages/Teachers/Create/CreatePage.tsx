@@ -11,13 +11,13 @@ import type { Subject } from "../../../types/Subject";
 export default function TeacherCreatePage() {
   const navigate = useNavigate();
   const { addTeacher } = useTeachers();
-  const { subjects } = useSubjects(); // obtém todas as disciplinas cadastradas
+  const { subjects } = useSubjects();
 
   const [formData, setFormData] = useState<TeacherFormData>({
     name: "",
     email: "",
     dateOfBirth: "",
-    subject: "", // vai armazenar o id ou nome da disciplina selecionada
+    subject: "",
     phone: "",
     address: "",
   });
@@ -54,7 +54,6 @@ export default function TeacherCreatePage() {
     <div className={styles.createContainer}>
       <h1 className={styles.createTitle}>Cadastrar Novo Professor</h1>
       <form onSubmit={handleSubmit} className={styles.createForm}>
-        {/* Campos de input comuns */}
         {[
           { label: "Nome", name: "name", type: "text" },
           { label: "Email", name: "email", type: "email" },
@@ -73,14 +72,11 @@ export default function TeacherCreatePage() {
               onChange={handleChange}
             />
             {errors[name as keyof TeacherFormData] && (
-              <span className={styles.formError}>
-                {errors[name as keyof TeacherFormData]}
-              </span>
+              <span className={styles.formError}>{errors[name as keyof TeacherFormData]}</span>
             )}
           </div>
         ))}
 
-        {/* Campo select para disciplinas */}
         <div className={styles.formGroup}>
           <label htmlFor="subject" className={styles.formLabel}>Disciplina</label>
           <select

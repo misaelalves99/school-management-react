@@ -9,11 +9,16 @@ export default function SubjectDeletePage() {
   const { id } = useParams<{ id: string }>();
   const { getSubjectById, deleteSubject, reloadSubjects } = useSubjects();
 
+  // Validação de ID
   if (!id) {
     return (
       <div className={styles.container}>
         <h2>ID inválido.</h2>
-        <button className={`${styles.btnSecondary}`} onClick={() => navigate("/subjects")}>
+        <button
+          type="button"
+          className={styles.btnSecondary}
+          onClick={() => navigate("/subjects")}
+        >
           Voltar
         </button>
       </div>
@@ -23,11 +28,16 @@ export default function SubjectDeletePage() {
   const subjectId = Number(id);
   const subject = getSubjectById(subjectId);
 
+  // Validação de existência da disciplina
   if (!subject) {
     return (
       <div className={styles.container}>
         <h2>Disciplina não encontrada.</h2>
-        <button className={`${styles.btnSecondary}`} onClick={() => navigate("/subjects")}>
+        <button
+          type="button"
+          className={styles.btnSecondary}
+          onClick={() => navigate("/subjects")}
+        >
           Voltar
         </button>
       </div>
@@ -54,10 +64,18 @@ export default function SubjectDeletePage() {
       </h3>
 
       <div className={styles.actions}>
-        <button type="button" className={styles.btnDanger} onClick={handleDelete}>
+        <button
+          type="button"
+          className={styles.btnDanger}
+          onClick={handleDelete}
+        >
           Excluir
         </button>
-        <button type="button" className={styles.btnSecondary} onClick={() => navigate("/subjects")}>
+        <button
+          type="button"
+          className={styles.btnSecondary}
+          onClick={() => navigate("/subjects")}
+        >
           Cancelar
         </button>
       </div>

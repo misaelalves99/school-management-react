@@ -7,7 +7,8 @@ import type { Student } from "../../../types/Student";
 import { useStudents } from "../../../hooks/useStudents";
 
 export default function StudentEditPage() {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams<{ id: string }>();
+  const id = params.id;
   const navigate = useNavigate();
   const { students, editStudent } = useStudents();
 
@@ -22,6 +23,7 @@ export default function StudentEditPage() {
 
   const [errors, setErrors] = useState<Partial<Record<keyof Omit<Student, "id">, string>>>({});
 
+  // Preencher formulário com os dados do aluno
   useEffect(() => {
     if (!id) return;
     const student = students.find(s => s.id === Number(id));

@@ -1,30 +1,20 @@
 // src/pages/ClassRooms/wrappers.tsx
 
-import { useParams } from 'react-router-dom';
 import DeleteClassRoom from './Delete/DeletePage';
 import ClassRoomDetailsPage from './Details/DetailsPage';
 import EditClassRoom from './Edit/EditPage';
 
+// Wrapper para a página de exclusão
 export const ClassRoomDeletePageWrapper: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  if (!id) return <p>Turma não encontrada.</p>;
-  const classRoomId = Number(id);
-
-  return <DeleteClassRoom id={classRoomId} />;
+  return <DeleteClassRoom />;
 };
 
+// Wrapper para a página de detalhes
 export const ClassRoomDetailsPageWrapper: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  if (!id) return <p>Turma não encontrada.</p>;
-  const classRoomId = Number(id);
-
-  return <ClassRoomDetailsPage id={classRoomId} />;
+  return <ClassRoomDetailsPage />;
 };
 
+// Wrapper para a página de edição
 export const ClassRoomEditPageWrapper: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  if (!id) return <p>Turma não encontrada.</p>;
-  const classRoomId = Number(id);
-
-  return <EditClassRoom id={classRoomId} />;
+  return <EditClassRoom />;
 };

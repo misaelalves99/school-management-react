@@ -1,16 +1,20 @@
-// src/pages/Enrollments/Delete/DeletePage.test.tsx
-
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import DeleteEnrollment from './DeletePage';
 import { MemoryRouter } from 'react-router-dom';
 import type { EnrollmentWithNames } from '../../../types/EnrollmentWithNames';
 
 const mockNavigate = jest.fn();
+const mockAlert = jest.fn();
 
+// Mock do useNavigate
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
 }));
+
+beforeAll(() => {
+  window.alert = mockAlert;
+});
 
 describe('DeleteEnrollment', () => {
   const enrollmentMock: EnrollmentWithNames = {
@@ -44,7 +48,7 @@ describe('DeleteEnrollment', () => {
     expect(screen.getByText(/Cancelar/i)).toBeInTheDocument();
   });
 
-  it('chama onDelete e navega ao enviar o formulário', async () => {
+  it('chama onDelete e navega ao clicar em Excluir', async () => {
     onDeleteMock.mockResolvedValueOnce();
 
     render(
@@ -57,13 +61,13 @@ describe('DeleteEnrollment', () => {
 
     await waitFor(() => {
       expect(onDeleteMock).toHaveBeenCalledWith(enrollmentMock.id);
+      expect(mockAlert).toHaveBeenCalledWith('Matrícula excluída com sucesso!');
       expect(mockNavigate).toHaveBeenCalledWith('/enrollments');
     });
   });
 
-  it('exibe alert ao falhar na exclusão', async () => {
+  it('exibe alerta ao falhar na exclusão', async () => {
     onDeleteMock.mockRejectedValueOnce(new Error('Falha'));
-    window.alert = jest.fn();
 
     render(
       <MemoryRouter>
@@ -75,7 +79,7 @@ describe('DeleteEnrollment', () => {
 
     await waitFor(() => {
       expect(onDeleteMock).toHaveBeenCalledWith(enrollmentMock.id);
-      expect(window.alert).toHaveBeenCalledWith(
+      expect(mockAlert).toHaveBeenCalledWith(
         'Ocorreu um erro ao excluir a matrícula. Tente novamente.'
       );
       expect(mockNavigate).not.toHaveBeenCalled();

@@ -1,11 +1,11 @@
 // src/pages/Enrollments/Create/CreatePage.test.tsx
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import CreateEnrollmentPage from './CreatePage';
 import { useStudents } from '../../../hooks/useStudents';
 import { useClassRooms } from '../../../hooks/useClassRooms';
 import { useEnrollments } from '../../../hooks/useEnrollments';
-import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('../../../hooks/useStudents');
 jest.mock('../../../hooks/useClassRooms');
@@ -50,7 +50,6 @@ describe('CreateEnrollmentPage', () => {
     expect(screen.getByLabelText(/Data da Matrícula/i)).toBeInTheDocument();
     expect(screen.getByText(/Salvar/i)).toBeInTheDocument();
 
-    // Verifica valor inicial da data (hoje)
     const today = new Date().toISOString().slice(0, 10);
     expect(screen.getByLabelText(/Data da Matrícula/i)).toHaveValue(today);
   });

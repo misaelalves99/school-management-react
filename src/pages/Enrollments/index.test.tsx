@@ -1,13 +1,12 @@
 // src/pages/Enrollments/index.test.tsx
 
-// src/pages/Enrollments/index.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
 import EnrollmentIndexPage from './index';
 import { MemoryRouter } from 'react-router-dom';
 import { useEnrollments } from '../../hooks/useEnrollments';
 import type { EnrollmentsContextType } from '../../contexts/Enrollments/EnrollmentsContext';
 
-// Mocks
+// Mocks de dados
 const mockEnrollments = [
   { id: 1, studentId: 1, classRoomId: 1, enrollmentDate: '2025-01-01', status: 'Ativa' },
   { id: 2, studentId: 2, classRoomId: 2, enrollmentDate: '2025-01-02', status: 'Inativa' },
@@ -21,9 +20,8 @@ const mockClassRooms = [
   { id: 2, name: 'Sala B' },
 ];
 
-jest.mock('../../hooks/useEnrollments', () => ({
-  useEnrollments: jest.fn(),
-}));
+// Mock dos hooks
+jest.mock('../../hooks/useEnrollments');
 jest.mock('../../hooks/useStudents', () => ({
   useStudents: () => ({ students: mockStudents }),
 }));
@@ -40,7 +38,7 @@ describe('EnrollmentIndexPage', () => {
       createEnrollment: jest.fn(),
       updateEnrollment: jest.fn(),
       removeEnrollment: jest.fn(),
-    } as unknown as EnrollmentsContextType); // ✅ garante o tipo completo
+    } as unknown as EnrollmentsContextType);
   });
 
   it('renderiza a lista de matrículas com nomes de alunos e turmas', () => {
@@ -92,9 +90,9 @@ describe('EnrollmentIndexPage', () => {
     expect(screen.getByText('Nenhuma matrícula encontrada.')).toBeInTheDocument();
   });
 
-  it('atualiza a busca e paginação corretamente', () => {
+  it('atualiza a busca corretamente', () => {
     render(
-      <MemoryRouter initialEntries={['/enrollments?page=1']}>
+      <MemoryRouter>
         <EnrollmentIndexPage />
       </MemoryRouter>
     );

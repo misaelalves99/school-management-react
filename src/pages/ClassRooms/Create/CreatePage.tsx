@@ -1,38 +1,34 @@
 // src/pages/ClassRooms/Create/CreatePage.tsx
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styles from './CreatePage.module.css';
-import { useClassRooms } from '../../../hooks/useClassRooms';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import styles from "./CreatePage.module.css";
+import { useClassRooms } from "../../../hooks/useClassRooms";
 
 export default function CreateClassRoom() {
   const navigate = useNavigate();
   const { create } = useClassRooms();
 
-  const [formData, setFormData] = useState<{
-    name: string;
-    capacity: string; // mantemos como string para input
-    schedule: string;
-  }>({
-    name: '',
-    capacity: '1',
-    schedule: '',
+  const [formData, setFormData] = useState({
+    name: "",
+    capacity: "1",
+    schedule: "",
   });
 
   const [errors, setErrors] = useState<Partial<typeof formData>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validate = () => {
     const newErrors: Partial<typeof formData> = {};
-    if (!formData.name.trim()) newErrors.name = 'Nome é obrigatório.';
+    if (!formData.name.trim()) newErrors.name = "Nome é obrigatório.";
     const capacityNum = Number(formData.capacity);
     if (!formData.capacity || isNaN(capacityNum) || capacityNum < 1 || capacityNum > 100)
-      newErrors.capacity = 'Capacidade deve ser entre 1 e 100.';
-    if (!formData.schedule.trim()) newErrors.schedule = 'Horário é obrigatório.';
+      newErrors.capacity = "Capacidade deve ser entre 1 e 100.";
+    if (!formData.schedule.trim()) newErrors.schedule = "Horário é obrigatório.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -50,8 +46,8 @@ export default function CreateClassRoom() {
       classTeacher: undefined,
     });
 
-    alert('Sala cadastrada com sucesso!');
-    navigate('/classrooms');
+    alert("Sala cadastrada com sucesso!");
+    navigate("/classrooms");
   };
 
   return (
@@ -59,7 +55,9 @@ export default function CreateClassRoom() {
       <h1 className={styles.createTitle}>Cadastrar Nova Sala</h1>
       <form onSubmit={handleSubmit} className={styles.createForm}>
         <div className={styles.formGroup}>
-          <label htmlFor="name" className={styles.formLabel}>Nome</label>
+          <label htmlFor="name" className={styles.formLabel}>
+            Nome
+          </label>
           <input
             id="name"
             name="name"
@@ -72,7 +70,9 @@ export default function CreateClassRoom() {
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="capacity" className={styles.formLabel}>Capacidade</label>
+          <label htmlFor="capacity" className={styles.formLabel}>
+            Capacidade
+          </label>
           <input
             id="capacity"
             name="capacity"
@@ -87,7 +87,9 @@ export default function CreateClassRoom() {
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="schedule" className={styles.formLabel}>Horário</label>
+          <label htmlFor="schedule" className={styles.formLabel}>
+            Horário
+          </label>
           <input
             id="schedule"
             name="schedule"
@@ -101,11 +103,13 @@ export default function CreateClassRoom() {
         </div>
 
         <div className={styles.formActions}>
-          <button type="submit" className={styles.btnPrimary}>Salvar</button>
+          <button type="submit" className={styles.btnPrimary}>
+            Salvar
+          </button>
           <button
             type="button"
             className={styles.btnSecondary}
-            onClick={() => navigate('/classrooms')}
+            onClick={() => navigate("/classrooms")}
           >
             Cancelar
           </button>

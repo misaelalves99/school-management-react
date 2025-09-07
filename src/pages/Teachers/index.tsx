@@ -12,27 +12,28 @@ export default function TeachersPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredTeachers = useMemo(() => {
-    if (!searchTerm.trim()) return teachers;
-    const term = searchTerm.toLowerCase();
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return teachers;
     return teachers.filter(
-      t => t.name.toLowerCase().includes(term) || t.subject.toLowerCase().includes(term)
+      t =>
+        t.name.toLowerCase().includes(term) ||
+        t.subject.toLowerCase().includes(term)
     );
   }, [searchTerm, teachers]);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
 
   return (
     <div className={styles.pageContainer}>
       <aside className={styles.leftPanel}>
         <h2 className={styles.title}>Buscar Professores</h2>
-        <form onSubmit={e => e.preventDefault()} className={styles.searchForm}>
+        <form
+          onSubmit={e => e.preventDefault()}
+          className={styles.searchForm}
+        >
           <input
             type="text"
             placeholder="Digite o nome ou disciplina..."
             value={searchTerm}
-            onChange={handleSearchChange}
+            onChange={e => setSearchTerm(e.target.value)}
             className={styles.input}
           />
           <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
@@ -49,7 +50,6 @@ export default function TeachersPage() {
 
       <main className={styles.rightPanel}>
         <h2 className={styles.title}>Lista de Professores</h2>
-
         <div className={styles.tableWrapper}>
           <table className={styles.table}>
             <thead>

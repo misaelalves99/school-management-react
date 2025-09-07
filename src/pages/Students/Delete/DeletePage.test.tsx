@@ -1,6 +1,6 @@
 // src/pages/Students/Delete/DeletePage.test.tsx
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import StudentDelete from './DeletePage';
 import { useStudents } from '../../../hooks/useStudents';
@@ -23,7 +23,7 @@ jest.mock('react-router-dom', () => {
 import { useParams } from 'react-router-dom';
 
 describe('StudentDelete', () => {
-  const removeStudentMock = jest.fn();
+  const removeStudentMock = jest.fn().mockResolvedValue(undefined);
   const studentsMock = [
     {
       id: 1,
@@ -71,15 +71,17 @@ describe('StudentDelete', () => {
     renderWithRouter('1');
     expect(screen.getByText(/Excluir Aluno/i)).toBeInTheDocument();
     expect(screen.getByText(/Tem certeza que deseja excluir/i)).toHaveTextContent('John Doe');
-    expect(screen.getByText(/Excluir/i)).toBeInTheDocument();
+    expect(screen.getByText(/^Excluir$/i)).toBeInTheDocument();
     expect(screen.getByText(/Cancelar/i)).toBeInTheDocument();
   });
 
-  it('chama removeStudent, exibe alert e navega ao confirmar exclusão', () => {
+  it('chama removeStudent, exibe alert e navega ao confirmar exclusão', async () => {
     const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
     renderWithRouter('1');
 
-    fireEvent.click(screen.getByText(/^Excluir$/i));
+    await act(async () => {
+      fireEvent.click(screen.getByText(/^Excluir$/i));
+    });
 
     expect(removeStudentMock).toHaveBeenCalledWith(1);
     expect(alertMock).toHaveBeenCalledWith('Aluno excluído com sucesso!');
@@ -92,5 +94,18 @@ describe('StudentDelete', () => {
     renderWithRouter('1');
     fireEvent.click(screen.getByText(/Cancelar/i));
     expect(navigateMock).toHaveBeenCalledWith('/students');
+  });
+
+  it('exibe alert em caso de erro ao remover aluno', async () => {
+    removeStudentMock.mockRejectedValueOnce(new Error('Erro'));
+    const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    renderWithRouter('1');
+
+    await act(async () => {
+      fireEvent.click(screen.getByText(/^Excluir$/i));
+    });
+
+    expect(alertMock).toHaveBeenCalledWith('Ocorreu um erro ao excluir o aluno.');
+    alertMock.mockRestore();
   });
 });

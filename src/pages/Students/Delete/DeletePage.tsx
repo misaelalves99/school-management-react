@@ -9,15 +9,22 @@ export default function StudentDelete() {
   const navigate = useNavigate();
   const { students, removeStudent } = useStudents();
 
-  if (!id) return <div>ID inválido</div>;
+  const studentId = Number(id);
 
-  const student = students.find(s => s.id === Number(id));
+  if (!id || isNaN(studentId)) return <div>ID inválido</div>;
+
+  const student = students.find(s => s.id === studentId);
   if (!student) return <div>Aluno não encontrado</div>;
 
-  const handleDelete = () => {
-    removeStudent(student.id);
-    alert("Aluno excluído com sucesso!");
-    navigate("/students");
+  const handleDelete = async () => {
+    try {
+      await removeStudent(student.id);
+      alert("Aluno excluído com sucesso!");
+      navigate("/students");
+    } catch (err) {
+      console.error("Erro ao excluir aluno:", err);
+      alert("Ocorreu um erro ao excluir o aluno.");
+    }
   };
 
   return (

@@ -7,7 +7,7 @@ import ErrorPage from './ErrorPage';
 describe('ErrorPage', () => {
   it('renderiza a página de erro sem detalhes quando state é undefined', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/error']}>
         <ErrorPage />
       </MemoryRouter>
     );
@@ -21,11 +21,13 @@ describe('ErrorPage', () => {
   it('exibe detalhes do erro quando fornecido no state', () => {
     const errorData = {
       message: 'Erro de teste',
-      stack: 'stack trace aqui'
+      stack: 'stack trace aqui',
     };
 
     render(
-      <MemoryRouter initialEntries={[{ pathname: '/error', state: { error: errorData } }]}>
+      <MemoryRouter
+        initialEntries={[{ pathname: '/error', state: { error: errorData } }]}
+      >
         <ErrorPage />
       </MemoryRouter>
     );
@@ -38,7 +40,7 @@ describe('ErrorPage', () => {
 
   it('tem link de retorno para a página inicial', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/error']}>
         <ErrorPage />
       </MemoryRouter>
     );

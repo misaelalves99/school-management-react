@@ -31,7 +31,14 @@ describe('StudentCreatePage', () => {
       </MemoryRouter>
     );
 
-    const fields = ['Nome', 'Email', 'Data de Nascimento', 'Matrícula', 'Telefone', 'Endereço'];
+    const fields = [
+      'Nome',
+      'Email',
+      'Data de Nascimento',
+      'Matrícula',
+      'Telefone',
+      'Endereço',
+    ];
     fields.forEach(field => {
       expect(screen.getByLabelText(new RegExp(field, 'i'))).toBeInTheDocument();
     });
@@ -60,7 +67,9 @@ describe('StudentCreatePage', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'invalid-email' } });
+    fireEvent.change(screen.getByLabelText(/Email/i), {
+      target: { value: 'invalid-email' },
+    });
     fireEvent.click(screen.getByText(/Salvar/i));
 
     expect(await screen.findByText(/Email inválido/i)).toBeInTheDocument();
@@ -77,8 +86,12 @@ describe('StudentCreatePage', () => {
     );
 
     fireEvent.change(screen.getByLabelText(/Nome/i), { target: { value: 'John Doe' } });
-    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'john@example.com' } });
-    fireEvent.change(screen.getByLabelText(/Data de Nascimento/i), { target: { value: '2000-01-01' } });
+    fireEvent.change(screen.getByLabelText(/Email/i), {
+      target: { value: 'john@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/Data de Nascimento/i), {
+      target: { value: '2000-01-01' },
+    });
     fireEvent.change(screen.getByLabelText(/Matrícula/i), { target: { value: '12345' } });
     fireEvent.change(screen.getByLabelText(/Telefone/i), { target: { value: '555-1234' } });
     fireEvent.change(screen.getByLabelText(/Endereço/i), { target: { value: 'Rua A, 123' } });

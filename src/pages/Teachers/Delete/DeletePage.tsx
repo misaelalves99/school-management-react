@@ -5,17 +5,16 @@ import styles from "./DeletePage.module.css";
 import { useTeachers } from "../../../hooks/useTeachers";
 
 export default function TeacherDelete() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getTeacher, removeTeacher } = useTeachers();
 
   if (!id) return <div>Id inválido</div>;
 
-  const teacher = getTeacher(Number(id));
+  const teacherId = Number(id);
+  const teacher = getTeacher(teacherId);
 
-  if (!teacher) {
-    return <div>Professor não encontrado.</div>;
-  }
+  if (!teacher) return <div>Professor não encontrado.</div>;
 
   const handleDelete = () => {
     removeTeacher(teacher.id);

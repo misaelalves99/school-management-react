@@ -8,7 +8,7 @@ import { useSubjects } from "../../../hooks/useSubjects";
 import type { TeacherFormData } from "../../../types/TeacherFormData";
 
 export default function TeacherEditPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams(); // React Router v7 não precisa de tipagem genérica
   const navigate = useNavigate();
   const { getTeacher, editTeacher } = useTeachers();
   const { subjects } = useSubjects();
@@ -26,13 +26,19 @@ export default function TeacherEditPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id) {
+      alert("ID do professor não fornecido");
+      navigate("/teachers");
+      return;
+    }
+
     const teacher = getTeacher(Number(id));
     if (!teacher) {
       alert("Professor não encontrado");
       navigate("/teachers");
       return;
     }
+
     setFormData({
       name: teacher.name,
       email: teacher.email,
@@ -103,7 +109,7 @@ export default function TeacherEditPage() {
           </div>
         ))}
 
-        {/* Select de disciplinas usando useSubjects */}
+        {/* Select de disciplinas */}
         <div className={styles.formGroup}>
           <label htmlFor="subject" className={styles.formLabel}>Disciplina</label>
           <select
@@ -125,7 +131,11 @@ export default function TeacherEditPage() {
 
         <div className={styles.formActions}>
           <button type="submit" className={styles.btnPrimary}>Salvar Alterações</button>
-          <button type="button" className={styles.btnSecondary} onClick={() => navigate("/teachers")}>
+          <button
+            type="button"
+            className={styles.btnSecondary}
+            onClick={() => navigate("/teachers")}
+          >
             Voltar
           </button>
         </div>

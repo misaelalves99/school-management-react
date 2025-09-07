@@ -1,7 +1,7 @@
 // src/pages/ClassRooms/Details/DetailsPage.test.tsx
 
 import { render, screen, fireEvent } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import ClassRoomDetailsPage from './DetailsPage';
 import { useClassRooms } from '../../../hooks/useClassRooms';
 
@@ -22,14 +22,19 @@ describe('ClassRoomDetailsPage', () => {
     mockedNavigate.mockClear();
   });
 
+  const renderWithRoute = (id: string) =>
+    render(
+      <MemoryRouter initialEntries={[`/classrooms/details/${id}`]}>
+        <Routes>
+          <Route path="/classrooms/details/:id" element={<ClassRoomDetailsPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
   it('exibe mensagem se turma não for encontrada', () => {
     getByIdMock.mockReturnValue(undefined);
 
-    render(
-      <BrowserRouter>
-        <ClassRoomDetailsPage id={999} />
-      </BrowserRouter>
-    );
+    renderWithRoute('999');
 
     expect(screen.getByText(/Turma não encontrada/i)).toBeInTheDocument();
   });
@@ -45,11 +50,7 @@ describe('ClassRoomDetailsPage', () => {
       classTeacher: { id: 1, name: 'Prof. A', email: '', dateOfBirth: '', subject: '', phone: '', address: '' },
     });
 
-    render(
-      <BrowserRouter>
-        <ClassRoomDetailsPage id={1} />
-      </BrowserRouter>
-    );
+    renderWithRoute('1');
 
     expect(screen.getByText('Sala Teste')).toBeInTheDocument();
     expect(screen.getByText('30')).toBeInTheDocument();
@@ -57,7 +58,6 @@ describe('ClassRoomDetailsPage', () => {
 
     expect(screen.getByText('Matemática')).toBeInTheDocument();
     expect(screen.getByText('Prof. A')).toBeInTheDocument();
-
     expect(screen.getByText('Prof. A')).toBeInTheDocument();
 
     // Testar navegação nos botões
@@ -79,11 +79,7 @@ describe('ClassRoomDetailsPage', () => {
       classTeacher: undefined,
     });
 
-    render(
-      <BrowserRouter>
-        <ClassRoomDetailsPage id={2} />
-      </BrowserRouter>
-    );
+    renderWithRoute('2');
 
     expect(screen.getByText(/Sem disciplinas vinculadas/i)).toBeInTheDocument();
     expect(screen.getByText(/Sem professores vinculados/i)).toBeInTheDocument();

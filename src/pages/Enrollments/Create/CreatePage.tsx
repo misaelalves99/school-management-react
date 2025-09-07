@@ -1,16 +1,12 @@
-// src/pages/Enrollments/Create/CreatePage.tsx
-
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './CreatePage.module.css';
-
 import { useStudents } from '../../../hooks/useStudents';
 import { useClassRooms } from '../../../hooks/useClassRooms';
 import { useEnrollments } from '../../../hooks/useEnrollments';
 import type { EnrollmentFormData } from '../../../types/EnrollmentForm';
 import type { ClassRoom } from '../../../types/ClassRoom';
 
-// Define o tipo de erros separadamente
 type EnrollmentErrors = {
   [K in keyof EnrollmentFormData]?: string;
 };
@@ -30,8 +26,7 @@ export default function CreateEnrollmentPage() {
 
   const [errors, setErrors] = useState<EnrollmentErrors>({});
 
-  // Conversão segura de string para number
-  const toNumber = (value: string): number => {
+  const toNumber = (value: string) => {
     const n = Number(value);
     return isNaN(n) ? 0 : n;
   };
@@ -76,7 +71,6 @@ export default function CreateEnrollmentPage() {
     <div className={styles.createContainer}>
       <h1 className={styles.createTitle}>Nova Matrícula</h1>
       <form onSubmit={handleSubmit} className={styles.createForm}>
-
         <div className={styles.formGroup}>
           <label htmlFor="studentId" className={styles.formLabel}>Aluno</label>
           <select
@@ -87,9 +81,7 @@ export default function CreateEnrollmentPage() {
             className={styles.formInput}
           >
             <option value="">Selecione o Aluno</option>
-            {students.map(s => (
-              <option key={s.id} value={s.id}>{s.name}</option>
-            ))}
+            {students.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
           {errors.studentId && <span className={styles.formError}>{errors.studentId}</span>}
         </div>
@@ -104,9 +96,7 @@ export default function CreateEnrollmentPage() {
             className={styles.formInput}
           >
             <option value="">Selecione a Turma</option>
-            {classRooms.map((c: ClassRoom) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
+            {classRooms.map((c: ClassRoom) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
           {errors.classRoomId && <span className={styles.formError}>{errors.classRoomId}</span>}
         </div>
@@ -126,11 +116,7 @@ export default function CreateEnrollmentPage() {
 
         <div className={styles.formActions}>
           <button type="submit" className={styles.btnPrimary}>Salvar</button>
-          <button
-            type="button"
-            className={styles.btnSecondary}
-            onClick={() => navigate('/enrollments')}
-          >
+          <button type="button" className={styles.btnSecondary} onClick={() => navigate('/enrollments')}>
             Voltar
           </button>
         </div>

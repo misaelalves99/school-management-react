@@ -5,15 +5,18 @@ import styles from "./DetailsPage.module.css";
 import { useStudents } from "../../../hooks/useStudents";
 
 export default function StudentDetails() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { students } = useStudents(); // ⚡ usando contexto
+  const { students } = useStudents();
 
   if (!id) {
     return (
       <div className={styles.container}>
         <h1 className={styles.title}>ID do aluno não fornecido</h1>
-        <button className={styles.btnSecondary} onClick={() => navigate("/students")}>
+        <button
+          className={styles.btnSecondary}
+          onClick={() => navigate("/students")}
+        >
           Voltar à Lista
         </button>
       </div>
@@ -25,7 +28,10 @@ export default function StudentDetails() {
     return (
       <div className={styles.container}>
         <h1 className={styles.title}>Aluno não encontrado</h1>
-        <button className={styles.btnSecondary} onClick={() => navigate("/students")}>
+        <button
+          className={styles.btnSecondary}
+          onClick={() => navigate("/students")}
+        >
           Voltar à Lista
         </button>
       </div>
@@ -73,7 +79,10 @@ export default function StudentDetails() {
         >
           Editar
         </button>
-        <button className={styles.btnSecondary} onClick={() => navigate('/students')}>
+        <button
+          className={styles.btnSecondary}
+          onClick={() => navigate("/students")}
+        >
           Voltar à Lista
         </button>
       </div>

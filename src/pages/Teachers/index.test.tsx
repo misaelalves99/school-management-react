@@ -1,3 +1,5 @@
+// src/pages/Teachers/index.test.tsx
+
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import TeachersPage from "./index";
@@ -104,35 +106,5 @@ describe("TeachersPage", () => {
 
     fireEvent.click(screen.getByText("Cadastrar Novo Professor"));
     expect(navigateMock).toHaveBeenCalledWith("/teachers/create");
-  });
-
-  it("funciona paginação corretamente", () => {
-    const teachersArray = Array.from({ length: 15 }, (_, i) => ({
-      id: i + 1,
-      name: `Teacher ${i + 1}`,
-      email: `teacher${i + 1}@example.com`,
-      subject: "Math",
-    }));
-
-    (useTeachers as jest.Mock).mockReturnValue({ teachers: teachersArray });
-
-    render(
-      <MemoryRouter>
-        <TeachersPage />
-      </MemoryRouter>
-    );
-
-    // Página 1
-    expect(screen.getByText("Teacher 1")).toBeInTheDocument();
-    expect(screen.queryByText("Teacher 11")).not.toBeInTheDocument();
-
-    // Próxima página
-    fireEvent.click(screen.getByText("Próxima"));
-    expect(screen.getByText("Teacher 11")).toBeInTheDocument();
-    expect(screen.queryByText("Teacher 1")).not.toBeInTheDocument();
-
-    // Voltar para página anterior
-    fireEvent.click(screen.getByText("Anterior"));
-    expect(screen.getByText("Teacher 1")).toBeInTheDocument();
   });
 });

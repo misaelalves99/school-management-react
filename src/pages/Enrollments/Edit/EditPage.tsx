@@ -8,12 +8,12 @@ import type { ValidationErrors } from "../../../types/ValidationErrors";
 import { useStudents } from "../../../hooks/useStudents";
 import { useClassRooms } from "../../../hooks/useClassRooms";
 
-interface EditProps {
+interface EditEnrollmentProps {
   enrollment: EnrollmentEdit;
   onSave: (data: EnrollmentEdit) => Promise<void>;
 }
 
-export default function EditEnrollment({ enrollment, onSave }: EditProps) {
+export default function EditEnrollment({ enrollment, onSave }: EditEnrollmentProps) {
   const navigate = useNavigate();
   const { students = [] } = useStudents();
   const { classRooms = [] } = useClassRooms();
@@ -43,9 +43,15 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!validate()) return;
-    await onSave(formData);
-    alert("Matrícula atualizada com sucesso!");
-    navigate("/enrollments");
+
+    try {
+      await onSave(formData);
+      alert("Matrícula atualizada com sucesso!");
+      navigate("/enrollments"); // React Router v7 navigate
+    } catch (err) {
+      console.error(err);
+      alert("Ocorreu um erro ao atualizar a matrícula. Tente novamente.");
+    }
   }
 
   return (
@@ -61,7 +67,7 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
           <select
             id="studentId"
             name="studentId"
-            value={formData.studentId === 0 ? "" : formData.studentId}
+            value={formData.studentId || ""}
             onChange={handleChange}
             className={styles.formInput}
           >
@@ -79,7 +85,7 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
           <select
             id="classRoomId"
             name="classRoomId"
-            value={formData.classRoomId === 0 ? "" : formData.classRoomId}
+            value={formData.classRoomId || ""}
             onChange={handleChange}
             className={styles.formInput}
           >
@@ -108,7 +114,9 @@ export default function EditEnrollment({ enrollment, onSave }: EditProps) {
         </div>
 
         <div className={styles.formActions}>
-          <button type="submit" className={styles.btnPrimary}>Salvar Alterações</button>
+          <button type="submit" className={styles.btnPrimary}>
+            Salvar Alterações
+          </button>
           <button
             type="button"
             className={styles.btnSecondary}

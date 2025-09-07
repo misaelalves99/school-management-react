@@ -1,5 +1,7 @@
+// src/pages/ClassRooms/Edit/EditPage.test.tsx
+
 import { render, screen, fireEvent } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import EditClassRoom from "./EditPage";
 import { useClassRooms } from "../../../hooks/useClassRooms";
 
@@ -29,14 +31,20 @@ describe("EditClassRoom", () => {
       getById: jest.fn().mockReturnValue(classRoomData),
       update: mockUpdate,
     });
+    window.alert = jest.fn();
   });
 
-  it("deve renderizar o formulário com dados preenchidos", () => {
+  const renderWithRouter = (path: string) =>
     render(
-      <MemoryRouter>
-        <EditClassRoom id={1} />
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route path="/classrooms/edit/:id" element={<EditClassRoom />} />
+        </Routes>
       </MemoryRouter>
     );
+
+  it("deve renderizar o formulário com dados preenchidos", () => {
+    renderWithRouter("/classrooms/edit/1");
 
     expect(screen.getByLabelText(/Nome/i)).toHaveValue(classRoomData.name);
     expect(screen.getByLabelText(/Capacidade/i)).toHaveValue(classRoomData.capacity);
@@ -49,21 +57,13 @@ describe("EditClassRoom", () => {
       update: mockUpdate,
     });
 
-    render(
-      <MemoryRouter>
-        <EditClassRoom id={999} />
-      </MemoryRouter>
-    );
+    renderWithRouter("/classrooms/edit/999");
 
     expect(screen.getByText(/Turma não encontrada/i)).toBeInTheDocument();
   });
 
   it("deve validar campos obrigatórios", () => {
-    render(
-      <MemoryRouter>
-        <EditClassRoom id={1} />
-      </MemoryRouter>
-    );
+    renderWithRouter("/classrooms/edit/1");
 
     fireEvent.change(screen.getByLabelText(/Nome/i), { target: { value: "" } });
     fireEvent.change(screen.getByLabelText(/Capacidade/i), { target: { value: "0" } });
@@ -78,11 +78,7 @@ describe("EditClassRoom", () => {
   });
 
   it("deve chamar update e navigate ao submeter corretamente", () => {
-    render(
-      <MemoryRouter>
-        <EditClassRoom id={1} />
-      </MemoryRouter>
-    );
+    renderWithRouter("/classrooms/edit/1");
 
     fireEvent.change(screen.getByLabelText(/Nome/i), { target: { value: "Turma B" } });
     fireEvent.change(screen.getByLabelText(/Capacidade/i), { target: { value: "25" } });
@@ -99,11 +95,7 @@ describe("EditClassRoom", () => {
   });
 
   it("botão 'Cancelar' deve navegar para /classrooms", () => {
-    render(
-      <MemoryRouter>
-        <EditClassRoom id={1} />
-      </MemoryRouter>
-    );
+    renderWithRouter("/classrooms/edit/1");
 
     fireEvent.click(screen.getByText(/Cancelar/i));
     expect(mockNavigate).toHaveBeenCalledWith("/classrooms");

@@ -33,6 +33,7 @@ export default function StudentIndex() {
             value={search}
             onChange={handleSearchChange}
             className={styles.input}
+            aria-label="Buscar aluno"
           />
           <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
             Buscar
@@ -66,13 +67,22 @@ export default function StudentIndex() {
                     <td>{student.enrollmentNumber || '-'}</td>
                     <td>{student.phone || '-'}</td>
                     <td className={styles.actionsCell}>
-                      <Link to={`/students/details/${student.id}`} className={`${styles.btn} ${styles.btnInfo}`}>
+                      <Link
+                        to={`/students/details/${student.id}`}
+                        className={`${styles.btn} ${styles.btnInfo}`}
+                      >
                         Detalhes
                       </Link>
-                      <Link to={`/students/edit/${student.id}`} className={`${styles.btn} ${styles.btnWarning}`}>
+                      <Link
+                        to={`/students/edit/${student.id}`}
+                        className={`${styles.btn} ${styles.btnWarning}`}
+                      >
                         Editar
                       </Link>
-                      <Link to={`/students/delete/${student.id}`} className={`${styles.btn} ${styles.btnDanger}`}>
+                      <Link
+                        to={`/students/delete/${student.id}`}
+                        className={`${styles.btn} ${styles.btnDanger}`}
+                      >
                         Excluir
                       </Link>
                     </td>

@@ -6,7 +6,7 @@ import { useSubjects } from "../../../hooks/useSubjects";
 
 export default function SubjectDetails() {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id?: string }>();
   const { getSubjectById } = useSubjects();
 
   if (!id) {
@@ -14,6 +14,7 @@ export default function SubjectDetails() {
       <div className={styles.container}>
         <h2 className={styles.title}>ID inválido</h2>
         <button
+          type="button"
           className={styles.btnSecondary}
           onClick={() => navigate("/subjects")}
         >
@@ -30,6 +31,7 @@ export default function SubjectDetails() {
       <div className={styles.container}>
         <h2 className={styles.title}>Disciplina não encontrada</h2>
         <button
+          type="button"
           className={styles.btnSecondary}
           onClick={() => navigate("/subjects")}
         >
@@ -50,7 +52,7 @@ export default function SubjectDetails() {
 
       <div className={styles.detailsRow}>
         <span className={styles.detailsLabel}>Descrição:</span>
-        <span className={styles.detailsValue}>{subject.description}</span>
+        <span className={styles.detailsValue}>{subject.description || '-'}</span>
       </div>
 
       <div className={styles.detailsRow}>
@@ -62,12 +64,14 @@ export default function SubjectDetails() {
 
       <div className={styles.actions}>
         <button
+          type="button"
           className={styles.btnWarning}
           onClick={() => navigate(`/subjects/edit/${subject.id}`)}
         >
           Editar
         </button>
         <button
+          type="button"
           className={styles.btnSecondary}
           onClick={() => navigate("/subjects")}
         >

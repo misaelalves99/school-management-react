@@ -3,7 +3,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import DeleteClassRoom from './DeletePage';
 import { useClassRooms } from '../../../hooks/useClassRooms';
-import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 jest.mock('../../../hooks/useClassRooms');
 
@@ -28,14 +28,19 @@ describe('DeleteClassRoom', () => {
     window.alert = jest.fn();
   });
 
+  const renderComponent = (id?: string) => {
+    render(
+      <MemoryRouter initialEntries={[id ? `/classrooms/delete/${id}` : '/classrooms/delete']}>
+        <Routes>
+          <Route path="/classrooms/delete/:id" element={<DeleteClassRoom />} />
+        </Routes>
+      </MemoryRouter>
+    );
+  };
+
   it('exibe mensagem de não encontrado se turma não existir', () => {
     getByIdMock.mockReturnValue(undefined);
-    render(
-      <BrowserRouter>
-        <DeleteClassRoom id={999} />
-      </BrowserRouter>
-    );
-
+    renderComponent('999');
     expect(screen.getByText(/Turma não encontrada/i)).toBeInTheDocument();
   });
 
@@ -50,11 +55,7 @@ describe('DeleteClassRoom', () => {
       classTeacher: undefined,
     });
 
-    render(
-      <BrowserRouter>
-        <DeleteClassRoom id={1} />
-      </BrowserRouter>
-    );
+    renderComponent('1');
 
     expect(screen.getByText(/Sala Teste/i)).toBeInTheDocument();
     expect(screen.getByText(/Seg - 08:00 às 10:00/i)).toBeInTheDocument();
@@ -65,11 +66,7 @@ describe('DeleteClassRoom', () => {
   it('exclui a turma ao clicar em Excluir', () => {
     getByIdMock.mockReturnValue({ id: 1, name: 'Sala Teste', capacity: 20, schedule: 'Horário', subjects: [], teachers: [], classTeacher: undefined });
 
-    render(
-      <BrowserRouter>
-        <DeleteClassRoom id={1} />
-      </BrowserRouter>
-    );
+    renderComponent('1');
 
     fireEvent.click(screen.getByText(/Excluir/i));
 
@@ -81,11 +78,7 @@ describe('DeleteClassRoom', () => {
   it('botão Cancelar navega para lista', () => {
     getByIdMock.mockReturnValue({ id: 1, name: 'Sala Teste', capacity: 20, schedule: 'Horário', subjects: [], teachers: [], classTeacher: undefined });
 
-    render(
-      <BrowserRouter>
-        <DeleteClassRoom id={1} />
-      </BrowserRouter>
-    );
+    renderComponent('1');
 
     fireEvent.click(screen.getByText(/Cancelar/i));
     expect(mockedNavigate).toHaveBeenCalledWith('/classrooms');

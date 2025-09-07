@@ -10,7 +10,7 @@ export default function SubjectsIndexPage() {
 
   const { subjects } = useSubjects();
 
-  // filtra usando memo para otimização
+  // filtra usando useMemo para otimização
   const filtered = useMemo(() => {
     const term = search.toLowerCase();
     return subjects.filter(
@@ -35,7 +35,9 @@ export default function SubjectsIndexPage() {
             placeholder="Digite o nome ou descrição..."
             onChange={handleSearchChange}
           />
-          <button className={`${styles.btn} ${styles.btnPrimary}`}>Buscar</button>
+          <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
+            Buscar
+          </button>
         </form>
 
         <Link to="/subjects/create" className={`${styles.btn} ${styles.btnSuccess}`}>
@@ -70,13 +72,22 @@ export default function SubjectsIndexPage() {
                   <td>{subject.description}</td>
                   <td>{subject.workloadHours}</td>
                   <td>
-                    <Link to={`/subjects/details/${subject.id}`} className={`${styles.btn} ${styles.btnInfo}`}>
+                    <Link
+                      to={`/subjects/details/${subject.id}`}
+                      className={`${styles.btn} ${styles.btnInfo}`}
+                    >
                       Detalhes
                     </Link>{' '}
-                    <Link to={`/subjects/edit/${subject.id}`} className={`${styles.btn} ${styles.btnWarning}`}>
+                    <Link
+                      to={`/subjects/edit/${subject.id}`}
+                      className={`${styles.btn} ${styles.btnWarning}`}
+                    >
                       Editar
                     </Link>{' '}
-                    <Link to={`/subjects/delete/${subject.id}`} className={`${styles.btn} ${styles.btnDanger}`}>
+                    <Link
+                      to={`/subjects/delete/${subject.id}`}
+                      className={`${styles.btn} ${styles.btnDanger}`}
+                    >
                       Excluir
                     </Link>
                   </td>

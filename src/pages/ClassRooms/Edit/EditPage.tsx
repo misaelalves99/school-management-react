@@ -1,19 +1,17 @@
-// src/pages/ClassRoom/Edit/EditPage.tsx
+// src/pages/ClassRooms/Edit/EditPage.tsx
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styles from "./EditPage.module.css";
 import { useClassRooms } from "../../../hooks/useClassRooms";
 
-interface Props {
-  id: number;
-}
-
-const EditClassRoom: React.FC<Props> = ({ id }) => {
-  const { getById, update } = useClassRooms();
+const EditClassRoom: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { getById, update } = useClassRooms();
 
-  const classRoom = getById(id);
+  // Busca a turma pelo id da URL
+  const classRoom = id ? getById(Number(id)) : undefined;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -27,6 +25,7 @@ const EditClassRoom: React.FC<Props> = ({ id }) => {
     schedule?: string;
   }>({});
 
+  // Preenche o formulário com os dados existentes
   useEffect(() => {
     if (classRoom) {
       setFormData({
@@ -37,11 +36,12 @@ const EditClassRoom: React.FC<Props> = ({ id }) => {
     }
   }, [classRoom]);
 
+  // Se não encontrar a turma, exibe mensagem
   if (!classRoom) return <p>Turma não encontrada.</p>;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: name === "capacity" ? Number(value) : value,
     }));
@@ -50,23 +50,17 @@ const EditClassRoom: React.FC<Props> = ({ id }) => {
   const validate = () => {
     const newErrors: typeof errors = {};
     if (!formData.name.trim()) newErrors.name = "Nome é obrigatório.";
-    if (
-      !formData.capacity ||
-      formData.capacity < 1 ||
-      formData.capacity > 100
-    ) {
+    if (!formData.capacity || formData.capacity < 1 || formData.capacity > 100) {
       newErrors.capacity = "Capacidade deve ser entre 1 e 100.";
     }
-    if (!formData.schedule.trim()) {
-      newErrors.schedule = "Horário é obrigatório.";
-    }
+    if (!formData.schedule.trim()) newErrors.schedule = "Horário é obrigatório.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate() || !classRoom) return;
 
     update(classRoom.id, formData);
     alert("Sala atualizada com sucesso!");
@@ -79,9 +73,7 @@ const EditClassRoom: React.FC<Props> = ({ id }) => {
 
       <form onSubmit={handleSubmit} className={styles.createForm}>
         <div className={styles.formGroup}>
-          <label htmlFor="name" className={styles.formLabel}>
-            Nome
-          </label>
+          <label htmlFor="name" className={styles.formLabel}>Nome</label>
           <input
             id="name"
             name="name"
@@ -90,15 +82,11 @@ const EditClassRoom: React.FC<Props> = ({ id }) => {
             onChange={handleChange}
             className={styles.formInput}
           />
-          {errors.name && (
-            <span className={styles.formError}>{errors.name}</span>
-          )}
+          {errors.name && <span className={styles.formError}>{errors.name}</span>}
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="capacity" className={styles.formLabel}>
-            Capacidade
-          </label>
+          <label htmlFor="capacity" className={styles.formLabel}>Capacidade</label>
           <input
             id="capacity"
             name="capacity"
@@ -109,15 +97,11 @@ const EditClassRoom: React.FC<Props> = ({ id }) => {
             onChange={handleChange}
             className={styles.formInput}
           />
-          {errors.capacity && (
-            <span className={styles.formError}>{errors.capacity}</span>
-          )}
+          {errors.capacity && <span className={styles.formError}>{errors.capacity}</span>}
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="schedule" className={styles.formLabel}>
-            Horário
-          </label>
+          <label htmlFor="schedule" className={styles.formLabel}>Horário</label>
           <input
             id="schedule"
             name="schedule"
@@ -127,15 +111,11 @@ const EditClassRoom: React.FC<Props> = ({ id }) => {
             onChange={handleChange}
             className={styles.formInput}
           />
-          {errors.schedule && (
-            <span className={styles.formError}>{errors.schedule}</span>
-          )}
+          {errors.schedule && <span className={styles.formError}>{errors.schedule}</span>}
         </div>
 
         <div className={styles.formActions}>
-          <button type="submit" className={styles.btnPrimary}>
-            Salvar Alterações
-          </button>
+          <button type="submit" className={styles.btnPrimary}>Salvar Alterações</button>
           <button
             type="button"
             className={styles.btnSecondary}

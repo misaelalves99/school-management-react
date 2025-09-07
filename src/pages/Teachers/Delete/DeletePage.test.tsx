@@ -1,3 +1,5 @@
+// src/pages/Teachers/Delete/DeletePage.test.tsx
+
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import TeacherDelete from "./DeletePage";
@@ -14,7 +16,7 @@ jest.mock("react-router-dom", () => {
   };
 });
 
-describe("TeacherDelete", () => {
+describe("TeacherDeletePage", () => {
   const removeTeacherMock = jest.fn();
   const getTeacherMock = jest.fn();
   const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
@@ -25,6 +27,10 @@ describe("TeacherDelete", () => {
       getTeacher: getTeacherMock,
       removeTeacher: removeTeacherMock,
     });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   const renderComponent = (id?: string) =>
@@ -48,11 +54,7 @@ describe("TeacherDelete", () => {
   });
 
   it("renderiza informações do professor e botões", () => {
-    getTeacherMock.mockReturnValue({
-      id: 1,
-      name: "Professor X",
-    });
-
+    getTeacherMock.mockReturnValue({ id: 1, name: "Professor X" });
     renderComponent("1");
 
     expect(screen.getByText("Excluir Professor")).toBeInTheDocument();

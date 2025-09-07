@@ -1,27 +1,26 @@
 // src/pages/ClassRooms/Delete/DeletePage.tsx
 
-import { useNavigate } from 'react-router-dom';
-import styles from './DeletePage.module.css';
-import { useClassRooms } from '../../../hooks/useClassRooms';
+import { useNavigate, useParams } from "react-router-dom";
+import styles from "./DeletePage.module.css";
+import { useClassRooms } from "../../../hooks/useClassRooms";
 
-interface Props {
-  id: number;
-}
-
-const DeleteClassRoom: React.FC<Props> = ({ id }) => {
+export default function DeleteClassRoom() {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getById, remove } = useClassRooms();
-  const classRoom = getById(id);
 
+  if (!id) return <p>ID da turma não fornecido.</p>;
+
+  const classRoom = getById(Number(id));
   if (!classRoom) return <p>Turma não encontrada.</p>;
 
   const handleDelete = () => {
     try {
       remove(classRoom.id);
-      alert('Turma excluída com sucesso!');
-      navigate('/classrooms');
+      alert("Turma excluída com sucesso!");
+      navigate("/classrooms");
     } catch {
-      alert('Erro ao excluir a turma.');
+      alert("Erro ao excluir a turma.");
     }
   };
 
@@ -36,12 +35,10 @@ const DeleteClassRoom: React.FC<Props> = ({ id }) => {
         <button type="button" className={styles.btnDanger} onClick={handleDelete}>
           Excluir
         </button>
-        <button type="button" className={styles.btnSecondary} onClick={() => navigate('/classrooms')}>
+        <button type="button" className={styles.btnSecondary} onClick={() => navigate("/classrooms")}>
           Cancelar
         </button>
       </div>
     </div>
   );
-};
-
-export default DeleteClassRoom;
+}

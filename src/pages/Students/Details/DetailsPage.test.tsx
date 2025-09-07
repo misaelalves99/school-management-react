@@ -16,7 +16,7 @@ jest.mock('react-router-dom', () => {
   return {
     ...actual,
     useNavigate: () => navigateMock,
-    useParams: jest.fn(() => ({ id: '1' })), // Valor padrão
+    useParams: jest.fn(() => ({ id: '1' })), // valor padrão
   };
 });
 
@@ -71,13 +71,14 @@ describe('StudentDetails', () => {
 
   it('exibe detalhes do aluno corretamente', () => {
     renderWithRouter('1');
+
     expect(screen.getByText(/Detalhes do Aluno/i)).toBeInTheDocument();
-    expect(screen.getByText(/Nome:/i)).toHaveTextContent('Nome: John Doe');
-    expect(screen.getByText(/Email:/i)).toHaveTextContent('Email: john@example.com');
-    expect(screen.getByText(/Data de Nascimento:/i)).toHaveTextContent('Data de Nascimento: 2000-01-01');
-    expect(screen.getByText(/Número de Matrícula:/i)).toHaveTextContent('Número de Matrícula: 123');
-    expect(screen.getByText(/Telefone:/i)).toHaveTextContent('Telefone: 1111-1111');
-    expect(screen.getByText(/Endereço:/i)).toHaveTextContent('Endereço: Rua A');
+    expect(screen.getByText(/Nome:/i).nextSibling?.textContent).toBe(' John Doe');
+    expect(screen.getByText(/Email:/i).nextSibling?.textContent).toBe(' john@example.com');
+    expect(screen.getByText(/Data de Nascimento:/i).nextSibling?.textContent).toBe(' 2000-01-01');
+    expect(screen.getByText(/Número de Matrícula:/i).nextSibling?.textContent).toBe(' 123');
+    expect(screen.getByText(/Telefone:/i).nextSibling?.textContent).toBe(' 1111-1111');
+    expect(screen.getByText(/Endereço:/i).nextSibling?.textContent).toBe(' Rua A');
   });
 
   it('botão Editar chama navigate corretamente', () => {

@@ -16,11 +16,11 @@ jest.mock("react-router-dom", () => {
   return {
     ...actual,
     useNavigate: () => navigateMock,
-    useParams: jest.fn(() => ({ id: "1" })), // ✅ função mockável
+    useParams: jest.fn(() => ({ id: "1" })),
   };
 });
 
-import { useParams } from "react-router-dom"; // import depois do mock
+import { useParams } from "react-router-dom";
 
 describe("SubjectDetails", () => {
   beforeEach(() => {

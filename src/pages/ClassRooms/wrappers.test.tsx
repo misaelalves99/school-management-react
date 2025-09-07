@@ -2,12 +2,16 @@
 
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { ClassRoomDeletePageWrapper, ClassRoomDetailsPageWrapper, ClassRoomEditPageWrapper } from './wrappers';
+import {
+  ClassRoomDeletePageWrapper,
+  ClassRoomDetailsPageWrapper,
+  ClassRoomEditPageWrapper
+} from './wrappers';
 
 // Mock dos componentes usados pelos wrappers
-jest.mock('./Delete/DeletePage', () => jest.fn(() => <div>DeleteClassRoomMock</div>));
-jest.mock('./Details/DetailsPage', () => jest.fn(() => <div>DetailsClassRoomMock</div>));
-jest.mock('./Edit/EditPage', () => jest.fn(() => <div>EditClassRoomMock</div>));
+jest.mock('./Delete/DeletePage', () => () => <div>DeleteClassRoomMock</div>);
+jest.mock('./Details/DetailsPage', () => () => <div>DetailsClassRoomMock</div>);
+jest.mock('./Edit/EditPage', () => () => <div>EditClassRoomMock</div>);
 
 describe('ClassRoom Wrappers', () => {
 

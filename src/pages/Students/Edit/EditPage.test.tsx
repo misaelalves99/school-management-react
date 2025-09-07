@@ -64,22 +64,22 @@ describe('StudentEditPage', () => {
     (useStudents as jest.Mock).mockReturnValue({ students: studentsMock, editStudent: jest.fn() });
     renderWithRouter('1');
 
-    expect(screen.getByLabelText(/name/i)).toHaveValue('John Doe');
-    expect(screen.getByLabelText(/email/i)).toHaveValue('john@example.com');
-    expect(screen.getByLabelText(/dateOfBirth/i)).toHaveValue('2000-01-01');
-    expect(screen.getByLabelText(/enrollmentNumber/i)).toHaveValue('123');
-    expect(screen.getByLabelText(/phone/i)).toHaveValue('1111-1111');
-    expect(screen.getByLabelText(/address/i)).toHaveValue('Rua A');
+    expect(screen.getByLabelText(/Nome/i)).toHaveValue('John Doe');
+    expect(screen.getByLabelText(/Email/i)).toHaveValue('john@example.com');
+    expect(screen.getByLabelText(/Data de Nascimento/i)).toHaveValue('2000-01-01');
+    expect(screen.getByLabelText(/Matrícula/i)).toHaveValue('123');
+    expect(screen.getByLabelText(/Telefone/i)).toHaveValue('1111-1111');
+    expect(screen.getByLabelText(/Endereço/i)).toHaveValue('Rua A');
   });
 
   it('valida campos obrigatórios', () => {
     (useStudents as jest.Mock).mockReturnValue({ students: studentsMock, editStudent: jest.fn() });
     renderWithRouter('1');
 
-    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: '' } });
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: '' } });
-    fireEvent.change(screen.getByLabelText(/dateOfBirth/i), { target: { value: '' } });
-    fireEvent.change(screen.getByLabelText(/enrollmentNumber/i), { target: { value: '' } });
+    fireEvent.change(screen.getByLabelText(/Nome/i), { target: { value: '' } });
+    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: '' } });
+    fireEvent.change(screen.getByLabelText(/Data de Nascimento/i), { target: { value: '' } });
+    fireEvent.change(screen.getByLabelText(/Matrícula/i), { target: { value: '' } });
 
     fireEvent.click(screen.getByText(/Salvar Alterações/i));
 
@@ -95,7 +95,7 @@ describe('StudentEditPage', () => {
 
     renderWithRouter('1');
 
-    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: 'Jane Doe' } });
+    fireEvent.change(screen.getByLabelText(/Nome/i), { target: { value: 'Jane Doe' } });
     fireEvent.click(screen.getByText(/Salvar Alterações/i));
 
     expect(editStudentMock).toHaveBeenCalledWith(1, expect.objectContaining({ name: 'Jane Doe' }));

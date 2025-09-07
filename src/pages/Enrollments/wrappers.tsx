@@ -1,5 +1,4 @@
 // src/pages/Enrollments/wrappers.tsx
-
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
@@ -46,12 +45,14 @@ export function EnrollmentDetailsWrapper() {
       navigate('/enrollments');
       return;
     }
+
     const found = enrollments.find(e => e.id === Number(id));
     if (!found) {
       alert('Matrícula não encontrada');
       navigate('/enrollments');
       return;
     }
+
     setEnrollment(getEnrollmentDetails(found, students, classRooms));
   }, [id, enrollments, students, classRooms, navigate]);
 
@@ -74,6 +75,7 @@ export function EnrollmentEditWrapper() {
       navigate('/enrollments');
       return;
     }
+
     const found = enrollments.find(e => e.id === Number(id));
     if (!found) {
       alert('Matrícula não encontrada');
@@ -81,7 +83,6 @@ export function EnrollmentEditWrapper() {
       return;
     }
 
-    // Converte Enrollment → EnrollmentEdit
     setEnrollment({
       id: found.id,
       studentId: found.studentId,
@@ -91,10 +92,9 @@ export function EnrollmentEditWrapper() {
     });
   }, [id, enrollments, navigate]);
 
-  async function onSave(updatedEnrollment: EnrollmentEdit): Promise<void> {
+  async function onSave(updatedEnrollment: EnrollmentEdit) {
     if (!enrollment) return;
 
-    // Merge com os campos obrigatórios
     const payload: Enrollment = {
       id: updatedEnrollment.id,
       studentId: updatedEnrollment.studentId || 0,
@@ -110,8 +110,8 @@ export function EnrollmentEditWrapper() {
         return;
       }
       navigate('/enrollments');
-    } catch (error) {
-      console.error('Erro ao salvar matrícula:', error);
+    } catch (err) {
+      console.error('Erro ao salvar matrícula:', err);
       alert('Ocorreu um erro ao salvar a matrícula.');
     }
   }
@@ -137,12 +137,14 @@ export function EnrollmentDeleteWrapper() {
       navigate('/enrollments');
       return;
     }
+
     const found = enrollments.find(e => e.id === Number(id));
     if (!found) {
       alert('Matrícula não encontrada');
       navigate('/enrollments');
       return;
     }
+
     setEnrollment(getEnrollmentDetails(found, students, classRooms));
   }, [id, enrollments, students, classRooms, navigate]);
 
@@ -150,8 +152,8 @@ export function EnrollmentDeleteWrapper() {
     try {
       await removeEnrollment(idToDelete);
       navigate('/enrollments');
-    } catch (error) {
-      console.error('Erro ao excluir matrícula:', error);
+    } catch (err) {
+      console.error('Erro ao excluir matrícula:', err);
       alert('Ocorreu um erro ao excluir a matrícula.');
     }
   }

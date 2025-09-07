@@ -34,19 +34,29 @@ describe("TeacherCreatePage", () => {
     jest.spyOn(window, "alert").mockImplementation(() => {});
   });
 
-  it("renderiza todos os campos do formulário", () => {
-    render(<MemoryRouter><TeacherCreate /></MemoryRouter>);
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
-    expect(screen.getByLabelText("Nome")).toBeInTheDocument();
-    expect(screen.getByLabelText("Email")).toBeInTheDocument();
-    expect(screen.getByLabelText("Data de Nascimento")).toBeInTheDocument();
-    expect(screen.getByLabelText("Disciplina")).toBeInTheDocument();
-    expect(screen.getByLabelText("Telefone")).toBeInTheDocument();
-    expect(screen.getByLabelText("Endereço")).toBeInTheDocument();
+  it("renderiza todos os campos do formulário", () => {
+    render(
+      <MemoryRouter>
+        <TeacherCreate />
+      </MemoryRouter>
+    );
+
+    ["Nome", "Email", "Data de Nascimento", "Disciplina", "Telefone", "Endereço"].forEach(label => {
+      expect(screen.getByLabelText(label)).toBeInTheDocument();
+    });
   });
 
   it("exibe erros de validação quando campos obrigatórios estão vazios", () => {
-    render(<MemoryRouter><TeacherCreate /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <TeacherCreate />
+      </MemoryRouter>
+    );
+
     fireEvent.click(screen.getByText("Salvar"));
 
     expect(screen.getByText("Nome é obrigatório.")).toBeInTheDocument();
@@ -57,7 +67,11 @@ describe("TeacherCreatePage", () => {
   });
 
   it("exibe erro de email inválido", () => {
-    render(<MemoryRouter><TeacherCreate /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <TeacherCreate />
+      </MemoryRouter>
+    );
 
     fireEvent.change(screen.getByLabelText("Nome"), { target: { value: "Professor X" } });
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "invalid-email" } });
@@ -71,7 +85,11 @@ describe("TeacherCreatePage", () => {
   });
 
   it("chama addTeacher e navega após submissão válida", () => {
-    render(<MemoryRouter><TeacherCreate /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <TeacherCreate />
+      </MemoryRouter>
+    );
 
     fireEvent.change(screen.getByLabelText("Nome"), { target: { value: "Professor X" } });
     fireEvent.change(screen.getByLabelText("Email"), { target: { value: "professor@example.com" } });
@@ -94,7 +112,12 @@ describe("TeacherCreatePage", () => {
   });
 
   it("botão de voltar navega corretamente", () => {
-    render(<MemoryRouter><TeacherCreate /></MemoryRouter>);
+    render(
+      <MemoryRouter>
+        <TeacherCreate />
+      </MemoryRouter>
+    );
+
     fireEvent.click(screen.getByText("Voltar"));
     expect(navigateMock).toHaveBeenCalledWith("/teachers");
   });

@@ -1,6 +1,6 @@
 // src/pages/ErrorPage/ErrorPage.tsx
 
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import styles from './ErrorPage.module.css';
 import type { ErrorData } from '../../types/ErrorData';
 
@@ -26,7 +26,7 @@ export default function ErrorPage() {
         </div>
       )}
 
-      <a href="/" className={styles.btnReturn}>⬅ Voltar para o Início</a>
+      <Link to="/" className={styles.btnReturn}>⬅ Voltar para o Início</Link>
     </div>
   );
 }

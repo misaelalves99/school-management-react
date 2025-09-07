@@ -25,6 +25,7 @@ describe('StudentIndex', () => {
     });
 
     jest.spyOn(window, 'confirm').mockImplementation(() => true);
+    jest.spyOn(window, 'alert').mockImplementation(() => {});
   });
 
   it('chama refreshStudents ao montar', () => {
@@ -53,51 +54,25 @@ describe('StudentIndex', () => {
       </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByPlaceholderText(/Digite o nome/i), { target: { value: 'alice' } });
-    fireEvent.click(screen.getByText(/Buscar/i));
+    fireEvent.change(screen.getByPlaceholderText(/Digite o nome do aluno/i), {
+      target: { value: 'alice' },
+    });
 
+    // Não há necessidade de clicar no botão "Buscar", o filtro ocorre no input
     expect(screen.getByText('Alice')).toBeInTheDocument();
     expect(screen.queryByText('Bob')).not.toBeInTheDocument();
   });
 
-  it('chama removeStudent ao clicar em Excluir', () => {
+  it('botão Cadastrar Novo Aluno existe e tem link correto', () => {
     render(
       <MemoryRouter>
         <StudentIndex />
       </MemoryRouter>
     );
 
-    fireEvent.click(screen.getAllByText('Excluir')[0]);
-    expect(removeStudentMock).toHaveBeenCalledWith(1);
-  });
-
-  it('botões de navegação de página funcionam', () => {
-    const manyStudents = Array.from({ length: 15 }, (_, i) => ({
-      id: i + 1,
-      name: `Student ${i + 1}`,
-      enrollmentNumber: `00${i + 1}`,
-      phone: '',
-      address: '',
-    }));
-    (useStudents as jest.Mock).mockReturnValue({
-      students: manyStudents,
-      removeStudent: removeStudentMock,
-      refreshStudents: refreshStudentsMock,
-    });
-
-    render(
-      <MemoryRouter>
-        <StudentIndex />
-      </MemoryRouter>
-    );
-
-    expect(screen.getByText(/Página 1 de 2/i)).toBeInTheDocument();
-
-    fireEvent.click(screen.getByText(/Próxima/i));
-    expect(screen.getByText(/Página 2 de 2/i)).toBeInTheDocument();
-
-    fireEvent.click(screen.getByText(/Anterior/i));
-    expect(screen.getByText(/Página 1 de 2/i)).toBeInTheDocument();
+    const createButton = screen.getByText(/Cadastrar Novo Aluno/i);
+    expect(createButton).toBeInTheDocument();
+    expect(createButton.closest('a')).toHaveAttribute('href', '/students/create');
   });
 
   it('exibe mensagem quando não há alunos', () => {
@@ -116,15 +91,19 @@ describe('StudentIndex', () => {
     expect(screen.getByText(/Nenhum aluno encontrado/i)).toBeInTheDocument();
   });
 
-  it('botão Cadastrar Novo Aluno existe e tem link correto', () => {
+  it('links de ações têm URLs corretas', () => {
     render(
       <MemoryRouter>
         <StudentIndex />
       </MemoryRouter>
     );
 
-    const createButton = screen.getByText(/Cadastrar Novo Aluno/i);
-    expect(createButton).toBeInTheDocument();
-    expect(createButton.closest('a')).toHaveAttribute('href', '/students/create');
+    const detailLink = screen.getByText('Detalhes').closest('a');
+    const editLink = screen.getByText('Editar').closest('a');
+    const deleteLink = screen.getByText('Excluir').closest('a');
+
+    expect(detailLink).toHaveAttribute('href', '/students/details/1');
+    expect(editLink).toHaveAttribute('href', '/students/edit/1');
+    expect(deleteLink).toHaveAttribute('href', '/students/delete/1');
   });
 });

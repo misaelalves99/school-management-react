@@ -2,17 +2,16 @@
 
 import { useClassRooms } from '../../../hooks/useClassRooms';
 import styles from './DetailsPage.module.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-interface Props {
-  id: number;
-}
-
-const ClassRoomDetailsPage: React.FC<Props> = ({ id }) => {
+const ClassRoomDetailsPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const { getById } = useClassRooms();
   const navigate = useNavigate();
-  const classRoom = getById(id);
 
+  if (!id) return <p>ID da turma não fornecido.</p>;
+
+  const classRoom = getById(Number(id));
   if (!classRoom) return <p>Turma não encontrada.</p>;
 
   return (

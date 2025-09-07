@@ -13,19 +13,27 @@ export default function TeacherDetails() {
     return (
       <div className={styles.container}>
         <h1 className={styles.title}>ID do professor não fornecido</h1>
-        <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => navigate("/teachers")}>
+        <button
+          className={`${styles.btn} ${styles.btnSecondary}`}
+          onClick={() => navigate("/teachers")}
+        >
           Voltar à Lista
         </button>
       </div>
     );
   }
 
-  const teacher = getTeacher(Number(id));
+  const teacherId = Number(id);
+  const teacher = getTeacher(teacherId);
+
   if (!teacher) {
     return (
       <div className={styles.container}>
         <h1 className={styles.title}>Professor não encontrado</h1>
-        <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => navigate("/teachers")}>
+        <button
+          className={`${styles.btn} ${styles.btnSecondary}`}
+          onClick={() => navigate("/teachers")}
+        >
           Voltar à Lista
         </button>
       </div>
@@ -38,35 +46,19 @@ export default function TeacherDetails() {
     <div className={styles.container}>
       <h1 className={styles.title}>Detalhes do Professor</h1>
 
-      <div className={styles.detailsRow}>
-        <span className={styles.detailsLabel}>Nome:</span>
-        <span className={styles.detailsValue}>{teacher.name}</span>
-      </div>
-
-      <div className={styles.detailsRow}>
-        <span className={styles.detailsLabel}>Email:</span>
-        <span className={styles.detailsValue}>{teacher.email}</span>
-      </div>
-
-      <div className={styles.detailsRow}>
-        <span className={styles.detailsLabel}>Data de Nascimento:</span>
-        <span className={styles.detailsValue}>{formattedDate}</span>
-      </div>
-
-      <div className={styles.detailsRow}>
-        <span className={styles.detailsLabel}>Disciplina:</span>
-        <span className={styles.detailsValue}>{teacher.subject}</span>
-      </div>
-
-      <div className={styles.detailsRow}>
-        <span className={styles.detailsLabel}>Telefone:</span>
-        <span className={styles.detailsValue}>{teacher.phone || "-"}</span>
-      </div>
-
-      <div className={styles.detailsRow}>
-        <span className={styles.detailsLabel}>Endereço:</span>
-        <span className={styles.detailsValue}>{teacher.address || "-"}</span>
-      </div>
+      {[
+        { label: "Nome", value: teacher.name },
+        { label: "Email", value: teacher.email },
+        { label: "Data de Nascimento", value: formattedDate },
+        { label: "Disciplina", value: teacher.subject },
+        { label: "Telefone", value: teacher.phone || "-" },
+        { label: "Endereço", value: teacher.address || "-" },
+      ].map(({ label, value }) => (
+        <div key={label} className={styles.detailsRow}>
+          <span className={styles.detailsLabel}>{label}:</span>
+          <span className={styles.detailsValue}>{value}</span>
+        </div>
+      ))}
 
       <div className={styles.actions}>
         <button
