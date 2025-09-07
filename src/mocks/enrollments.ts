@@ -1,6 +1,6 @@
 // src/mocks/enrollments.ts
 
-import type { Enrollment } from '../types/Enrollment';
+import type { Enrollment } from '../types/enrollment';
 
 // Mock de matrículas
 let enrollmentsData: Enrollment[] = [

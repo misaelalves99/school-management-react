@@ -2,7 +2,7 @@
 
 import { ReactNode, useCallback, useState } from "react";
 import { ClassRoomContext } from "./ClassRoomContext";
-import type { ClassRoom } from "../../types/ClassRoom";
+import type { ClassRoom } from "../../types/classroom.ts";
 import {
   getClassRooms as getMockClassRooms,
   createClassRoom as createMockClassRoom,

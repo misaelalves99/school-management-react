@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import DeleteEnrollment from './DeletePage';
 import { MemoryRouter } from 'react-router-dom';
-import type { EnrollmentWithNames } from '../../../types/EnrollmentWithNames';
+import type { EnrollmentWithNames } from '../../../types/enrollment-with-names';
 
 const mockNavigate = jest.fn();
 const mockAlert = jest.fn();

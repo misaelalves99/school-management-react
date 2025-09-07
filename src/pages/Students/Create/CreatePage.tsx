@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./CreatePage.module.css";
-import type { Student } from "../../../types/Student";
+import type { Student } from "../../../types/student";
 import { useStudents } from "../../../hooks/useStudents";
 
 export default function StudentCreatePage() {

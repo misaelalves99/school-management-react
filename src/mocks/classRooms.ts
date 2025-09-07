@@ -1,8 +1,8 @@
 // src/mocks/classRooms.ts
 
-import type { ClassRoom } from '../types/ClassRoom';
-import type { Subject } from '../types/Subject';
-import type { Teacher } from '../types/Teacher';
+import type { ClassRoom } from '../types/classroom.ts';
+import type { Subject } from '../types/subject.js';
+import type { Teacher } from '../types/teacher.js';
 
 // Mock inicial de salas
 export let classRoomsData: ClassRoom[] = [

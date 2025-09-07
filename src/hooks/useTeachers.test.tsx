@@ -2,8 +2,8 @@
 import { renderHook, act } from "@testing-library/react";
 import { useTeachers } from "./useTeachers";
 import { TeachersProvider } from "../contexts/Teachers/TeachersProvider";
-import type { Teacher } from "../types/Teacher";
-import type { TeacherFormData } from "../types/TeacherFormData";
+import type { Teacher } from "../types/teacher";
+import type { TeacherFormData } from "../types/teacher-form-data";
 
 describe("useTeachers", () => {
   it("deve lançar erro se usado fora do TeachersProvider", () => {

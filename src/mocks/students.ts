@@ -1,6 +1,6 @@
 // src/mocks/students.ts
 
-import type { Student } from "../types/Student";
+import type { Student } from "../types/student";
 
 let studentsData: Student[] = [
   { id: 1, name: "João Silva", email: "joao.silva@email.com", dateOfBirth: "2000-01-15", enrollmentNumber: "20230001", phone: "123456789", address: "Rua A" },

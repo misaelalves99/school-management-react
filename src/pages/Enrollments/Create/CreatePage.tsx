@@ -4,8 +4,8 @@ import styles from './CreatePage.module.css';
 import { useStudents } from '../../../hooks/useStudents';
 import { useClassRooms } from '../../../hooks/useClassRooms';
 import { useEnrollments } from '../../../hooks/useEnrollments';
-import type { EnrollmentFormData } from '../../../types/EnrollmentForm';
-import type { ClassRoom } from '../../../types/ClassRoom';
+import type { EnrollmentFormData } from '../../../types/enrollment-form';
+import type { ClassRoom } from '../../../types/classroom.ts';
 
 type EnrollmentErrors = {
   [K in keyof EnrollmentFormData]?: string;

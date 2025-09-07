@@ -7,7 +7,7 @@ import {
   deleteTeacher, 
   mockTeachers 
 } from './Teachers';
-import type { Teacher } from '../types/Teacher';
+import type { Teacher } from '../types/teacher';
 
 describe('mockTeachers', () => {
   const initialData: Omit<Teacher, 'id'>[] = [

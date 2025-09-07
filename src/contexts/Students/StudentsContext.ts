@@ -1,7 +1,7 @@
 // src/contexts/Students/StudentsContext.ts
 
 import { createContext } from "react";
-import type { Student } from "../../types/Student";
+import type { Student } from "../../types/student";
 
 export interface StudentsContextType {
   students: Student[];

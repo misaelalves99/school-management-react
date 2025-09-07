@@ -3,7 +3,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { useContext } from 'react';
 import { ClassRoomContext, ClassRoomContextType } from './ClassRoomContext';
-import type { ClassRoom } from '../../types/ClassRoom';
+import type { ClassRoom } from '../../types/classroom.ts';
 
 // Hook auxiliar que consome o contexto
 const useClassRoomContext = () => {

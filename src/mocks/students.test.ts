@@ -6,7 +6,7 @@ import {
   updateStudent,
   deleteStudent,
 } from './Students';
-import type { Student } from '../types/Student';
+import type { Student } from '../types/student';
 
 describe('Students mocks', () => {
   const initialData: Omit<Student, 'id'>[] = [

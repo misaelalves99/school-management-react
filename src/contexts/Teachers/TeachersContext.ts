@@ -1,8 +1,8 @@
 // src/contexts/TeachersContext.ts
 
 import { createContext } from "react";
-import type { Teacher } from "../../types/Teacher";
-import type { TeacherFormData } from "../../types/TeacherFormData";
+import type { Teacher } from "../../types/teacher";
+import type { TeacherFormData } from "../../types/teacher-form-data";
 
 export interface TeachersContextType {
   teachers: Teacher[];

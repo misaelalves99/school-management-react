@@ -1,7 +1,7 @@
 // src/contexts/Subjects/SubjectsContext.ts
 
 import { createContext } from "react";
-import type { Subject } from "../../types/Subject";
+import type { Subject } from "../../types/subject";
 
 export interface SubjectsContextData {
   subjects: Subject[];

@@ -1,7 +1,6 @@
 // src/types/EnrollmentDetails.ts
 
-import type { Enrollment } from './Enrollment';
-
+import type { Enrollment } from './enrollment';
 
 export interface EnrollmentDetails extends Enrollment {
   id: number;

@@ -2,9 +2,9 @@
 
 import { ReactNode, useCallback, useState } from "react";
 import { EnrollmentsContext } from "./EnrollmentsContext";
-import type { Enrollment } from "../../types/Enrollment";
-import type { EnrollmentFormData } from "../../types/EnrollmentForm";
-import type { EnrollmentEdit } from "../../types/EnrollmentEdit";
+import type { Enrollment } from "../../types/enrollment";
+import type { EnrollmentFormData } from "../../types/enrollment-form";
+import type { EnrollmentEdit } from "../../types/enrollment-edit";
 import {
   getEnrollments as getMockEnrollments,
   createEnrollment as createMockEnrollment,

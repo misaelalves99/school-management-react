@@ -5,7 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import styles from "./EditPage.module.css";
 import { useTeachers } from "../../../hooks/useTeachers";
 import { useSubjects } from "../../../hooks/useSubjects";
-import type { TeacherFormData } from "../../../types/TeacherFormData";
+import type { TeacherFormData } from "../../../types/teacher-form-data";
 
 export default function TeacherEditPage() {
   const { id } = useParams(); // React Router v7 não precisa de tipagem genérica

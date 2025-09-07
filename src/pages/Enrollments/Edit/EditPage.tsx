@@ -3,8 +3,8 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./EditPage.module.css";
-import type { EnrollmentEdit } from "../../../types/EnrollmentEdit";
-import type { ValidationErrors } from "../../../types/ValidationErrors";
+import type { EnrollmentEdit } from "../../../types/enrollment-edit";
+import type { ValidationErrors } from "../../../types/validation-errors";
 import { useStudents } from "../../../hooks/useStudents";
 import { useClassRooms } from "../../../hooks/useClassRooms";
 

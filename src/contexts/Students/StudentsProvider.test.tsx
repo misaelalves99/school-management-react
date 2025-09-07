@@ -6,7 +6,7 @@ import userEvent from "@testing-library/user-event";
 import { StudentsProvider } from "./StudentsProvider";
 import { StudentsContext } from "./StudentsContext";
 import * as StudentsMock from "../../mocks/Students";
-import type { Student } from "../../types/Student";
+import type { Student } from "../../types/student";
 
 // Componente de teste que consome o contexto
 function TestConsumer() {

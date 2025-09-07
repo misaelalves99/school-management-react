@@ -9,9 +9,9 @@ import DeleteEnrollment from './Delete/DeletePage';
 import { useEnrollments } from '../../hooks/useEnrollments';
 import { useStudents } from '../../hooks/useStudents';
 import { useClassRooms } from '../../hooks/useClassRooms';
-import type { Enrollment } from '../../types/Enrollment';
-import type { EnrollmentEdit } from '../../types/EnrollmentEdit';
-import type { EnrollmentWithNames } from '../../types/EnrollmentWithNames';
+import type { Enrollment } from '../../types/enrollment';
+import type { EnrollmentEdit } from '../../types/enrollment-edit';
+import type { EnrollmentWithNames } from '../../types/enrollment-with-names';
 
 // Função auxiliar para mapear Enrollment → EnrollmentWithNames
 function getEnrollmentDetails(

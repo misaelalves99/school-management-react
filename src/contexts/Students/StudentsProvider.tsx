@@ -2,7 +2,7 @@
 
 import { useState, ReactNode } from "react";
 import { StudentsContext } from "./StudentsContext";
-import type { Student } from "../../types/Student";
+import type { Student } from "../../types/student";
 import { getStudents, createStudent, updateStudent, deleteStudent } from "../../mocks/Students";
 
 interface StudentsProviderProps {

@@ -1,6 +1,6 @@
 // src/mocks/teachers.ts
 
-import type { Teacher } from "../types/Teacher";
+import type { Teacher } from "../types/teacher";
 
 // Inicial mock teachers
 let teachersData: Teacher[] = [

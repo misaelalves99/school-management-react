@@ -3,8 +3,8 @@
 import { renderHook } from "@testing-library/react";
 import { useContext } from "react";
 import { TeachersContext, TeachersContextType } from "./TeachersContext";
-import type { TeacherFormData } from "../../types/TeacherFormData";
-import type { Teacher } from "../../types/Teacher";
+import type { TeacherFormData } from "../../types/teacher-form-data";
+import type { Teacher } from "../../types/teacher";
 
 describe("TeachersContext", () => {
   const mockTeacher: Teacher = {

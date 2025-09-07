@@ -6,7 +6,7 @@ import styles from './EnrollmentsPage.module.css';
 import { useEnrollments } from '../../hooks/useEnrollments';
 import { useStudents } from '../../hooks/useStudents';
 import { useClassRooms } from '../../hooks/useClassRooms';
-import type { EnrollmentWithNames } from '../../types/EnrollmentWithNames';
+import type { EnrollmentWithNames } from '../../types/enrollment-with-names';
 
 export default function EnrollmentIndexPage() {
   const { enrollments } = useEnrollments();

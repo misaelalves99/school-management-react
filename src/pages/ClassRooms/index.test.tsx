@@ -4,7 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import ClassroomsPage from './index';
 import { useClassRooms } from '../../hooks/useClassRooms';
-import type { ClassRoom } from '../../types/ClassRoom';
+import type { ClassRoom } from '../../types/classroom.ts';
 
 jest.mock('../../hooks/useClassRooms');
 

@@ -1,7 +1,7 @@
 // src/contexts/ClassRooms/ClassRoomContext.ts
 
 import { createContext } from 'react';
-import type { ClassRoom } from '../../types/ClassRoom';
+import type { ClassRoom } from '../../types/classroom';
 
 export interface ClassRoomContextType {
   classRooms: ClassRoom[];

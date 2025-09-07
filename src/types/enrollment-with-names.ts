@@ -1,6 +1,6 @@
 // src/types/EnrollmentWithNames.ts
 
-import type { EnrollmentFormData } from './EnrollmentForm';
+import type { EnrollmentFormData } from './enrollment-form';
 
 export interface EnrollmentWithNames extends EnrollmentFormData {
   id: number;

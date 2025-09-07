@@ -2,7 +2,7 @@
 
 import { useState, ReactNode } from "react";
 import { SubjectsContext, SubjectsContextData } from "./SubjectsContext";
-import type { Subject } from "../../types/Subject";
+import type { Subject } from "../../types/subject";
 import { mockSubjects } from "../../mocks/Subjects";
 
 interface SubjectsProviderProps {

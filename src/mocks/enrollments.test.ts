@@ -6,7 +6,7 @@ import {
   updateEnrollment,
   deleteEnrollment,
 } from "./Enrollments";
-import type { Enrollment } from "../types/Enrollment";
+import type { Enrollment } from "../types/enrollment";
 
 describe("Enrollments mocks", () => {
   const initialData: Omit<Enrollment, "id">[] = [

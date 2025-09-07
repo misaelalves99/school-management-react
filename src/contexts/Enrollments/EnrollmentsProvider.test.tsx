@@ -5,7 +5,7 @@ import { ReactNode, useContext } from 'react';
 import { EnrollmentsProvider } from './EnrollmentsProvider';
 import { EnrollmentsContext } from './EnrollmentsContext';
 import * as mockEnrollments from '../../mocks/Enrollments';
-import type { Enrollment } from '../../types/Enrollment';
+import type { Enrollment } from '../../types/enrollment';
 
 describe('EnrollmentsProvider', () => {
   const wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (

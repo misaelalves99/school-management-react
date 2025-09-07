@@ -1,6 +1,6 @@
 // src/types/enrollmentPageData.ts
 
-import type { EnrollmentWithNames } from './EnrollmentWithNames';
+import type { EnrollmentWithNames } from './enrollment-with-names';
 
 export interface EnrollmentPageData {
   items: EnrollmentWithNames[];

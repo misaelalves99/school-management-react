@@ -2,7 +2,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { useSubjects } from "./useSubjects";
 import { SubjectsProvider } from "../contexts/Subjects/SubjectsProvider";
-import type { Subject } from "../types/Subject";
+import type { Subject } from "../types/subject";
 
 describe("useSubjects", () => {
   it("deve lançar erro se usado fora do SubjectsProvider", () => {

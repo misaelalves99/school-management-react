@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "./EditPage.module.css";
-import type { Subject } from "../../../types/Subject";
+import type { Subject } from "../../../types/subject";
 import { useSubjects } from "../../../hooks/useSubjects";
 
 export default function SubjectEditPage() {

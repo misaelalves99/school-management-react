@@ -1,6 +1,6 @@
 // src/mocks/classRooms.test.ts
-import type { Teacher } from '../types/Teacher';
-import type { Subject } from '../types/Subject';
+import type { Teacher } from '../types/teacher';
+import type { Subject } from '../types/subject';
 import {
   classRoomsData,
   getClassRooms,

@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./CreatePage.module.css";
-import type { TeacherFormData } from "../../../types/TeacherFormData";
+import type { TeacherFormData } from "../../../types/teacher-form-data";
 import { useTeachers } from "../../../hooks/useTeachers";
 import { useSubjects } from "../../../hooks/useSubjects";
-import type { Subject } from "../../../types/Subject";
+import type { Subject } from "../../../types/subject";
 
 export default function TeacherCreatePage() {
   const navigate = useNavigate();

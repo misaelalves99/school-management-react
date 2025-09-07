@@ -1,9 +1,9 @@
 // src/contexts/Enrollments/EnrollmentsContext.tsx
 
 import { createContext } from "react";
-import type { Enrollment } from "../../types/Enrollment";
-import type { EnrollmentFormData } from "../../types/EnrollmentForm";
-import type { EnrollmentEdit } from "../../types/EnrollmentEdit";
+import type { Enrollment } from "../../types/enrollment";
+import type { EnrollmentFormData } from "../../types/enrollment-form";
+import type { EnrollmentEdit } from "../../types/enrollment-edit";
 
 export interface EnrollmentsContextType {
   enrollments: Enrollment[];

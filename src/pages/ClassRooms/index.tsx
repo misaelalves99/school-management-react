@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useClassRooms } from '../../hooks/useClassRooms';
 import styles from './ClassRoomList.module.css';
-import type { ClassRoom } from '../../types/ClassRoom';
+import type { ClassRoom } from '../../types/classroom.ts';
 
 export default function ClassroomsPage() {
   const { classRooms } = useClassRooms();

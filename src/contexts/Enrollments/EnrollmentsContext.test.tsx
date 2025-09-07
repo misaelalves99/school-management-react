@@ -3,9 +3,9 @@
 import { renderHook, act } from '@testing-library/react';
 import { useContext, ReactNode, FC } from 'react';
 import { EnrollmentsContext, EnrollmentsContextType } from './EnrollmentsContext';
-import type { Enrollment } from '../../types/Enrollment';
-import type { EnrollmentFormData } from '../../types/EnrollmentForm';
-import type { EnrollmentEdit } from '../../types/EnrollmentEdit';
+import type { Enrollment } from '../../types/enrollment';
+import type { EnrollmentFormData } from '../../types/enrollment-form';
+import type { EnrollmentEdit } from '../../types/enrollment-edit';
 
 describe('EnrollmentsContext', () => {
   it('deve ter valor inicial indefinido', () => {

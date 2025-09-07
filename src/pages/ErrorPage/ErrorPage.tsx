@@ -2,7 +2,7 @@
 
 import { useLocation, Link } from 'react-router-dom';
 import styles from './ErrorPage.module.css';
-import type { ErrorData } from '../../types/ErrorData';
+import type { ErrorData } from '../../types/error-data';
 
 export default function ErrorPage() {
   const location = useLocation();

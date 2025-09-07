@@ -4,7 +4,7 @@ import { renderHook, act } from "@testing-library/react";
 import { ReactNode, useContext } from "react";
 import { SubjectsProvider } from "./SubjectsProvider";
 import { SubjectsContext } from "./SubjectsContext";
-import type { Subject } from "../../types/Subject";
+import type { Subject } from "../../types/subject";
 import { mockSubjects } from "../../mocks/Subjects";
 
 describe("SubjectsProvider", () => {

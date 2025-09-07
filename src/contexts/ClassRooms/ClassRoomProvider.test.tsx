@@ -5,7 +5,7 @@ import { renderHook, act } from '@testing-library/react';
 import { ClassRoomProvider } from './ClassRoomProvider';
 import { ClassRoomContext } from './ClassRoomContext';
 import * as mocks from '../../mocks/ClassRooms';
-import type { ClassRoom } from '../../types/ClassRoom';
+import type { ClassRoom } from '../../types/classroom.ts';
 
 describe('ClassRoomProvider', () => {
   const wrapper: React.FC<{ children: ReactNode }> = ({ children }) => (

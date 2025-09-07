@@ -4,8 +4,8 @@ import { useContext } from "react";
 import { TeachersProvider } from "./TeachersProvider";
 import { TeachersContext, TeachersContextType } from "./TeachersContext";
 import { getTeachers, getTeacherById } from "../../mocks/Teachers";
-import type { TeacherFormData } from "../../types/TeacherFormData";
-import type { Teacher } from "../../types/Teacher";
+import type { TeacherFormData } from "../../types/teacher-form-data";
+import type { Teacher } from "../../types/teacher";
 
 describe("TeachersProvider", () => {
   const TestComponent = () => {

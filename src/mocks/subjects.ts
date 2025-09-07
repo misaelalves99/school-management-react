@@ -1,5 +1,5 @@
 // src/mocks/subjects.ts
-import type { Subject } from "../types/Subject";
+import type { Subject } from "../types/subject";
 
 let subjectsData: Subject[] = [
   { id: 1, name: "Matemática", description: "Álgebra e geometria", workloadHours: 60 },

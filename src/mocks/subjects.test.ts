@@ -1,6 +1,6 @@
 // src/mocks/subjects.test.ts
 import { mockSubjects } from './Subjects';
-import type { Subject } from '../types/Subject';
+import type { Subject } from '../types/subject';
 
 describe('mockSubjects', () => {
   const initialData: Omit<Subject, 'id'>[] = [

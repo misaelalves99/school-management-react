@@ -3,7 +3,7 @@
 import { useContext } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { StudentsContext, StudentsContextType } from "./StudentsContext";
-import type { Student } from "../../types/Student";
+import type { Student } from "../../types/student";
 
 // Componente de teste que consome o contexto
 function TestConsumer() {

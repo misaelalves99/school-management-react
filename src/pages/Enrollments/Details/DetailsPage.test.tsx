@@ -3,7 +3,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import EnrollmentDetails from './DetailsPage';
 import { MemoryRouter } from 'react-router-dom';
-import type { EnrollmentWithNames } from '../../../types/EnrollmentWithNames';
+import type { EnrollmentWithNames } from '../../../types/enrollment-with-names';
 
 const mockNavigate = jest.fn();
 
